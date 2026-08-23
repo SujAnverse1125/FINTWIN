@@ -82,16 +82,6 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
           <kbd className="search-kbd">⌘K</kbd>
         </button>
 
-        {/* AI Twin Copilot Trigger */}
-        <button
-          className="topbar-btn ai-copilot-trigger"
-          onClick={onOpenAiCopilot}
-          title="Open AI Financial Twin Copilot"
-        >
-          <Sparkles size={15} />
-          <span>Ask AI Twin</span>
-        </button>
-
         {/* Quick Add Button */}
         <button
           className="topbar-btn primary-action"
@@ -121,7 +111,7 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                 top: "100%",
                 right: 0,
                 marginTop: 10,
-                width: 340,
+                width: "min(340px, calc(100vw - 32px))",
                 background: "var(--bg-card-solid)",
                 border: "1px solid var(--border-medium)",
                 borderRadius: "var(--radius-lg)",
@@ -140,10 +130,12 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                   borderBottom: "1px solid var(--border-subtle)",
                 }}
               >
-                <div style={{ fontWeight: 700, fontSize: 13.5 }}>Financial Health Alerts</div>
+                <span style={{ fontWeight: 700, fontSize: 13, color: "#fff" }}>
+                  Alerts & Notifications
+                </span>
                 <button
                   onClick={() => setShowNotifications(false)}
-                  style={{ color: "var(--text-muted)", padding: 2 }}
+                  style={{ color: "var(--text-muted)", fontSize: 12 }}
                 >
                   <X size={14} />
                 </button>
@@ -155,8 +147,8 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                     style={{
                       padding: 10,
                       borderRadius: "var(--radius-md)",
-                      background: "rgba(244,63,94,0.12)",
-                      border: "1px solid rgba(244,63,94,0.3)",
+                      background: "rgba(244,63,94,0.1)",
+                      border: "1px solid rgba(244,63,94,0.25)",
                       fontSize: 12.5,
                       cursor: "pointer",
                     }}
@@ -166,10 +158,10 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 600, color: "#fb7185" }}>
-                      <AlertTriangle size={14} /> {overdueCount} Overdue Invoice(s)
+                      <AlertTriangle size={14} /> {overdueCount} Overdue Invoices
                     </div>
                     <div style={{ color: "var(--text-secondary)", marginTop: 4, fontSize: 11.5 }}>
-                      Action recommended: Send automated reminders.
+                      Review payment terms or trigger financing.
                     </div>
                   </div>
                 )}
@@ -179,8 +171,8 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                     style={{
                       padding: 10,
                       borderRadius: "var(--radius-md)",
-                      background: "rgba(245,158,11,0.12)",
-                      border: "1px solid rgba(245,158,11,0.3)",
+                      background: "rgba(245,158,11,0.1)",
+                      border: "1px solid rgba(245,158,11,0.25)",
                       fontSize: 12.5,
                       cursor: "pointer",
                     }}
@@ -190,10 +182,10 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 600, color: "#fbbf24" }}>
-                      <TrendingDown size={14} /> Customer Concentration Warning
+                      <TrendingDown size={14} /> {highRiskCount} High Risk Customer Invoices
                     </div>
                     <div style={{ color: "var(--text-secondary)", marginTop: 4, fontSize: 11.5 }}>
-                      Top client represents &gt;40% of outstanding receivables.
+                      AI predicts high default probability.
                     </div>
                   </div>
                 )}
@@ -228,7 +220,7 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                padding: "5px 10px 5px 6px",
+                padding: "5px 8px",
                 borderRadius: "var(--radius-full)",
                 background: "rgba(255, 255, 255, 0.05)",
                 border: "1px solid var(--border-medium)",
@@ -251,41 +243,47 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
               >
                 {user?.avatar || "FT"}
               </div>
-              <div style={{ textAlign: "left", display: "flex", flexDirection: "column" }}>
+              <div className="topbar-user-text" style={{ textAlign: "left", display: "flex", flexDirection: "column" }}>
                 <span style={{ fontSize: 12, fontWeight: 600, color: "#fff", lineHeight: 1.2 }}>
-                  {user?.name || "Founder"}
+                  {user?.name || "Executive"}
                 </span>
                 <span style={{ fontSize: 9.5, color: "var(--accent-emerald)", fontWeight: 600 }}>
                   {user?.role?.split(" ")[0] || "Admin"}
                 </span>
               </div>
-              <ChevronDown size={12} style={{ color: "var(--text-muted)" }} />
             </button>
           ) : (
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => navigate("/login")}
-            >
-              <User size={13} />
-              <span>Sign In</span>
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={() => navigate("/login")}
+              >
+                Log In
+              </button>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => navigate("/login")}
+              >
+                Sign Up
+              </button>
+            </div>
           )}
 
-          {/* User Profile Dropdown Menu */}
-          {showUserDropdown && isAuthenticated && (
+          {/* User Profile Dropdown */}
+          {isAuthenticated && showUserDropdown && (
             <div
               style={{
                 position: "absolute",
                 top: "100%",
                 right: 0,
-                marginTop: 8,
-                width: 260,
+                marginTop: 10,
+                width: "min(260px, calc(100vw - 32px))",
                 background: "var(--bg-card-solid)",
                 border: "1px solid var(--border-medium)",
-                borderRadius: "var(--radius-lg)",
+                borderRadius: "var(--radius-md)",
                 boxShadow: "var(--shadow-lg)",
                 zIndex: 200,
-                padding: "12px",
+                padding: "8px",
               }}
             >
               <div style={{ paddingBottom: 10, borderBottom: "1px solid var(--border-subtle)", marginBottom: 8 }}>

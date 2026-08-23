@@ -235,10 +235,10 @@ export default function Payroll() {
       )}
 
       {/* Top Role Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <h2 style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+        <div style={{ flex: "1 1 320px", minWidth: 260 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+            <h2 style={{ fontSize: 20, fontWeight: 800, color: "#fff", lineHeight: 1.2 }}>
               Workers & Salary Payroll Hub
             </h2>
             <span
@@ -255,19 +255,19 @@ export default function Payroll() {
               📊 Accountant Workspace
             </span>
           </div>
-          <p style={{ color: "var(--text-secondary)", fontSize: 13, marginTop: 4 }}>
+          <p style={{ color: "var(--text-secondary)", fontSize: 13, marginTop: 4, lineHeight: 1.4 }}>
             Manage workers, calibrate monthly compensation, and disburse salaries directly into the financial ledger
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: 10 }}>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
           <button
             className="btn btn-secondary"
             onClick={handleExportPayrollCsv}
             disabled={payrollHistory.length === 0}
           >
             <Download size={14} />
-            <span>Export Payroll CSV</span>
+            <span>Export CSV</span>
           </button>
 
           <button
@@ -277,7 +277,7 @@ export default function Payroll() {
             title="Disburse salaries for all active workers"
           >
             <Send size={14} />
-            <span>Disburse Batch Payroll ({formatLakhs(totalMonthlyPayrollLiability)})</span>
+            <span>Batch Payroll ({formatLakhs(totalMonthlyPayrollLiability)})</span>
           </button>
 
           <button

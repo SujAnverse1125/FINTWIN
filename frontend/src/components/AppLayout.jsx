@@ -1,17 +1,28 @@
 import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import AiCopilotModal from "./AiCopilotModal";
 import QuickActionModal from "./QuickActionModal";
 import CommandSearchModal from "./CommandSearchModal";
-import { Sparkles } from "lucide-react";
+import {
+  LayoutDashboard,
+  Wallet,
+  Plus,
+  Percent,
+  UserCheck,
+  Sparkles,
+} from "lucide-react";
 
 export default function AppLayout({ children }) {
+  const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAiCopilotOpen, setIsAiCopilotOpen] = useState(false);
   const [isQuickActionOpen, setIsQuickActionOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <div className="app-container">
@@ -47,10 +58,10 @@ export default function AppLayout({ children }) {
         <main className="page-container">{children}</main>
       </div>
 
-      {/* Floating AI Copilot Trigger */}
+      {/* Floating AI Copilot Trigger (Desktop only - mobile uses bottom nav) */}
       {!isAiCopilotOpen && (
         <button
-          className="floating-copilot-btn"
+          className="floating-copilot-btn desktop-only"
           onClick={() => setIsAiCopilotOpen(true)}
           title="Open FinTwin AI Financial Copilot"
         >
@@ -58,6 +69,62 @@ export default function AppLayout({ children }) {
           <span className="copilot-btn-text">Ask FinTwin</span>
         </button>
       )}
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="mobile-bottom-nav">
+        <Link
+          to="/dashboard"
+          className={`mobile-nav-item ${isActive("/dashboard") ? "active" : ""}`}
+        >
+          <LayoutDashboard size={20} />
+          <span>Dashboard</span>
+        </Link>
+
+        <Link
+          to="/cash-flow"
+          className={`mobile-nav-item ${isActive("/cash-flow") ? "active" : ""}`}
+        >
+          <Wallet size={20} />
+          <span>Cash Flow</span>
+        </Link>
+
+        {/* Center Quick Add Action */}
+        <button
+          className="mobile-nav-item mobile-nav-fab"
+          onClick={() => setIsQuickActionOpen(true)}
+          title="Quick Add Action"
+        >
+          <div className="mobile-fab-circle">
+            <Plus size={22} />
+          </div>
+          <span>Add</span>
+        </button>
+
+        <Link
+          to="/gst"
+          className={`mobile-nav-item ${isActive("/gst") ? "active" : ""}`}
+        >
+          <Percent size={20} />
+          <span>GST Tax</span>
+        </Link>
+
+        <Link
+          to="/payroll"
+          className={`mobile-nav-item ${isActive("/payroll") ? "active" : ""}`}
+        >
+          <UserCheck size={20} />
+          <span>Payroll</span>
+        </Link>
+
+        <button
+          className={`mobile-nav-item ${isAiCopilotOpen ? "active" : ""}`}
+          onClick={() => setIsAiCopilotOpen(true)}
+          title="AI Copilot"
+        >
+          <Sparkles size={20} style={{ color: "#c4b5fd" }} />
+          <span>AI Twin</span>
+        </button>
+      </nav>
 
       {/* Floating AI Copilot Drawer */}
       <AiCopilotModal

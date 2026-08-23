@@ -254,13 +254,13 @@ export default function Gst() {
             {/* GST Rate Slabs */}
             <div>
               <label className="form-label">GST Tax Slab</label>
-              <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {[0, 5, 12, 18, 28].map((rate) => (
                   <button
                     key={rate}
                     type="button"
                     className={`btn ${calcRate === rate ? "btn-primary" : "btn-secondary"}`}
-                    style={{ flex: 1, padding: "8px 0", justifyContent: "center" }}
+                    style={{ flex: "1 1 50px", minWidth: 48, padding: "8px 0", justifyContent: "center" }}
                     onClick={() => setCalcRate(rate)}
                   >
                     {rate}%

@@ -1,278 +1,988 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  FlaskConical,
-  RotateCcw,
+  AlertTriangle,
+  Brain,
   TrendingDown,
   TrendingUp,
-  AlertTriangle,
-  ShieldAlert,
-  Zap,
-  ArrowRight,
-  Sparkles,
-  IndianRupee,
   Clock,
+  RotateCcw,
 } from "lucide-react";
 
-import { getFinancialData } from "../data/financialStore";
+import ModulePage from "../components/ModulePage";
+
 import {
-  getCashFlowSummary,
-  calculateShockSimulation,
-} from "../engines/digitalTwin";
+  getFinancialData,
+} from "../data/financialStore";
 
-const presetShocks = [
-  {
-    title: "Major Client 45-Day Delay",
-    desc: "Simulate a severe payment stall on your highest-value receivables.",
-    params: { rev: 0, exp: 0, delay: 45 },
-  },
-  {
-    title: "25% Demand Contraction",
-    desc: "Market slowdown reduces top-line monthly revenue by 25%.",
-    params: { rev: -25, exp: 0, delay: 10 },
-  },
-  {
-    title: "15% Raw Material Inflation",
-    desc: "Supply chain cost surge increases overall operational burn by 15%.",
-    params: { rev: 0, exp: 15, delay: 5 },
-  },
-  {
-    title: "Triple Shock Scenario",
-    desc: "Concurrent 20% revenue drop, 15% cost inflation, and 30-day collection delay.",
-    params: { rev: -20, exp: 15, delay: 30 },
-  },
-];
 
-export default function Simulator() {
-  const [revenueChange, setRevenueChange] = useState(0);
-  const [expenseChange, setExpenseChange] = useState(0);
-  const [paymentDelay, setPaymentDelay] = useState(0);
+function Simulator() {
 
-  const baseline = getCashFlowSummary();
-  const simulation = calculateShockSimulation({
-    revenueChangePercent: revenueChange,
-    expenseChangePercent: expenseChange,
-    paymentDelayDays: paymentDelay,
-  });
+  const [revenueChange, setRevenueChange] =
+    useState(0);
 
-  const formatLakhs = (amt) => `₹${(Number(amt || 0) / 100000).toFixed(2)}L`;
+  const [expenseChange, setExpenseChange] =
+    useState(0);
 
-  const handleApplyPreset = (p) => {
-    setRevenueChange(p.rev);
-    setExpenseChange(p.exp);
-    setPaymentDelay(p.delay);
-  };
+  const [paymentDelay, setPaymentDelay] =
+    useState(0);
 
-  const handleReset = () => {
+  const [simulation, setSimulation] =
+    useState(null);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+
+  // ==========================================
+  // FORMAT MONEY
+  // ==========================================
+
+  function formatMoney(amount) {
+
+    const value =
+      Number(amount || 0);
+
+    const absolute =
+      Math.abs(value);
+
+    if (absolute >= 10000000) {
+
+      return `₹${(
+        value / 10000000
+      ).toFixed(2)} Cr`;
+
+    }
+
+    if (absolute >= 100000) {
+
+      return `₹${(
+        value / 100000
+      ).toFixed(2)} L`;
+
+    }
+
+    if (absolute >= 1000) {
+
+      return `₹${(
+        value / 1000
+      ).toFixed(1)}K`;
+
+    }
+
+    return `₹${value.toFixed(0)}`;
+  }
+
+
+  // ==========================================
+  // RISK CLASS
+  // ==========================================
+
+  function getRiskClass(risk) {
+
+    const value =
+      String(
+        risk || "LOW"
+      ).toUpperCase();
+
+    if (value === "HIGH") {
+      return "risk-high";
+    }
+
+    if (value === "MEDIUM") {
+      return "risk-medium";
+    }
+
+    return "risk-low";
+  }
+
+
+  // ==========================================
+  // RUN SIMULATION
+  // ==========================================
+
+  async function runSimulation() {
+
+    try {
+
+      setLoading(true);
+      setError("");
+
+
+      const data =
+        getFinancialData();
+
+
+      const response =
+        await fetch(
+          "https://fintwin-h7pc.onrender.com",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+
+              current_cash:
+                data.business.openingCash,
+
+              invoices:
+                data.invoices,
+
+              recurring_expenses:
+                data.recurringExpenses,
+
+              one_time_expenses:
+                data.expenses,
+
+              revenue_change_percent:
+                revenueChange,
+
+              expense_change_percent:
+                expenseChange,
+
+              payment_delay_days:
+                paymentDelay,
+
+            }),
+          }
+        );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          `Simulator API returned ${response.status}`
+        );
+
+      }
+
+
+      const result =
+        await response.json();
+
+
+      if (!result.success) {
+
+        throw new Error(
+          "Simulation failed."
+        );
+
+      }
+
+
+      setSimulation(
+        result.simulation
+      );
+
+    } catch (err) {
+
+      console.error(
+        "Simulator error:",
+        err
+      );
+
+      setError(
+        err.message ||
+        "Unable to run simulation."
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  }
+
+
+  // ==========================================
+  // RESET
+  // ==========================================
+
+  function resetSimulation() {
+
     setRevenueChange(0);
+
     setExpenseChange(0);
+
     setPaymentDelay(0);
-  };
+
+    setSimulation(null);
+
+    setError("");
+  }
+
+
+  // ==========================================
+  // SCENARIO ICON
+  // ==========================================
+
+  function getScenarioIcon(
+    scenario
+  ) {
+
+    if (
+      scenario ===
+      "Revenue Shock"
+    ) {
+
+      return <TrendingDown size={18} />;
+
+    }
+
+    if (
+      scenario ===
+      "Expense Shock"
+    ) {
+
+      return <TrendingUp size={18} />;
+
+    }
+
+    if (
+      scenario ===
+      "Payment Delay"
+    ) {
+
+      return <Clock size={18} />;
+
+    }
+
+    if (
+      scenario ===
+      "Combined Shock"
+    ) {
+
+      return <AlertTriangle size={18} />;
+
+    }
+
+    return <Brain size={18} />;
+  }
+
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* Preset Stress Cards */}
-      <div>
-        <div style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "var(--text-muted)", marginBottom: 12 }}>
-          One-Click Stress Test Presets
+    <ModulePage
+      title="Shock Simulator"
+      description="Test financial scenarios before making important business decisions."
+    >
+
+      {/* =====================================
+          INTRO
+      ====================================== */}
+
+      <div
+        className="cash-success"
+        style={{
+          marginBottom: "18px",
+        }}
+      >
+
+        <Brain size={21} />
+
+        <div>
+
+          <strong>
+            Financial What-If Simulator
+          </strong>
+
+          <p>
+            Adjust the assumptions below to
+            understand how different shocks could
+            affect your available cash.
+          </p>
+
         </div>
-        <div className="grid-4">
-          {presetShocks.map((shock, idx) => (
-            <div
-              key={idx}
-              className="glass-card interactive"
-              style={{ padding: 18 }}
-              onClick={() => handleApplyPreset(shock.params)}
-            >
-              <div style={{ fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 6 }}>
-                {shock.title}
-              </div>
-              <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                {shock.desc}
-              </div>
-            </div>
-          ))}
-        </div>
+
       </div>
 
-      {/* Main Simulation Workspace */}
-      <div className="grid-12">
-        {/* Sliders Control Panel */}
-        <div className="col-span-6 glass-card">
-          <div className="card-header">
-            <div className="card-title-group">
-              <div className="card-icon-wrap purple">
-                <FlaskConical size={18} />
-              </div>
-              <div>
-                <div className="card-title">Stress Parameters</div>
-                <div className="card-subtitle">Adjust variables to test financial elasticity</div>
-              </div>
-            </div>
-            <button className="btn btn-secondary btn-sm" onClick={handleReset}>
-              <RotateCcw size={13} /> Reset
-            </button>
+
+      {/* =====================================
+          CONTROLS
+      ====================================== */}
+
+      <div className="module-card">
+
+        <div className="section-heading">
+
+          <div
+            className="section-heading-icon"
+          >
+            <Brain size={19} />
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 10 }}>
-            {/* Revenue Slump Slider */}
-            <div style={{ background: "rgba(255,255,255,0.02)", padding: "16px 18px", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 600 }}>
-                <span style={{ color: "var(--text-secondary)" }}>Revenue Variance</span>
-                <span style={{ color: revenueChange < 0 ? "#fb7185" : revenueChange > 0 ? "#34d399" : "#60a5fa", fontWeight: 700 }}>
-                  {revenueChange > 0 ? `+${revenueChange}%` : `${revenueChange}%`}
-                </span>
-              </div>
-              <input
-                type="range"
-                min="-50"
-                max="50"
-                step="5"
-                value={revenueChange}
-                onChange={(e) => setRevenueChange(Number(e.target.value))}
-                className="range-slider"
-              />
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--text-dim)" }}>
-                <span>-50% (Severe slump)</span>
-                <span>0% (Baseline)</span>
-                <span>+50% (Surge)</span>
-              </div>
-            </div>
+          <div>
 
-            {/* Expense Inflation Slider */}
-            <div style={{ background: "rgba(255,255,255,0.02)", padding: "16px 18px", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 600 }}>
-                <span style={{ color: "var(--text-secondary)" }}>Cost / Burn Inflation</span>
-                <span style={{ color: expenseChange > 0 ? "#fb7185" : "#60a5fa", fontWeight: 700 }}>
-                  {expenseChange > 0 ? `+${expenseChange}%` : `${expenseChange}%`}
-                </span>
-              </div>
-              <input
-                type="range"
-                min="-30"
-                max="50"
-                step="5"
-                value={expenseChange}
-                onChange={(e) => setExpenseChange(Number(e.target.value))}
-                className="range-slider"
-              />
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--text-dim)" }}>
-                <span>-30% (Cost cut)</span>
-                <span>0% (Baseline)</span>
-                <span>+50% (Surge)</span>
-              </div>
-            </div>
+            <h2>
+              Scenario Assumptions
+            </h2>
 
-            {/* Payment Delay Slider */}
-            <div style={{ background: "rgba(255,255,255,0.02)", padding: "16px 18px", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 600 }}>
-                <span style={{ color: "var(--text-secondary)" }}>Additional Client Delay</span>
-                <span style={{ color: paymentDelay > 0 ? "#fbbf24" : "#60a5fa", fontWeight: 700 }}>
-                  +{paymentDelay} Days Delay
-                </span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="60"
-                step="5"
-                value={paymentDelay}
-                onChange={(e) => setPaymentDelay(Number(e.target.value))}
-                className="range-slider"
-              />
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--text-dim)" }}>
-                <span>0 Days</span>
-                <span>30 Days</span>
-                <span>60 Days (Prolonged stall)</span>
-              </div>
-            </div>
+            <p>
+              Change one or more assumptions and
+              run the financial simulation.
+            </p>
+
           </div>
+
         </div>
 
-        {/* Live Simulation Outcomes */}
-        <div className="col-span-6 glass-card">
-          <div className="card-header">
-            <div className="card-title-group">
-              <div className="card-icon-wrap emerald">
-                <Zap size={18} />
-              </div>
-              <div>
-                <div className="card-title">Stress Test Outcome</div>
-                <div className="card-subtitle">Digital twin projected resilience</div>
-              </div>
-            </div>
-            <span
+
+        <div
+          style={{
+            marginTop: "25px",
+            display: "grid",
+            gap: "28px",
+          }}
+        >
+
+          {/* Revenue */}
+
+          <div>
+
+            <div
               style={{
-                fontSize: 11,
-                fontWeight: 700,
-                padding: "3px 10px",
-                borderRadius: "var(--radius-full)",
-                background:
-                  simulation.riskLevel === "Critical Deficit"
-                    ? "rgba(244,63,94,0.2)"
-                    : simulation.riskLevel === "High Warning"
-                    ? "rgba(245,158,11,0.2)"
-                    : "rgba(16,185,129,0.2)",
-                color:
-                  simulation.riskLevel === "Critical Deficit"
-                    ? "#fb7185"
-                    : simulation.riskLevel === "High Warning"
-                    ? "#fbbf24"
-                    : "#34d399",
+                display: "flex",
+                justifyContent:
+                  "space-between",
+                marginBottom: "8px",
               }}
             >
-              {simulation.riskLevel}
-            </span>
-          </div>
 
-          <div className="grid-2" style={{ gap: 14, margin: "14px 0" }}>
-            <div style={{ background: "rgba(255,255,255,0.03)", padding: 16, borderRadius: "var(--radius-md)" }}>
-              <div style={{ fontSize: 11.5, color: "var(--text-muted)" }}>Projected Stressed Cash</div>
-              <div
-                style={{
-                  fontSize: 24,
-                  fontWeight: 800,
-                  color: simulation.stressedCash >= 0 ? "#60a5fa" : "#fb7185",
-                  marginTop: 4,
-                }}
-              >
-                {formatLakhs(simulation.stressedCash)}
-              </div>
-              <div style={{ fontSize: 11.5, color: simulation.cashVariance < 0 ? "#fb7185" : "#34d399", marginTop: 4 }}>
-                {simulation.cashVariance < 0 ? "-" : "+"}{formatLakhs(Math.abs(simulation.cashVariance))} vs Baseline
-              </div>
+              <strong>
+                Revenue Change
+              </strong>
+
+              <strong>
+                {revenueChange}%
+              </strong>
+
             </div>
 
-            <div style={{ background: "rgba(255,255,255,0.03)", padding: 16, borderRadius: "var(--radius-md)" }}>
-              <div style={{ fontSize: 11.5, color: "var(--text-muted)" }}>Stressed Cash Runway</div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginTop: 4 }}>
-                {simulation.stressedRunway} Days
-              </div>
-              <div style={{ fontSize: 11.5, color: simulation.runwayDiff < 0 ? "#fb7185" : "#34d399", marginTop: 4 }}>
-                {simulation.runwayDiff} Days vs Baseline ({baseline.runwayDays}d)
-              </div>
-            </div>
+            <input
+              type="range"
+              min="-50"
+              max="50"
+              step="5"
+              value={revenueChange}
+              onChange={(e) =>
+                setRevenueChange(
+                  Number(e.target.value)
+                )
+              }
+              style={{
+                width: "100%",
+              }}
+            />
+
+            <small
+              style={{
+                color: "#6b7280",
+              }}
+            >
+              Negative values simulate a
+              revenue decline.
+            </small>
+
           </div>
 
-          {/* Actionable Playbook */}
-          <div
+
+          {/* Expenses */}
+
+          <div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent:
+                  "space-between",
+                marginBottom: "8px",
+              }}
+            >
+
+              <strong>
+                Expense Change
+              </strong>
+
+              <strong>
+                +{expenseChange}%
+              </strong>
+
+            </div>
+
+            <input
+              type="range"
+              min="0"
+              max="50"
+              step="5"
+              value={expenseChange}
+              onChange={(e) =>
+                setExpenseChange(
+                  Number(e.target.value)
+                )
+              }
+              style={{
+                width: "100%",
+              }}
+            />
+
+            <small
+              style={{
+                color: "#6b7280",
+              }}
+            >
+              Simulate an increase in
+              business expenses.
+            </small>
+
+          </div>
+
+
+          {/* Payment Delay */}
+
+          <div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent:
+                  "space-between",
+                marginBottom: "8px",
+              }}
+            >
+
+              <strong>
+                Customer Payment Delay
+              </strong>
+
+              <strong>
+                {paymentDelay} days
+              </strong>
+
+            </div>
+
+            <input
+              type="range"
+              min="0"
+              max="90"
+              step="5"
+              value={paymentDelay}
+              onChange={(e) =>
+                setPaymentDelay(
+                  Number(e.target.value)
+                )
+              }
+              style={{
+                width: "100%",
+              }}
+            />
+
+            <small
+              style={{
+                color: "#6b7280",
+              }}
+            >
+              Simulate customers paying later
+              than expected.
+            </small>
+
+          </div>
+
+        </div>
+
+
+        {/* Buttons */}
+
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            marginTop: "25px",
+          }}
+        >
+
+          <button
+            onClick={runSimulation}
+            disabled={loading}
             style={{
-              padding: 16,
-              borderRadius: "var(--radius-md)",
-              background: "rgba(139,92,246,0.1)",
-              border: "1px solid rgba(139,92,246,0.25)",
+              padding: "10px 18px",
+              border: "none",
+              borderRadius: "8px",
+              cursor:
+                loading
+                  ? "not-allowed"
+                  : "pointer",
+              fontWeight: "700",
             }}
           >
-            <div style={{ fontWeight: 700, fontSize: 13, color: "#c4b5fd", display: "flex", alignItems: "center", gap: 6 }}>
-              <Sparkles size={14} /> AI Recommended Mitigation Playbook
-            </div>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12.5, marginTop: 8, lineHeight: 1.6 }}>
-              {simulation.stressedCash < 0
-                ? "Liquidity alert: In this stress scenario, your business faces an immediate cash crunch. We recommend establishing a ₹4.00L invoice discounting line now before collections stall."
-                : "Resilience confirmed: Your current cash reserves absorb this shock while maintaining a positive liquidity buffer."}
-            </p>
-          </div>
+            {loading
+              ? "Running..."
+              : "Run Simulation"}
+          </button>
+
+
+          <button
+            onClick={resetSimulation}
+            style={{
+              padding: "10px 15px",
+              border: "1px solid #e5e7eb",
+              borderRadius: "8px",
+              background: "white",
+              cursor: "pointer",
+            }}
+          >
+            <RotateCcw
+              size={14}
+              style={{
+                verticalAlign:
+                  "middle",
+                marginRight: "5px",
+              }}
+            />
+
+            Reset
+
+          </button>
+
         </div>
+
       </div>
-    </div>
+
+
+      {/* =====================================
+          ERROR
+      ====================================== */}
+
+      {error && (
+
+        <div
+          className="module-alert"
+          style={{
+            marginTop: "18px",
+          }}
+        >
+
+          <AlertTriangle size={20} />
+
+          <div>
+
+            <strong>
+              Simulation failed
+            </strong>
+
+            <p>
+              {error}
+            </p>
+
+          </div>
+
+        </div>
+
+      )}
+
+
+      {/* =====================================
+          RESULTS
+      ====================================== */}
+
+      {simulation && (
+
+        <>
+
+          {/* Base Position */}
+
+          <div
+            className="module-card"
+            style={{
+              marginTop: "18px",
+            }}
+          >
+
+            <div className="section-heading">
+
+              <div
+                className="section-heading-icon"
+              >
+                <Brain size={19} />
+              </div>
+
+              <div>
+
+                <h2>
+                  Current Financial Position
+                </h2>
+
+                <p>
+                  Baseline used by the simulator.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div
+              className="module-grid"
+              style={{
+                marginTop: "18px",
+              }}
+            >
+
+              <div className="module-stat">
+
+                <span>
+                  CURRENT CASH
+                </span>
+
+                <strong>
+                  {formatMoney(
+                    simulation.base
+                      ?.current_cash
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div className="module-stat">
+
+                <span>
+                  RECEIVABLES
+                </span>
+
+                <strong>
+                  {formatMoney(
+                    simulation.base
+                      ?.receivables
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div className="module-stat">
+
+                <span>
+                  TOTAL EXPENSES
+                </span>
+
+                <strong>
+                  {formatMoney(
+                    simulation.base
+                      ?.total_expenses
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div className="module-stat">
+
+                <span>
+                  NET POSITION
+                </span>
+
+                <strong>
+                  {formatMoney(
+                    simulation.base
+                      ?.net_position
+                  )}
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          {/* Scenario Results */}
+
+          <div
+            className="module-card"
+            style={{
+              marginTop: "18px",
+            }}
+          >
+
+            <div className="section-heading">
+
+              <div
+                className="section-heading-icon"
+              >
+                <AlertTriangle size={19} />
+              </div>
+
+              <div>
+
+                <h2>
+                  Scenario Results
+                </h2>
+
+                <p>
+                  Compare the impact of different
+                  financial shocks.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div
+              style={{
+                marginTop: "20px",
+                display: "grid",
+                gap: "12px",
+              }}
+            >
+
+              {(
+                simulation.scenarios ||
+                []
+              ).map(
+                (scenario, index) => (
+
+                  <div
+                    key={`${scenario.scenario}-${index}`}
+                    style={{
+                      padding: "16px",
+                      border:
+                        "1px solid #e5e7eb",
+                      borderRadius: "10px",
+                    }}
+                  >
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems:
+                          "center",
+                        gap: "10px",
+                      }}
+                    >
+
+                      <div
+                        style={{
+                          color:
+                            scenario.risk ===
+                            "HIGH"
+                              ? "#dc2626"
+                              : scenario.risk ===
+                                "MEDIUM"
+                                ? "#a16207"
+                                : "#15803d",
+                        }}
+                      >
+                        {getScenarioIcon(
+                          scenario.scenario
+                        )}
+                      </div>
+
+
+                      <strong
+                        style={{
+                          flex: 1,
+                        }}
+                      >
+                        {scenario.scenario}
+                      </strong>
+
+
+                      <span
+                        className={
+                          getRiskClass(
+                            scenario.risk
+                          )
+                        }
+                        style={{
+                          padding:
+                            "5px 8px",
+                          borderRadius:
+                            "6px",
+                          fontSize:
+                            "9px",
+                          fontWeight:
+                            "700",
+                        }}
+                      >
+                        {scenario.risk}
+                      </span>
+
+                    </div>
+
+
+                    <div
+                      className="module-grid"
+                      style={{
+                        marginTop: "14px",
+                      }}
+                    >
+
+                      <div>
+
+                        <small
+                          style={{
+                            color:
+                              "#6b7280",
+                          }}
+                        >
+                          PROJECTED CASH
+                        </small>
+
+                        <strong
+                          style={{
+                            display:
+                              "block",
+                            marginTop:
+                              "4px",
+                          }}
+                        >
+                          {formatMoney(
+                            scenario.projected_cash
+                          )}
+                        </strong>
+
+                      </div>
+
+
+                      <div>
+
+                        <small
+                          style={{
+                            color:
+                              "#6b7280",
+                          }}
+                        >
+                          CASH IMPACT
+                        </small>
+
+                        <strong
+                          style={{
+                            display:
+                              "block",
+                            marginTop:
+                              "4px",
+                            color:
+                              Number(
+                                scenario.cash_impact
+                              ) < 0
+                                ? "#dc2626"
+                                : "#15803d",
+                          }}
+                        >
+                          {formatMoney(
+                            scenario.cash_impact
+                          )}
+                        </strong>
+
+                      </div>
+
+
+                      <div>
+
+                        <small
+                          style={{
+                            color:
+                              "#6b7280",
+                          }}
+                        >
+                          LIQUIDITY GAP
+                        </small>
+
+                        <strong
+                          style={{
+                            display:
+                              "block",
+                            marginTop:
+                              "4px",
+                            color:
+                              Number(
+                                scenario.liquidity_gap
+                              ) > 0
+                                ? "#dc2626"
+                                : "#15803d",
+                          }}
+                        >
+                          {formatMoney(
+                            scenario.liquidity_gap
+                          )}
+                        </strong>
+
+                      </div>
+
+                    </div>
+
+
+                    <p
+                      style={{
+                        margin:
+                          "12px 0 0",
+                        fontSize:
+                          "10px",
+                        lineHeight:
+                          "1.5",
+                        color:
+                          "#6b7280",
+                      }}
+                    >
+                      {scenario.explanation}
+                    </p>
+
+                  </div>
+
+                )
+              )}
+
+            </div>
+
+          </div>
+
+
+          {/* Assumptions */}
+
+          <div
+            style={{
+              marginTop: "18px",
+              padding: "14px",
+              borderRadius: "10px",
+              background: "#f9fafb",
+              border:
+                "1px solid #e5e7eb",
+              fontSize: "9px",
+              color: "#6b7280",
+            }}
+          >
+
+            <strong>
+              Simulation assumptions:
+            </strong>{" "}
+
+            Revenue{" "}
+            {revenueChange}%,
+            {" "}
+            Expenses +{expenseChange}%,
+            {" "}
+            Payment delay{" "}
+            {paymentDelay} days.
+
+            These are scenario estimates and
+            should not be interpreted as guaranteed
+            financial outcomes.
+
+          </div>
+
+        </>
+
+      )}
+
+    </ModulePage>
   );
 }
+
+
+export default Simulator;

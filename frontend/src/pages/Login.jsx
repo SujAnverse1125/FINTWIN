@@ -108,11 +108,10 @@ export default function Login() {
 
       {/* Main Authentication Card */}
       <div
-        className="glass-card"
+        className="glass-card auth-card"
         style={{
           width: "100%",
           maxWidth: 540,
-          padding: "32px 30px",
           background: "rgba(13, 18, 31, 0.92)",
           border: "1px solid rgba(59, 130, 246, 0.3)",
           boxShadow: "0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(59, 130, 246, 0.15)",
