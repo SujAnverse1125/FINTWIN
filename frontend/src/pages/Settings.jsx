@@ -6,6 +6,10 @@ import {
   Database,
   Save,
   Trash2,
+  Globe,
+  Languages,
+  Check,
+  Sparkles,
 } from "lucide-react";
 
 import {
@@ -16,9 +20,13 @@ import {
 } from "../data/financialStore";
 import { INDUSTRY_SECTORS } from "../data/sampleData";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Settings() {
   const { user } = useAuth();
+  const { currentLang, changeLanguage, t, supportedLanguages, activeLanguageMeta } =
+    useLanguage();
+
   const [business, setBusiness] = useState(getBusiness());
   const [name, setName] = useState(business.name || user?.company || "My Enterprise");
   const [industry, setIndustry] = useState(business.industry || "Manufacturing & Trade");
@@ -60,6 +68,12 @@ export default function Settings() {
     setTimeout(() => setNotification(""), 3500);
   };
 
+  const handleLanguageSelect = (langId, langName) => {
+    changeLanguage(langId);
+    setNotification(`Language switched to ${langName}!`);
+    setTimeout(() => setNotification(""), 3500);
+  };
+
   const handleClearData = () => {
     if (window.confirm("Are you sure you want to clear all your financial records and start fresh?")) {
       clearAllData();
@@ -95,7 +109,139 @@ export default function Settings() {
         </div>
       )}
 
-      {/* Main Settings Form */}
+      {/* =================================================================
+          1. REGIONAL LANGUAGE & LOCALIZATION SETTINGS (NEW)
+          ================================================================= */}
+      <div className="glass-card" style={{ border: "1px solid rgba(139, 92, 246, 0.35)", background: "linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.04) 100%)" }}>
+        <div className="card-header">
+          <div className="card-title-group">
+            <div className="card-icon-wrap purple">
+              <Globe size={18} />
+            </div>
+            <div>
+              <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span>{t("languageOption", "Regional Language & Localization")}</span>
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    padding: "2px 8px",
+                    borderRadius: "var(--radius-full)",
+                    background: "rgba(139, 92, 246, 0.2)",
+                    color: "#c4b5fd",
+                    border: "1px solid rgba(139, 92, 246, 0.3)",
+                  }}
+                >
+                  {supportedLanguages.length} Regional Languages
+                </span>
+              </div>
+              <div className="card-subtitle">
+                {t("languageSub", "Choose your preferred Indian regional language for financial dashboards & reports")}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>
+              {t("currentLanguage", "Active")}:
+            </span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#a78bfa", display: "flex", alignItems: "center", gap: 6 }}>
+              <span>{activeLanguageMeta.flag}</span>
+              <span>{activeLanguageMeta.name} ({activeLanguageMeta.englishName})</span>
+            </span>
+          </div>
+        </div>
+
+        {/* 10 Regional Language Grid Cards */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+            gap: 12,
+            marginTop: 18,
+          }}
+        >
+          {supportedLanguages.map((lang) => {
+            const isSelected = currentLang === lang.id;
+            return (
+              <button
+                key={lang.id}
+                type="button"
+                onClick={() => handleLanguageSelect(lang.id, lang.name)}
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                  padding: "12px 14px",
+                  borderRadius: "var(--radius-md)",
+                  background: isSelected
+                    ? "linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(59, 130, 246, 0.2))"
+                    : "rgba(255, 255, 255, 0.03)",
+                  border: isSelected
+                    ? "1px solid #8b5cf6"
+                    : "1px solid var(--border-subtle)",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  transition: "all var(--transition-fast)",
+                  position: "relative",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.07)";
+                    e.currentTarget.style.borderColor = "var(--border-medium)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
+                    e.currentTarget.style.borderColor = "var(--border-subtle)";
+                  }
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontSize: 18 }}>{lang.flag}</span>
+                    <span style={{ fontSize: 15, fontWeight: 800, color: isSelected ? "#fff" : "var(--text-primary)" }}>
+                      {lang.name}
+                    </span>
+                    <span style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 500 }}>
+                      ({lang.englishName})
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 11, color: isSelected ? "#c4b5fd" : "var(--text-secondary)", fontWeight: 500 }}>
+                    {lang.region}
+                  </div>
+                  <div style={{ fontSize: 10, color: "var(--text-dim)", marginTop: 2 }}>
+                    {lang.sub}
+                  </div>
+                </div>
+
+                {isSelected && (
+                  <div
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: "50%",
+                      background: "#8b5cf6",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#fff",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Check size={12} strokeWidth={3} />
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* =================================================================
+          2. COMPANY PROFILE & FINANCIAL PARAMETERS
+          ================================================================= */}
       <div className="grid-12">
         <div className="col-span-8 glass-card">
           <div className="card-header">
@@ -104,7 +250,7 @@ export default function Settings() {
                 <Building size={18} />
               </div>
               <div>
-                <div className="card-title">Company Profile & Financial Targets</div>
+                <div className="card-title">{t("companyProfile", "Company Profile & Financial Targets")}</div>
                 <div className="card-subtitle">
                   Configure digital twin baseline parameters
                 </div>
@@ -209,7 +355,7 @@ export default function Settings() {
             <div className="modal-actions" style={{ marginTop: 14 }}>
               <button type="submit" className="btn btn-primary">
                 <Save size={15} />
-                <span>Save Business Parameters</span>
+                <span>{t("saveChanges", "Save Business Parameters")}</span>
               </button>
             </div>
           </form>
@@ -243,7 +389,7 @@ export default function Settings() {
                 onClick={handleClearData}
               >
                 <Trash2 size={14} />
-                <span>Clear All Data</span>
+                <span>{t("resetData", "Clear All Data")}</span>
               </button>
             </div>
 

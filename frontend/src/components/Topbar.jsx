@@ -21,6 +21,7 @@ import {
 
 import { getInvoices } from "../data/financialStore";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const titles = {
   "/dashboard": { title: "Executive Dashboard", sub: "Real-time liquidity, receivables & cash runway telemetry" },
@@ -42,6 +43,7 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
+  const { t } = useLanguage();
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
@@ -78,7 +80,7 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
         {/* Search button */}
         <button className="topbar-search-btn" onClick={onOpenSearch}>
           <Search size={15} />
-          <span>Quick search...</span>
+          <span>{t("quickSearch", "Quick search...")}</span>
           <kbd className="search-kbd">⌘K</kbd>
         </button>
 
@@ -89,7 +91,7 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
           title="Create Invoice or Expense"
         >
           <Plus size={15} />
-          <span>Quick Add</span>
+          <span>{t("quickAdd", "Quick Add")}</span>
         </button>
 
         {/* Notification Bell */}

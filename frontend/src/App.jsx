@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { LanguageProvider } from "./context/LanguageContext";
 
 // Master Layout
 import AppLayout from "./components/AppLayout";
@@ -56,8 +57,9 @@ function PublicAuthRoute({ children }) {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
+      <LanguageProvider>
+        <BrowserRouter>
+          <Routes>
           {/* Public Landing Pages */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
@@ -202,8 +204,9 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-    </AuthProvider>
-  );
+    </LanguageProvider>
+  </AuthProvider>
+);
 }
 
 export default App;

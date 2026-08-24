@@ -99,9 +99,11 @@ Would you like me to simulate a what-if stress scenario or check working capital
   };
 
   return (
-    <div className="ai-copilot-drawer">
-      {/* Header */}
-      <div className="copilot-header">
+    <>
+      <div className="copilot-backdrop" onClick={onClose} />
+      <div className="ai-copilot-drawer">
+        {/* Header */}
+        <div className="copilot-header">
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div
             style={{
@@ -189,5 +191,6 @@ Would you like me to simulate a what-if stress scenario or check working capital
         </button>
       </div>
     </div>
+    </>
   );
 }

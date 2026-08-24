@@ -30,27 +30,29 @@ import {
 } from "../data/financialStore";
 import { calculateRunwayDays } from "../engines/digitalTwin";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const primaryNav = [
-  { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-  { name: "Cash Flow Twin", path: "/cash-flow", icon: Wallet },
-  { name: "Invoices", path: "/invoices", icon: FileText, badge: "Live" },
-  { name: "Expenses & Burn", path: "/expenses", icon: CreditCard },
-  { name: "Customers & Risk", path: "/customers", icon: Users },
-  { name: "90-Day Forecast", path: "/forecast", icon: TrendingUp },
-  { name: "What-If Simulator", path: "/simulator", icon: FlaskConical },
-  { name: "MSME Financing", path: "/financing", icon: Landmark, badge: "New" },
-  { name: "GST & Tax Calculator", path: "/gst", icon: Percent, badge: "Tax" },
-  { name: "Payroll & Workers", path: "/payroll", icon: UserCheck, badge: "Payroll" },
-  { name: "Reports & P&L", path: "/reports", icon: FileSpreadsheet },
-  { name: "Integrations", path: "/integrations", icon: Layers },
-  { name: "Settings", path: "/settings", icon: Settings },
+  { key: "dashboard", name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { key: "cashFlow", name: "Cash Flow Twin", path: "/cash-flow", icon: Wallet },
+  { key: "invoices", name: "Invoices", path: "/invoices", icon: FileText, badge: "Live" },
+  { key: "expenses", name: "Expenses & Burn", path: "/expenses", icon: CreditCard },
+  { key: "customers", name: "Customers & Risk", path: "/customers", icon: Users },
+  { key: "forecast", name: "90-Day Forecast", path: "/forecast", icon: TrendingUp },
+  { key: "simulator", name: "What-If Simulator", path: "/simulator", icon: FlaskConical },
+  { key: "financing", name: "MSME Financing", path: "/financing", icon: Landmark, badge: "New" },
+  { key: "gst", name: "GST & Tax Calculator", path: "/gst", icon: Percent, badge: "Tax" },
+  { key: "payroll", name: "Payroll & Workers", path: "/payroll", icon: UserCheck, badge: "Payroll" },
+  { key: "reports", name: "Reports & P&L", path: "/reports", icon: FileSpreadsheet },
+  { key: "integrations", name: "Integrations", path: "/integrations", icon: Layers },
+  { key: "settings", name: "Settings", path: "/settings", icon: Settings },
 ];
 
 export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMobile }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
 
   const [business, setBusiness] = useState(getBusiness());
   const [dbConnected, setDbConnected] = useState(isDatabaseConnected());
@@ -177,7 +179,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMo
               <div className="nav-item-icon">
                 <Icon size={18} />
               </div>
-              {!collapsed && <span>{item.name}</span>}
+              {!collapsed && <span>{t(item.key, item.name)}</span>}
               {!collapsed && item.badge && (
                 <span className={`nav-badge ${item.badge === "Live" ? "success" : item.badge === "Tax" ? "alert" : ""}`}>
                   {item.badge}
@@ -224,7 +226,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMo
                 padding: 0,
               }}
             >
-              <LogOut size={11} /> Logout
+              <LogOut size={11} /> {t("logout", "Logout")}
             </button>
           </div>
         </div>
