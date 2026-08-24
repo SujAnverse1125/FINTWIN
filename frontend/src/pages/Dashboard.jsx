@@ -49,12 +49,14 @@ import {
   generateLocalForecast,
 } from "../engines/digitalTwin";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const [data, setData] = useState(getFinancialData());
   const [summary, setSummary] = useState(getCashFlowSummary());
@@ -214,7 +216,7 @@ export default function Dashboard() {
         {/* Current Cash */}
         <div className="kpi-card">
           <div className="kpi-top">
-            <span className="kpi-label">Liquid Cash Reserve</span>
+            <span className="kpi-label">{t("liquidCash", "Liquid Cash Reserve")}</span>
             <div className="card-icon-wrap emerald">
               <Wallet size={18} />
             </div>
@@ -226,7 +228,7 @@ export default function Dashboard() {
           </div>
           <div className="kpi-trend positive">
             <ArrowUpRight size={14} />
-            <span>{summary.runwayDays} Days Buffer</span>
+            <span>{summary.runwayDays} {t("daysBuffer", "Days Buffer")}</span>
             <span style={{ color: "var(--text-muted)", marginLeft: "auto" }}>
               Target: ₹{(Number(data.business.minCashReserve || 0) / 100000).toFixed(1)}L
             </span>
@@ -236,7 +238,7 @@ export default function Dashboard() {
         {/* Total Receivables */}
         <div className="kpi-card">
           <div className="kpi-top">
-            <span className="kpi-label">Outstanding Receivables</span>
+            <span className="kpi-label">{t("receivables", "Outstanding Receivables")}</span>
             <div className="card-icon-wrap">
               <FileText size={18} />
             </div>
@@ -248,9 +250,9 @@ export default function Dashboard() {
           </div>
           <div className="kpi-trend neutral">
             <Clock size={14} />
-            <span>{pendingInvoices.length} Pending Invoices</span>
+            <span>{pendingInvoices.length} {t("Pending Invoices")}</span>
             <span style={{ color: "var(--text-muted)", marginLeft: "auto" }}>
-              DSO: {summary.dso} Days
+              DSO: {summary.dso} {t("days", "Days")}
             </span>
           </div>
         </div>
@@ -258,7 +260,7 @@ export default function Dashboard() {
         {/* Monthly Burn */}
         <div className="kpi-card">
           <div className="kpi-top">
-            <span className="kpi-label">Monthly Burn Velocity</span>
+            <span className="kpi-label">{t("burnRate", "Monthly Burn Velocity")}</span>
             <div className="card-icon-wrap amber">
               <CreditCard size={18} />
             </div>
@@ -272,7 +274,7 @@ export default function Dashboard() {
             <ArrowDownRight size={14} />
             <span>{formatLakhs(summary.recurringExpenses)} Fixed</span>
             <span style={{ color: "var(--text-muted)", marginLeft: "auto" }}>
-              +{formatLakhs(summary.oneTimeExpenses)} Variable
+              +{formatLakhs(summary.oneTimeExpenses)} Var
             </span>
           </div>
         </div>
@@ -280,7 +282,7 @@ export default function Dashboard() {
         {/* 30-Day Net Liquidity */}
         <div className="kpi-card">
           <div className="kpi-top">
-            <span className="kpi-label">30-Day Net Runway</span>
+            <span className="kpi-label">{t("netRunway", "30-Day Net Runway")}</span>
             <div className="card-icon-wrap purple">
               <TrendingUp size={18} />
             </div>
@@ -297,7 +299,7 @@ export default function Dashboard() {
           </div>
           <div className="kpi-trend positive">
             <Zap size={14} />
-            <span>Working Cap: {summary.workingCapitalRatio}x</span>
+            <span>{t("Working Cap")}: {summary.workingCapitalRatio}x</span>
             <span
               style={{
                 marginLeft: "auto",
@@ -305,7 +307,7 @@ export default function Dashboard() {
                 fontWeight: 700,
               }}
             >
-              {summary.status}
+              {t(summary.status, summary.status)}
             </span>
           </div>
         </div>

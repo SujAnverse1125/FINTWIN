@@ -13,9 +13,11 @@ import {
   UserCheck,
   Sparkles,
 } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function AppLayout({ children }) {
   const location = useLocation();
+  const { t } = useLanguage();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAiCopilotOpen, setIsAiCopilotOpen] = useState(false);
@@ -63,10 +65,10 @@ export default function AppLayout({ children }) {
         <button
           className="floating-copilot-btn desktop-only"
           onClick={() => setIsAiCopilotOpen(true)}
-          title="Open FinTwin AI Financial Copilot"
+          title={t("askAi", "Ask FinTwin AI")}
         >
           <Sparkles size={17} />
-          <span className="copilot-btn-text">Ask FinTwin</span>
+          <span className="copilot-btn-text">{t("askAi", "Ask FinTwin AI")}</span>
         </button>
       )}
 
@@ -77,7 +79,7 @@ export default function AppLayout({ children }) {
           className={`mobile-nav-item ${isActive("/dashboard") ? "active" : ""}`}
         >
           <LayoutDashboard size={20} />
-          <span>Dashboard</span>
+          <span>{t("dashboard", "Dashboard")}</span>
         </Link>
 
         <Link
@@ -85,19 +87,19 @@ export default function AppLayout({ children }) {
           className={`mobile-nav-item ${isActive("/cash-flow") ? "active" : ""}`}
         >
           <Wallet size={20} />
-          <span>Cash Flow</span>
+          <span>{t("cashFlow", "Cash Flow")}</span>
         </Link>
 
         {/* Center Quick Add Action */}
         <button
           className="mobile-nav-item mobile-nav-fab"
           onClick={() => setIsQuickActionOpen(true)}
-          title="Quick Add Action"
+          title={t("quickAdd", "Quick Add")}
         >
           <div className="mobile-fab-circle">
             <Plus size={22} />
           </div>
-          <span>Add</span>
+          <span>{t("Add", "Add")}</span>
         </button>
 
         <Link
@@ -105,7 +107,7 @@ export default function AppLayout({ children }) {
           className={`mobile-nav-item ${isActive("/gst") ? "active" : ""}`}
         >
           <Percent size={20} />
-          <span>GST Tax</span>
+          <span>{t("gst", "GST Tax")}</span>
         </Link>
 
         <Link
@@ -113,7 +115,7 @@ export default function AppLayout({ children }) {
           className={`mobile-nav-item ${isActive("/payroll") ? "active" : ""}`}
         >
           <UserCheck size={20} />
-          <span>Payroll</span>
+          <span>{t("payroll", "Payroll")}</span>
         </Link>
 
         <button
@@ -122,7 +124,7 @@ export default function AppLayout({ children }) {
           title="AI Copilot"
         >
           <Sparkles size={20} style={{ color: "#c4b5fd" }} />
-          <span>AI Twin</span>
+          <span>{t("AI Twin", "AI Twin")}</span>
         </button>
       </nav>
 

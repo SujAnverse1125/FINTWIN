@@ -70,8 +70,8 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
         </button>
 
         <div className="topbar-page-info">
-          <h1 className="topbar-page-title">{currentInfo.title}</h1>
-          <span className="topbar-page-subtitle">{currentInfo.sub}</span>
+          <h1 className="topbar-page-title">{t(currentInfo.title, currentInfo.title)}</h1>
+          <span className="topbar-page-subtitle">{t(currentInfo.sub, currentInfo.sub)}</span>
         </div>
       </div>
 

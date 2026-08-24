@@ -196,15 +196,15 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMo
           <div className="sidebar-runway-chip">
             <div className="runway-pulse"></div>
             <div>
-              <div className="runway-label">Estimated Runway</div>
-              <div className="runway-val">{runway} Days Buffer</div>
+              <div className="runway-label">{t("netRunway", "Estimated Runway")}</div>
+              <div className="runway-val">{runway} {t("daysBuffer", "Days Buffer")}</div>
             </div>
           </div>
 
           <div className="sidebar-db-status">
             <span className="status-indicator">
               <span className={dbConnected ? "dot-connected" : "dot-offline"} />
-              {dbConnected ? "Database Synced" : "Local Twin Mode"}
+              {dbConnected ? t("Database Synced", "Database Synced") : t("Local Twin Mode", "Local Twin Mode")}
             </span>
             <button
               onClick={(e) => {
