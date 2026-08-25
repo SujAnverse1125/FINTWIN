@@ -17,173 +17,178 @@ import {
 } from "../data/financialStore";
 
 
+import { API_URL } from "../config";
+
+function buildLocalRiskAnalysis(data) {
+  const currentCash = Number(data.business?.openingCash || 0);
+  const invoices = data.invoices || [];
+  const recurring = data.recurringExpenses || [];
+  const expenses = data.expenses || [];
+
+  const totalReceivables = invoices
+    .filter((inv) => String(inv.status || "").toLowerCase() !== "paid")
+    .reduce((sum, inv) => sum + Number(inv.amount || 0), 0);
+
+  const monthlyRecurring = recurring.reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
+  const oneTimeTotal = expenses.reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
+  const totalBurn = monthlyRecurring + Math.round(oneTimeTotal / 2);
+
+  const runwayDays = totalBurn > 0 ? Math.round((currentCash / (totalBurn / 30))) : (currentCash > 0 ? 120 : 0);
+
+  const customerMap = {};
+  invoices.forEach((inv) => {
+    const cust = inv.customer || "General Customer";
+    customerMap[cust] = (customerMap[cust] || 0) + Number(inv.amount || 0);
+  });
+  const customerList = Object.entries(customerMap).map(([name, amount]) => ({
+    customer: name,
+    amount,
+    percentage: totalReceivables > 0 ? Math.round((amount / totalReceivables) * 100) : 0,
+  })).sort((a, b) => b.amount - a.amount);
+
+  const top1Share = customerList[0]?.percentage || 0;
+  const concentrationRisk = top1Share > 50 ? "HIGH" : top1Share > 30 ? "MEDIUM" : "LOW";
+  const liquidityRisk = runwayDays < 30 ? "HIGH" : runwayDays < 60 ? "MEDIUM" : "LOW";
+  const overdueCount = invoices.filter((inv) => String(inv.status || "").toLowerCase() === "overdue").length;
+  const paymentDelayRisk = overdueCount >= 3 ? "HIGH" : overdueCount >= 1 ? "MEDIUM" : "LOW";
+
+  let score = 25;
+  if (liquidityRisk === "HIGH") score += 35;
+  else if (liquidityRisk === "MEDIUM") score += 20;
+
+  if (concentrationRisk === "HIGH") score += 25;
+  else if (concentrationRisk === "MEDIUM") score += 15;
+
+  if (paymentDelayRisk === "HIGH") score += 25;
+  else if (paymentDelayRisk === "MEDIUM") score += 15;
+
+  score = Math.min(100, Math.max(10, score));
+  const overallLevel = score >= 70 ? "HIGH" : score >= 40 ? "MEDIUM" : "LOW";
+
+  return {
+    overall: {
+      risk: overallLevel,
+      score,
+      message: overallLevel === "HIGH" ? "Critical solvency pressure identified. Active cash management required." : overallLevel === "MEDIUM" ? "Moderate risk profile. Monitor receivables and runway." : "Stable liquidity & low default risk.",
+    },
+    payment_delay: {
+      risk: paymentDelayRisk,
+      score: paymentDelayRisk === "HIGH" ? 75 : paymentDelayRisk === "MEDIUM" ? 45 : 15,
+      message: `${overdueCount} invoices currently marked overdue or pending collection.`,
+      high_risk_invoices: invoices.filter((inv) => String(inv.status || "").toLowerCase() === "overdue"),
+    },
+    customer_concentration: {
+      risk: concentrationRisk,
+      score: concentrationRisk === "HIGH" ? 80 : concentrationRisk === "MEDIUM" ? 50 : 20,
+      top_customer_share: top1Share,
+      top_customer: customerList[0]?.customer || "N/A",
+      message: `Top buyer represents ${top1Share}% of outstanding receivables.`,
+    },
+    liquidity: {
+      risk: liquidityRisk,
+      score: liquidityRisk === "HIGH" ? 85 : liquidityRisk === "MEDIUM" ? 45 : 15,
+      runway_days: runwayDays,
+      lowest_projected_cash: currentCash,
+      message: `Estimated runway of ${runwayDays} days based on current burn.`,
+    },
+    expense_pressure: {
+      risk: totalBurn > currentCash ? "HIGH" : totalBurn > currentCash * 0.6 ? "MEDIUM" : "LOW",
+      score: totalBurn > currentCash ? 80 : 35,
+      monthly_burn: totalBurn,
+      message: `Monthly burn velocity is ₹${totalBurn.toLocaleString("en-IN")}.`,
+    },
+    explanations: [
+      {
+        type: "LIQUIDITY",
+        severity: liquidityRisk,
+        title: liquidityRisk === "HIGH" ? "Low Cash Runway" : "Liquidity Buffer",
+        message: `Current runway covers approximately ${runwayDays} days of operations.`,
+      },
+      {
+        type: "CONCENTRATION",
+        severity: concentrationRisk,
+        title: "Customer Concentration",
+        message: `Your largest single debtor represents ${top1Share}% of receivables.`,
+      },
+    ],
+  };
+}
+
 function Risk() {
   const [risk, setRisk] = useState(null);
-
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState("");
-
 
   // ==========================================
   // LOAD RISK ANALYSIS
   // ==========================================
-
   useEffect(() => {
     loadRisk();
   }, []);
 
-
   async function loadRisk() {
-
     try {
-
       setLoading(true);
       setError("");
 
+      const data = getFinancialData();
 
-      const data =
-        getFinancialData();
+      try {
+        // First generate forecast
+        const forecastResponse = await fetch(`${API_URL}/api/forecast`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            current_cash: Number(data.business?.openingCash || 0),
+            invoices: data.invoices || [],
+            payments: data.payments || [],
+            recurring_expenses: data.recurringExpenses || [],
+            one_time_expenses: data.expenses || [],
+          }),
+        });
 
+        if (forecastResponse.ok) {
+          const forecastResult = await forecastResponse.json();
+          if (forecastResult.success && forecastResult.forecast) {
+            // Send forecast to Risk Engine
+            const riskResponse = await fetch(`${API_URL}/api/risk`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                current_cash: Number(data.business?.openingCash || 0),
+                invoices: data.invoices || [],
+                recurring_expenses: data.recurringExpenses || [],
+                one_time_expenses: data.expenses || [],
+                forecast: forecastResult.forecast,
+              }),
+            });
 
-      // --------------------------------------
-      // First generate the latest forecast
-      // --------------------------------------
-
-      const forecastResponse =
-        await fetch(
-          "https://fintwin-h7pc.onrender.com",
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-
-              current_cash:
-                data.business.openingCash,
-
-              invoices:
-                data.invoices,
-
-              payments:
-                data.payments,
-
-              recurring_expenses:
-                data.recurringExpenses,
-
-              one_time_expenses:
-                data.expenses,
-
-            }),
+            if (riskResponse.ok) {
+              const riskResult = await riskResponse.json();
+              if (riskResult.success && riskResult.risk) {
+                setRisk(riskResult.risk);
+                return;
+              }
+            }
           }
-        );
-
-
-      if (!forecastResponse.ok) {
-
-        throw new Error(
-          `Forecast API returned ${forecastResponse.status}`
-        );
-
+        }
+      } catch (networkErr) {
+        console.warn("Backend risk API unavailable, falling back to local engine:", networkErr);
       }
 
-
-      const forecastResult =
-        await forecastResponse.json();
-
-
-      if (!forecastResult.success) {
-
-        throw new Error(
-          "Unable to generate forecast"
-        );
-
-      }
-
-
-      // --------------------------------------
-      // Send forecast to Risk Engine
-      // --------------------------------------
-
-      const riskResponse =
-        await fetch(
-          "https://fintwin-h7pc.onrender.com",
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-
-              current_cash:
-                data.business.openingCash,
-
-              invoices:
-                data.invoices,
-
-              recurring_expenses:
-                data.recurringExpenses,
-
-              one_time_expenses:
-                data.expenses,
-
-              forecast:
-                forecastResult.forecast,
-
-            }),
-          }
-        );
-
-
-      if (!riskResponse.ok) {
-
-        throw new Error(
-          `Risk API returned ${riskResponse.status}`
-        );
-
-      }
-
-
-      const riskResult =
-        await riskResponse.json();
-
-
-      if (!riskResult.success) {
-
-        throw new Error(
-          "Risk analysis failed"
-        );
-
-      }
-
-
-      setRisk(
-        riskResult.risk
-      );
+      // Local fallback
+      const localRisk = buildLocalRiskAnalysis(data);
+      setRisk(localRisk);
 
     } catch (err) {
-
-      console.error(
-        "Risk analysis error:",
-        err
-      );
-
-      setError(
-        err.message ||
-        "Unable to generate risk analysis."
-      );
-
+      console.error("Risk analysis error:", err);
+      setError(err.message || "Unable to generate risk analysis.");
     } finally {
-
       setLoading(false);
-
     }
   }
 

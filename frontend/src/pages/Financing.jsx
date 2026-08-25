@@ -10,11 +10,73 @@ import {
 } from "lucide-react";
 
 import ModulePage from "../components/ModulePage";
+import { getFinancialData } from "../data/financialStore";
+import { API_URL } from "../config";
 
-import {
-  getFinancialData,
-} from "../data/financialStore";
+function buildLocalFinancing(liquidityGap, outstandingReceivables, currentCash) {
+  const gap = Math.max(0, Number(liquidityGap || 0));
+  const receivables = Math.max(0, Number(outstandingReceivables || 0));
+  const cash = Math.max(0, Number(currentCash || 0));
+  const fundingNeeded = gap;
+  const invoiceCap = Math.min(fundingNeeded, Math.round(receivables * 0.8));
 
+  const nonDebt = {
+    type: "NON_DEBT",
+    name: "Customer Advance / Early Collection",
+    funding_amount: fundingNeeded,
+    estimated_cost: Math.round(fundingNeeded * 0.01),
+    estimated_total_repayment: Math.round(fundingNeeded * 1.01),
+    estimated_rate_percent: 1.0,
+    repayment_period_months: 1,
+    risk_level: "LOW",
+    description: "Use customer advances, early-payment discounts, or internal cash-flow acceleration before taking new debt.",
+    score: 95,
+  };
+
+  const invoiceFin = {
+    type: "INVOICE_FINANCING",
+    name: "Invoice Discounting (TReDS)",
+    funding_amount: invoiceCap > 0 ? invoiceCap : fundingNeeded,
+    estimated_cost: Math.round((invoiceCap > 0 ? invoiceCap : fundingNeeded) * 0.02 * 3),
+    estimated_total_repayment: Math.round((invoiceCap > 0 ? invoiceCap : fundingNeeded) * 1.06),
+    estimated_rate_percent: 2.0,
+    repayment_period_months: 3,
+    risk_level: "MEDIUM",
+    description: "Raise funds against eligible outstanding invoices. Discounting converts unpaid customer bills to immediate liquid cash.",
+    score: 88,
+  };
+
+  const workingCap = {
+    type: "WORKING_CAPITAL",
+    name: "Working Capital Credit Facility",
+    funding_amount: fundingNeeded,
+    estimated_cost: Math.round(fundingNeeded * 0.12 * 0.5),
+    estimated_total_repayment: Math.round(fundingNeeded * 1.06),
+    estimated_rate_percent: 12.0,
+    repayment_period_months: 6,
+    risk_level: "MEDIUM",
+    description: "A revolving credit facility or short-term MSME loan to cover operational cash deficit.",
+    score: 76,
+  };
+
+  const options = [nonDebt, invoiceFin, workingCap];
+  const rec = invoiceCap >= fundingNeeded && fundingNeeded > 0
+    ? { recommended_option: "Invoice Discounting (TReDS)", option_type: "INVOICE_FINANCING", reason: "Eligible receivables cover your liquidity gap without adding general corporate debt." }
+    : fundingNeeded === 0
+    ? { recommended_option: "No External Financing Required", option_type: "NONE", reason: "No cash deficit detected. Retain internal liquid cash buffer." }
+    : { recommended_option: "Working Capital Credit Facility", option_type: "WORKING_CAPITAL", reason: "Flexible funding for short-term operating liquidity." };
+
+  return {
+    liquidity_gap: gap,
+    funding_needed: fundingNeeded,
+    outstanding_receivables: receivables,
+    current_cash: cash,
+    invoice_financing_capacity: invoiceCap,
+    options,
+    recommendation: rec,
+    disclaimer: "All financing costs and recommendations are illustrative estimates for decision support.",
+  };
+}
 
 function Financing() {
 
@@ -125,112 +187,49 @@ function Financing() {
   // ==========================================
 
   async function runAnalysis() {
-
     try {
-
       setLoading(true);
       setError("");
 
+      const data = getFinancialData();
+      const receivables = (data.invoices || [])
+        .filter((inv) => String(inv.status || "").toLowerCase() !== "paid")
+        .reduce((sum, inv) => sum + Number(inv.amount || 0), 0);
+      const currentCash = Number(data.business?.openingCash || 0);
 
-      const data =
-        getFinancialData();
+      try {
+        const response = await fetch(`${API_URL}/api/financing`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            liquidity_gap: Number(liquidityGap || 0),
+            outstanding_receivables: receivables,
+            current_cash: currentCash,
+          }),
+        });
 
-
-      const response =
-        await fetch(
-          "https://fintwin-h7pc.onrender.com",
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-
-              liquidity_gap:
-                Number(
-                  liquidityGap
-                ),
-
-              outstanding_receivables:
-                data.invoices
-                  .filter(
-                    (invoice) =>
-                      String(
-                        invoice.status ||
-                        ""
-                      ).toLowerCase()
-                      !== "paid"
-                  )
-                  .reduce(
-                    (
-                      total,
-                      invoice
-                    ) =>
-                      total +
-                      Number(
-                        invoice.amount ||
-                        0
-                      ),
-                    0
-                  ),
-
-              current_cash:
-                Number(
-                  data.business
-                    .openingCash ||
-                  0
-                ),
-
-            }),
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.financing) {
+            setAnalysis(result.financing);
+            return;
           }
-        );
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          `Financing API returned ${response.status}`
-        );
-
+        }
+      } catch (networkErr) {
+        console.warn("Backend financing API unavailable, falling back to local engine:", networkErr);
       }
 
-
-      const result =
-        await response.json();
-
-
-      if (!result.success) {
-
-        throw new Error(
-          "Financing analysis failed."
-        );
-
-      }
-
-
-      setAnalysis(
-        result.financing
-      );
+      // Local fallback
+      const localFin = buildLocalFinancing(liquidityGap, receivables, currentCash);
+      setAnalysis(localFin);
 
     } catch (err) {
-
-      console.error(
-        "Financing error:",
-        err
-      );
-
-      setError(
-        err.message ||
-        "Unable to generate financing analysis."
-      );
-
+      console.error("Financing error:", err);
+      setError(err.message || "Unable to run financing analysis.");
     } finally {
-
       setLoading(false);
-
     }
   }
 
