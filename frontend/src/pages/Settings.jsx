@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Building,
   ShieldCheck,
@@ -10,6 +10,7 @@ import {
   Languages,
   Check,
   Sparkles,
+  ChevronDown,
 } from "lucide-react";
 
 import {
@@ -68,9 +69,11 @@ export default function Settings() {
     setTimeout(() => setNotification(""), 3500);
   };
 
-  const handleLanguageSelect = (langId, langName) => {
+  const handleLanguageChange = (e) => {
+    const langId = e.target.value;
+    const langObj = supportedLanguages.find((l) => l.id === langId);
     changeLanguage(langId);
-    setNotification(`Language switched to ${langName}!`);
+    setNotification(`Language switched to ${langObj?.name || langId}!`);
     setTimeout(() => setNotification(""), 3500);
   };
 
@@ -110,139 +113,9 @@ export default function Settings() {
       )}
 
       {/* =================================================================
-          1. REGIONAL LANGUAGE & LOCALIZATION SETTINGS (NEW)
+          1. COMPANY PROFILE & FINANCIAL PARAMETERS (NOW AT TOP)
           ================================================================= */}
-      <div className="glass-card" style={{ border: "1px solid rgba(139, 92, 246, 0.35)", background: "linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.04) 100%)" }}>
-        <div className="card-header">
-          <div className="card-title-group">
-            <div className="card-icon-wrap purple">
-              <Globe size={18} />
-            </div>
-            <div>
-              <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span>{t("languageOption", "Regional Language & Localization")}</span>
-                <span
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    padding: "2px 8px",
-                    borderRadius: "var(--radius-full)",
-                    background: "rgba(139, 92, 246, 0.2)",
-                    color: "#425F6B",
-                    border: "1px solid rgba(139, 92, 246, 0.3)",
-                  }}
-                >
-                  {supportedLanguages.length} Regional Languages
-                </span>
-              </div>
-              <div className="card-subtitle">
-                {t("languageSub", "Choose your preferred Indian regional language for financial dashboards & reports")}
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>
-              {t("currentLanguage", "Active")}:
-            </span>
-            <span style={{ fontSize: 13, fontWeight: 700, color: "#425F6B", display: "flex", alignItems: "center", gap: 6 }}>
-              <span>{activeLanguageMeta.flag}</span>
-              <span>{activeLanguageMeta.name} ({activeLanguageMeta.englishName})</span>
-            </span>
-          </div>
-        </div>
-
-        {/* 10 Regional Language Grid Cards */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-            gap: 12,
-            marginTop: 18,
-          }}
-        >
-          {supportedLanguages.map((lang) => {
-            const isSelected = currentLang === lang.id;
-            return (
-              <button
-                key={lang.id}
-                type="button"
-                onClick={() => handleLanguageSelect(lang.id, lang.name)}
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  justifyContent: "space-between",
-                  padding: "12px 14px",
-                  borderRadius: "var(--radius-md)",
-                  background: isSelected
-                    ? "linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(59, 130, 246, 0.2))"
-                    : "rgba(255, 255, 255, 0.03)",
-                  border: isSelected
-                    ? "1px solid #425F6B"
-                    : "1px solid var(--border-subtle)",
-                  cursor: "pointer",
-                  textAlign: "left",
-                  transition: "all var(--transition-fast)",
-                  position: "relative",
-                }}
-                onMouseEnter={(e) => {
-                  if (!isSelected) {
-                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.07)";
-                    e.currentTarget.style.borderColor = "var(--border-medium)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isSelected) {
-                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
-                    e.currentTarget.style.borderColor = "var(--border-subtle)";
-                  }
-                }}
-              >
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                    <span style={{ fontSize: 18 }}>{lang.flag}</span>
-                    <span style={{ fontSize: 15, fontWeight: 800, color: isSelected ? "#fff" : "var(--text-primary)" }}>
-                      {lang.name}
-                    </span>
-                    <span style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 500 }}>
-                      ({lang.englishName})
-                    </span>
-                  </div>
-                  <div style={{ fontSize: 11, color: isSelected ? "#425F6B" : "var(--text-secondary)", fontWeight: 500 }}>
-                    {lang.region}
-                  </div>
-                  <div style={{ fontSize: 10, color: "var(--text-dim)", marginTop: 2 }}>
-                    {lang.sub}
-                  </div>
-                </div>
-
-                {isSelected && (
-                  <div
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: "50%",
-                      background: "#425F6B",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#fff",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Check size={12} strokeWidth={3} />
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* =================================================================
-          2. COMPANY PROFILE & FINANCIAL PARAMETERS
-          ================================================================= */}
-      <div className="grid-12">
+      <div className="grid-12" id="profile">
         <div className="col-span-8 glass-card">
           <div className="card-header">
             <div className="card-title-group">
@@ -252,7 +125,7 @@ export default function Settings() {
               <div>
                 <div className="card-title">{t("companyProfile", "Company Profile & Financial Targets")}</div>
                 <div className="card-subtitle">
-                  Configure digital twin baseline parameters
+                  Configure digital twin baseline parameters & legal identity
                 </div>
               </div>
             </div>
@@ -352,54 +225,164 @@ export default function Settings() {
               </div>
             </div>
 
-            <div className="modal-actions" style={{ marginTop: 14 }}>
+            <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
               <button type="submit" className="btn btn-primary">
-                <Save size={15} />
-                <span>{t("saveChanges", "Save Business Parameters")}</span>
+                <Save size={15} /> Save Configuration
               </button>
             </div>
           </form>
         </div>
 
-        {/* Data Administration & State Management */}
-        <div className="col-span-4 glass-card">
-          <div className="card-header">
-            <div className="card-title-group">
-              <div className="card-icon-wrap rose">
-                <Database size={18} />
+        {/* Data Administration */}
+        <div className="col-span-4 glass-card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <div>
+            <div className="card-header">
+              <div className="card-title-group">
+                <div className="card-icon-wrap rose">
+                  <Database size={18} />
+                </div>
+                <div>
+                  <div className="card-title">Data Administration</div>
+                  <div className="card-subtitle">Manage stored invoices & ledger</div>
+                </div>
               </div>
-              <div>
-                <div className="card-title">Data Administration</div>
-                <div className="card-subtitle">Manage stored invoices & ledger</div>
-              </div>
+            </div>
+
+            <div style={{ marginTop: 12 }}>
+              <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                Clear all active records (invoices, expenses, worker ledger) to restart simulations with fresh uploaded datasets.
+              </p>
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ padding: 14, borderRadius: "var(--radius-md)", background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-subtle)" }}>
-              <div style={{ fontWeight: 600, fontSize: 13, color: "#fff", marginBottom: 4 }}>
-                Purge Account Data
+          <div style={{ paddingTop: 24, borderTop: "1px solid var(--border-subtle)", marginTop: 16 }}>
+            <button
+              type="button"
+              className="btn btn-danger"
+              style={{ width: "100%", justifyContent: "center" }}
+              onClick={handleClearData}
+            >
+              <Trash2 size={15} /> Reset Digital Twin Ledger
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* =================================================================
+          2. REGIONAL LANGUAGE & LOCALIZATION (CLEAN DROPDOWN SELECTOR)
+          ================================================================= */}
+      <div className="glass-card" style={{ border: "1px solid rgba(139, 92, 246, 0.35)", background: "linear-gradient(135deg, rgba(139, 92, 246, 0.06) 0%, rgba(59, 130, 246, 0.03) 100%)" }}>
+        <div className="card-header">
+          <div className="card-title-group">
+            <div className="card-icon-wrap purple">
+              <Globe size={18} />
+            </div>
+            <div>
+              <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span>{t("languageOption", "Regional Language & Localization")}</span>
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    padding: "2px 8px",
+                    borderRadius: "var(--radius-full)",
+                    background: "rgba(139, 92, 246, 0.2)",
+                    color: "#7c3aed",
+                    border: "1px solid rgba(139, 92, 246, 0.3)",
+                  }}
+                >
+                  {supportedLanguages.length} Indian Languages Supported
+                </span>
               </div>
-              <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 12, lineHeight: 1.5 }}>
-                Clear all your uploaded invoices, expenses, and customer records to start completely fresh.
+              <div className="card-subtitle">
+                {t("languageSub", "Choose your preferred Indian regional language for financial dashboards & reports")}
               </div>
-              <button
-                className="btn btn-danger btn-sm"
-                style={{ width: "100%", justifyContent: "center" }}
-                onClick={handleClearData}
+            </div>
+          </div>
+        </div>
+
+        {/* Clean Language Dropdown Selector + Active Preview Card */}
+        <div className="grid-2" style={{ marginTop: 16, alignItems: "center" }}>
+          {/* Dropdown Input */}
+          <div className="form-group">
+            <label className="form-label" style={{ fontWeight: 600, color: "#1e293b", marginBottom: 6 }}>
+              Select System Language
+            </label>
+            <div style={{ position: "relative" }}>
+              <select
+                className="form-select"
+                value={currentLang}
+                onChange={handleLanguageChange}
+                style={{
+                  height: 48,
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  padding: "0 16px",
+                  borderRadius: "12px",
+                  border: "1.5px solid rgba(139, 92, 246, 0.4)",
+                  background: "#ffffff",
+                  color: "#0f172a",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                }}
               >
-                <Trash2 size={14} />
-                <span>{t("resetData", "Clear All Data")}</span>
-              </button>
+                {supportedLanguages.map((lang) => (
+                  <option key={lang.id} value={lang.id}>
+                    {lang.flag} {lang.name} ({lang.englishName}) — {lang.region}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <span style={{ fontSize: "11.5px", color: "var(--text-muted)", marginTop: 6, display: "block" }}>
+              Applies across Dashboard, Invoices, Risk Radar, and AI Copilot.
+            </span>
+          </div>
+
+          {/* Active Language Preview Pill */}
+          <div
+            style={{
+              padding: "16px 20px",
+              borderRadius: "14px",
+              background: "rgba(255, 255, 255, 0.85)",
+              border: "1px solid rgba(139, 92, 246, 0.25)",
+              boxShadow: "0 4px 16px rgba(139, 92, 246, 0.08)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>
+                Active Locale
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+                <span style={{ fontSize: "24px" }}>{activeLanguageMeta.flag}</span>
+                <div>
+                  <div style={{ fontSize: "16px", fontWeight: 800, color: "#0f172a" }}>
+                    {activeLanguageMeta.name} ({activeLanguageMeta.englishName})
+                  </div>
+                  <div style={{ fontSize: "11.5px", color: "#7c3aed", fontWeight: 600 }}>
+                    {activeLanguageMeta.region} • {activeLanguageMeta.sub}
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div style={{ padding: 14, borderRadius: "var(--radius-md)", background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)" }}>
-              <div style={{ fontWeight: 600, fontSize: 13, color: "#1C6758", marginBottom: 4 }}>
-                Account Security & Storage
-              </div>
-              <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                Your data is encrypted and synced with the persistent database. When you log out, your session is saved securely.
-              </div>
+            <div
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: "50%",
+                background: "rgba(16, 185, 129, 0.15)",
+                border: "1px solid rgba(16, 185, 129, 0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#059669",
+              }}
+              title="Active & Synchronized"
+            >
+              <Check size={16} strokeWidth={3} />
             </div>
           </div>
         </div>

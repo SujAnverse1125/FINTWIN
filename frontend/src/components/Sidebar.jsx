@@ -217,7 +217,10 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMo
           2. ENTERPRISE SELECTOR CAPSULE (LIGHT FROSTED GLASS CARD)
           ========================================================================= */}
       {!collapsed ? (
-        <div
+        <Link
+          to="/settings"
+          onClick={handleNavClick}
+          title="Manage Company Profile & Settings"
           style={{
             margin: "12px 14px 6px",
             padding: "10px 12px",
@@ -229,6 +232,19 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMo
             alignItems: "center",
             gap: 10,
             flexShrink: 0,
+            textDecoration: "none",
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = "#ffffff";
+            e.currentTarget.style.borderColor = "rgba(2, 132, 199, 0.35)";
+            e.currentTarget.style.boxShadow = "0 4px 12px rgba(2, 132, 199, 0.1)";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = "rgba(255, 255, 255, 0.7)";
+            e.currentTarget.style.borderColor = "rgba(0, 0, 0, 0.06)";
+            e.currentTarget.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.9)";
           }}
         >
           <div
@@ -284,10 +300,13 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMo
               </span>
             </div>
           </div>
-        </div>
+        </Link>
       ) : (
         <div style={{ padding: "8px 0", display: "flex", justifyContent: "center" }}>
-          <div
+          <Link
+            to="/settings"
+            onClick={handleNavClick}
+            title="Manage Company Profile & Settings"
             style={{
               width: 34,
               height: 34,
@@ -299,12 +318,15 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMo
               justifyContent: "center",
               fontWeight: 700,
               fontSize: 13,
-              boxShadow: "0 2px 8px rgba(2, 132, 199, 0.25)",
-              border: "1px solid rgba(255, 255, 255, 0.5)",
+              textDecoration: "none",
+              cursor: "pointer",
+              transition: "transform 0.15s ease",
             }}
+            onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.08)")}
+            onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
           >
             {business?.name ? business.name[0].toUpperCase() : "E"}
-          </div>
+          </Link>
         </div>
       )}
 

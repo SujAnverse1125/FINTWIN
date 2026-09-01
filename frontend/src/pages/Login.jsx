@@ -17,6 +17,7 @@ import {
   Activity
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { INDUSTRY_SECTORS } from "../data/sampleData";
 import FinTwinLogo from "../components/FinTwinLogo";
 
@@ -24,6 +25,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, register } = useAuth();
+  const { currentLang, changeLanguage, supportedLanguages, activeLanguageMeta, t } = useLanguage();
   const canvasRef = useRef(null);
 
   // Mode: 'register' | 'login'
@@ -392,6 +394,43 @@ export default function Login() {
             background: "#ffffff",
           }}
         >
+          {/* Top Language Selector Bar */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "20px",
+              paddingBottom: "12px",
+              borderBottom: "1px solid #f1f5f9",
+            }}
+          >
+            <span style={{ fontSize: "11.5px", color: "#64748b", fontWeight: 600 }}>
+              🌐 Language / भाषा:
+            </span>
+            <select
+              value={currentLang}
+              onChange={(e) => changeLanguage(e.target.value)}
+              style={{
+                padding: "4px 10px",
+                borderRadius: "8px",
+                border: "1px solid #e2e8f0",
+                background: "#f8fafc",
+                color: "#0f172a",
+                fontSize: "12px",
+                fontWeight: 600,
+                cursor: "pointer",
+                outline: "none",
+              }}
+            >
+              {supportedLanguages.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.flag} {l.name} ({l.englishName})
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Header */}
           <div style={{ marginBottom: "24px" }}>
             <h1
