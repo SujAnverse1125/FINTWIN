@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CreditCard,
   Plus,
@@ -67,18 +67,33 @@ export default function Expenses() {
     return unsub;
   }, []);
 
-  const formatLakhs = (amt) => `₹${(Number(amt || 0) / 100000).toFixed(2)}L`;
+  const defaultRecurringExpenses = [
+    { id: "REC-001", category: "Payroll & Salaries", description: "Factory Staff Payroll & Worker Wages", amount: 320000, frequency: "Monthly", dayOfMonth: 1 },
+    { id: "REC-002", category: "Facility & Rent", description: "Factory & Warehouse Lease", amount: 120000, frequency: "Monthly", dayOfMonth: 5 },
+    { id: "REC-003", category: "Utilities & Power", description: "Industrial Electricity & Power", amount: 65000, frequency: "Monthly", dayOfMonth: 10 },
+    { id: "REC-004", category: "Software & SaaS", description: "ERP, Cloud & Accounting Tools", amount: 25000, frequency: "Monthly", dayOfMonth: 15 },
+  ];
 
-  const totalRecurring = calculateRecurringExpenses();
-  const totalOneTime = calculateOneTimeExpenses();
-  const totalBurn = calculateTotalMonthlyBurn();
+  const defaultOneTimeExpenses = [
+    { id: "EXP-001", category: "Raw Materials", description: "High-grade Steel Sheet Batch", amount: 180000, date: "2026-08-04", recurring: false },
+    { id: "EXP-002", category: "Logistics & Freight", description: "Inter-state Carrier Freight", amount: 45000, date: "2026-08-10", recurring: false },
+    { id: "EXP-003", category: "Maintenance & Repairs", description: "Machinery Calibration & Servicing", amount: 35000, date: "2026-08-18", recurring: false },
+  ];
+
+  const hasLoggedExpenses = data.recurringExpenses.length > 0 || data.expenses.length > 0;
+  const effectiveRecurring = hasLoggedExpenses ? data.recurringExpenses : defaultRecurringExpenses;
+  const effectiveOneTime = hasLoggedExpenses ? data.expenses : defaultOneTimeExpenses;
+
+  const totalRecurring = effectiveRecurring.reduce((sum, r) => sum + Number(r.amount || 0), 0);
+  const totalOneTime = effectiveOneTime.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  const totalBurn = totalRecurring + Math.round(totalOneTime / 2);
 
   // Category breakdown data for charts
   const categoryMap = {};
-  data.recurringExpenses.forEach((r) => {
+  effectiveRecurring.forEach((r) => {
     categoryMap[r.category] = (categoryMap[r.category] || 0) + Number(r.amount || 0);
   });
-  data.expenses.forEach((e) => {
+  effectiveOneTime.forEach((e) => {
     categoryMap[e.category] = (categoryMap[e.category] || 0) + Number(e.amount || 0);
   });
 
@@ -295,13 +310,13 @@ export default function Expenses() {
               className={`tab-btn ${activeTab === "recurring" ? "active" : ""}`}
               onClick={() => setActiveTab("recurring")}
             >
-              Recurring ({data.recurringExpenses.length})
+              Recurring ({effectiveRecurring.length})
             </button>
             <button
               className={`tab-btn ${activeTab === "variable" ? "active" : ""}`}
               onClick={() => setActiveTab("variable")}
             >
-              One-Time ({data.expenses.length})
+              One-Time ({effectiveOneTime.length})
             </button>
           </div>
         </div>
@@ -320,16 +335,16 @@ export default function Expenses() {
             </thead>
             <tbody>
               {(activeTab === "all" || activeTab === "recurring") &&
-                data.recurringExpenses.map((rec) => (
+                effectiveRecurring.map((rec) => (
                   <tr key={rec.id}>
-                    <td style={{ fontWeight: 600, color: "#fff" }}>{rec.category}</td>
-                    <td>{rec.description}</td>
+                    <td style={{ fontWeight: 700, color: "#0F172A" }}>{rec.category}</td>
+                    <td style={{ color: "#334155" }}>{rec.description}</td>
                     <td style={{ fontWeight: 700, color: "#C78150" }}>
                       {formatLakhs(rec.amount)}
                     </td>
-                    <td>Monthly (Day {rec.dayOfMonth})</td>
+                    <td style={{ color: "#64748b" }}>Monthly (Day {rec.dayOfMonth || 1})</td>
                     <td>
-                      <span className="status-badge" style={{ background: "rgba(139,92,246,0.15)", color: "#425F6B" }}>
+                      <span className="status-badge" style={{ background: "rgba(139,92,246,0.12)", color: "#6d28d9", fontWeight: "600" }}>
                         Fixed Recurring
                       </span>
                     </td>
@@ -347,16 +362,16 @@ export default function Expenses() {
                 ))}
 
               {(activeTab === "all" || activeTab === "variable") &&
-                data.expenses.map((exp) => (
+                effectiveOneTime.map((exp) => (
                   <tr key={exp.id}>
-                    <td style={{ fontWeight: 600, color: "#fff" }}>{exp.category}</td>
-                    <td>{exp.description}</td>
-                    <td style={{ fontWeight: 700, color: "#7A9CAE" }}>
+                    <td style={{ fontWeight: 700, color: "#0F172A" }}>{exp.category}</td>
+                    <td style={{ color: "#334155" }}>{exp.description}</td>
+                    <td style={{ fontWeight: 700, color: "#0284c7" }}>
                       {formatLakhs(exp.amount)}
                     </td>
-                    <td>{exp.date || "2026-08-10"}</td>
+                    <td style={{ color: "#64748b" }}>{exp.date || "2026-08-10"}</td>
                     <td>
-                      <span className="status-badge" style={{ background: "rgba(59,130,246,0.15)", color: "#93c5fd" }}>
+                      <span className="status-badge" style={{ background: "rgba(59,130,246,0.12)", color: "#1d4ed8", fontWeight: "600" }}>
                         One-Time
                       </span>
                     </td>

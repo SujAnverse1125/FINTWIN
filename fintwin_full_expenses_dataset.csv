@@ -1,0 +1,17 @@
+Expense ID,Category,Description,Amount,Cadence / Date,Type,Frequency,Day Of Month,GST Applicable,HSN / SAC Code
+REC-2026-001,Payroll & Salaries,Factory Machine Operators & Shopfloor Wages,320000,2026-08-01,Recurring,Monthly,1,No,998511
+REC-2026-002,Facility & Rent,MIDC Industrial Shed Lease & Warehouse Rent,120000,2026-08-05,Recurring,Monthly,5,Yes (18%),997212
+REC-2026-003,Utilities & Power,Industrial High-Tension Electricity Bill (MSEDCL),65000,2026-08-10,Recurring,Monthly,10,Yes (18%),996911
+REC-2026-004,Software & SaaS,Tally Prime Cloud ERP + Zoho Subscriptions,25000,2026-08-15,Recurring,Monthly,15,Yes (18%),997331
+REC-2026-005,Security & Maintenance,CCTV & Facility Security Guard Contractor,28000,2026-08-01,Recurring,Monthly,1,Yes (18%),998525
+REC-2026-006,Internet & Telecom,Airtel Enterprise Fiber 1Gbps Dedicated Line,12000,2026-08-12,Recurring,Monthly,12,Yes (18%),998422
+EXP-2026-101,Raw Materials,Prime Grade Cold Rolled Steel Coils (Batch A),180000,2026-08-04,One-Time,Once,,Yes (18%),7209.16
+EXP-2026-102,Logistics & Freight,Inter-state 16-Wheeler Container Freight (Gujarat to Pune),45000,2026-08-10,One-Time,Once,,Yes (5%),996511
+EXP-2026-103,Equipment Maintenance,Hydraulic Press Calibration & Seal Replacement,35000,2026-08-18,One-Time,Once,,Yes (18%),998717
+EXP-2026-104,Raw Materials,CNC Carbide Cutting Inserts & Tooling Pack,48000,2026-08-08,One-Time,Once,,Yes (18%),8207.30
+EXP-2026-105,Packaging & Dispatch,Corrugated Export Wooden Pallets & Shrink Wrap,22000,2026-08-22,One-Time,Once,,Yes (12%),4819.10
+EXP-2026-106,Professional Fees,Quarterly Statutory GST & Tax Audit Retainer,30000,2026-08-15,One-Time,Once,,Yes (18%),998231
+EXP-2026-107,Raw Materials,Industrial Powder Coating Chemicals & Solvents,55000,2026-08-25,One-Time,Once,,Yes (18%),3208.90
+EXP-2026-108,General & Misc,Factory Safety Helmets & Safety Harness Equipment,18000,2026-08-14,One-Time,Once,,Yes (18%),6506.10
+EXP-2026-109,Logistics & Freight,Local Mini-Truck Dispatch Delivery Runs,16000,2026-08-27,One-Time,Once,,Yes (5%),996511
+EXP-2026-110,Equipment Maintenance,Compressor Oil Flush & Air Filter Replacement,14000,2026-08-29,One-Time,Once,,Yes (18%),998717
