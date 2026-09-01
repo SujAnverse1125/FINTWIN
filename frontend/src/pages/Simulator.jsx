@@ -46,24 +46,32 @@ function buildLocalSimulation(
   gstRate = 18,
   additionalRevenue = 0
 ) {
-  const currentCash = Number(data.business?.openingCash || 0) + Number(additionalRevenue || 0);
+  const userCash = Number(data.business?.openingCash || 0);
   const rawReceivables = (data.invoices || [])
     .filter((inv) => String(inv.status || "").toLowerCase() !== "paid")
     .reduce((sum, inv) => sum + Number(inv.amount || 0), 0);
   
-  const collFactor = Math.max(0.1, Math.min(1.0, collectionRate / 100));
-  const receivables = rawReceivables * collFactor;
   const recurring = (data.recurringExpenses || []).reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
   const oneTime = (data.expenses || []).reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
-  const totalExpenses = recurring + oneTime;
+  const totalRawExpenses = recurring + oneTime;
+
+  // Use realistic baseline defaults if store has no data entered yet
+  const hasData = userCash > 0 || rawReceivables > 0 || totalRawExpenses > 0;
+  const currentCash = (hasData ? userCash : 840000) + Number(additionalRevenue || 0);
+  const receivablesBase = hasData ? rawReceivables : 1210000;
+  const totalExpensesBase = hasData ? totalRawExpenses : 480000;
+
+  const collFactor = Math.max(0.1, Math.min(1.0, collectionRate / 100));
+  const receivables = receivablesBase * collFactor;
+  const totalExpenses = totalExpensesBase;
   const gstFactor = 1.0 + (gstRate - 18) / 100;
   const netPosition = currentCash + receivables - totalExpenses;
 
   const base = {
     current_cash: currentCash,
     receivables,
-    recurring_expenses: recurring,
-    one_time_expenses: oneTime,
+    recurring_expenses: recurring > 0 ? recurring : Math.round(totalExpenses * 0.7),
+    one_time_expenses: oneTime > 0 ? oneTime : Math.round(totalExpenses * 0.3),
     total_expenses: totalExpenses,
     net_position: netPosition,
   };
@@ -445,26 +453,25 @@ function Simulator() {
           INTRO BANNER
       ====================================== */}
       <div
-        className="cash-success"
         style={{
           marginBottom: "18px",
           display: "flex",
           alignItems: "center",
           gap: "14px",
-          background: "linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(16,185,129,0.08) 100%)",
-          border: "1px solid rgba(59,130,246,0.3)",
+          background: "linear-gradient(135deg, rgba(2,132,199,0.08) 0%, rgba(16,185,129,0.08) 100%)",
+          border: "1px solid rgba(2,132,199,0.2)",
           padding: "16px 20px",
-          borderRadius: "12px",
+          borderRadius: "14px",
         }}
       >
-        <div style={{ color: "#7A9CAE" }}>
+        <div style={{ color: "#0284c7" }}>
           <Brain size={24} />
         </div>
         <div>
-          <strong style={{ fontSize: "14px", color: "#fff", display: "block" }}>
+          <strong style={{ fontSize: "14px", color: "#0f172a", display: "block" }}>
             Financial What-If Stress Simulator & Graphical Projection
           </strong>
-          <p style={{ margin: "4px 0 0", color: "#94a3b8", fontSize: "12.5px" }}>
+          <p style={{ margin: "4px 0 0", color: "#64748b", fontSize: "12.5px" }}>
             Adjust the sliders below to run live simulations and visualize how macroeconomic shocks, debtor payment delays, and expense surges impact your solvency in real-time graphs.
           </p>
         </div>
@@ -478,20 +485,20 @@ function Simulator() {
           className="module-alert"
           style={{
             marginBottom: "18px",
-            background: "rgba(239, 68, 68, 0.15)",
+            background: "rgba(239, 68, 68, 0.1)",
             border: "1px solid rgba(239, 68, 68, 0.3)",
             padding: "14px 18px",
             borderRadius: "10px",
             display: "flex",
             alignItems: "center",
             gap: "12px",
-            color: "#fca5a5",
+            color: "#991b1b",
           }}
         >
-          <AlertTriangle size={20} color="#C07F7F" />
+          <AlertTriangle size={20} color="#dc2626" />
           <div>
-            <strong>Simulation failed</strong>
-            <p style={{ margin: "2px 0 0", fontSize: "12px" }}>{error}</p>
+            <strong style={{ color: "#991b1b" }}>Simulation failed</strong>
+            <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#b91c1c" }}>{error}</p>
           </div>
         </div>
       )}
@@ -513,12 +520,12 @@ function Simulator() {
         ====================================== */}
         <div className="module-card" style={{ margin: 0 }}>
           <div className="section-heading">
-            <div className="section-heading-icon" style={{ background: "rgba(59,130,246,0.2)", color: "#7A9CAE" }}>
+            <div className="section-heading-icon" style={{ background: "rgba(2,132,199,0.1)", color: "#0284c7" }}>
               <Brain size={19} />
             </div>
             <div>
-              <h2 style={{ fontSize: "15px", fontWeight: "700" }}>Scenario Assumptions</h2>
-              <p style={{ fontSize: "12px", color: "#94a3b8" }}>
+              <h2 style={{ fontSize: "15px", fontWeight: "800", color: "#0f172a" }}>Scenario Assumptions</h2>
+              <p style={{ fontSize: "12px", color: "#64748b" }}>
                 Configure your stress test parameters and run the digital twin calculation.
               </p>
             </div>
@@ -533,12 +540,12 @@ function Simulator() {
                 style={{
                   padding: "8px 16px",
                   borderRadius: "8px",
-                  border: activePreset === key ? "2px solid #7A9CAE" : "1px solid rgba(255,255,255,0.15)",
-                  background: activePreset === key ? "rgba(122,156,174,0.15)" : "rgba(255,255,255,0.04)",
-                  color: activePreset === key ? "#fff" : "#94a3b8",
+                  border: activePreset === key ? "2px solid #0284c7" : "1px solid #e2e8f0",
+                  background: activePreset === key ? "rgba(2,132,199,0.12)" : "#f8fafc",
+                  color: activePreset === key ? "#0284c7" : "#475569",
                   cursor: "pointer",
                   fontSize: "12px",
-                  fontWeight: activePreset === key ? "700" : "500",
+                  fontWeight: activePreset === key ? "800" : "600",
                   transition: "all 0.2s ease",
                 }}
               >
@@ -564,8 +571,8 @@ function Simulator() {
                   fontSize: "13px",
                 }}
               >
-                <strong style={{ color: "#f8fafc" }}>Revenue Change (Demand Shock)</strong>
-                <strong style={{ color: revenueChange < 0 ? "#C07F7F" : revenueChange > 0 ? "#1C6758" : "#94a3b8" }}>
+                <strong style={{ color: "#0f172a" }}>Revenue Change (Demand Shock)</strong>
+                <strong style={{ color: revenueChange < 0 ? "#dc2626" : revenueChange > 0 ? "#059669" : "#64748b" }}>
                   {revenueChange > 0 ? `+${revenueChange}%` : `${revenueChange}%`}
                 </strong>
               </div>
@@ -576,7 +583,7 @@ function Simulator() {
                 step="5"
                 value={revenueChange}
                 onChange={(e) => setRevenueChange(Number(e.target.value))}
-                style={{ width: "100%", accentColor: "#7A9CAE" }}
+                style={{ width: "100%", accentColor: "#0284c7" }}
               />
               <small style={{ color: "#64748b", fontSize: "11px" }}>
                 Negative values simulate a decline in sales orders or client cancellations.
@@ -593,8 +600,8 @@ function Simulator() {
                   fontSize: "13px",
                 }}
               >
-                <strong style={{ color: "#f8fafc" }}>Expense Surge (Inflation / OpEx Shock)</strong>
-                <strong style={{ color: expenseChange > 0 ? "#C07F7F" : "#94a3b8" }}>
+                <strong style={{ color: "#0f172a" }}>Expense Surge (Inflation / OpEx Shock)</strong>
+                <strong style={{ color: expenseChange > 0 ? "#dc2626" : "#64748b" }}>
                   +{expenseChange}%
                 </strong>
               </div>
@@ -605,7 +612,7 @@ function Simulator() {
                 step="5"
                 value={expenseChange}
                 onChange={(e) => setExpenseChange(Number(e.target.value))}
-                style={{ width: "100%", accentColor: "#C07F7F" }}
+                style={{ width: "100%", accentColor: "#dc2626" }}
               />
               <small style={{ color: "#64748b", fontSize: "11px" }}>
                 Simulate an increase in raw material costs, rent, or unexpected operational disbursements.
@@ -622,8 +629,8 @@ function Simulator() {
                   fontSize: "13px",
                 }}
               >
-                <strong style={{ color: "#f8fafc" }}>Customer Payment Delay (Debtor Lag)</strong>
-                <strong style={{ color: paymentDelay > 0 ? "#C78150" : "#94a3b8" }}>
+                <strong style={{ color: "#0f172a" }}>Customer Payment Delay (Debtor Lag)</strong>
+                <strong style={{ color: paymentDelay > 0 ? "#d97706" : "#64748b" }}>
                   {paymentDelay} days
                 </strong>
               </div>
@@ -634,7 +641,7 @@ function Simulator() {
                 step="5"
                 value={paymentDelay}
                 onChange={(e) => setPaymentDelay(Number(e.target.value))}
-                style={{ width: "100%", accentColor: "#C78150" }}
+                style={{ width: "100%", accentColor: "#d97706" }}
               />
               <small style={{ color: "#64748b", fontSize: "11px" }}>
                 Simulate enterprise buyers delaying settlements past agreed credit periods.
@@ -644,8 +651,8 @@ function Simulator() {
             {/* Invoice Collection Rate Slider */}
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px" }}>
-                <strong style={{ color: "#f8fafc" }}>Invoice Collection Rate</strong>
-                <strong style={{ color: collectionRate < 80 ? "#C07F7F" : "#1C6758" }}>{collectionRate}%</strong>
+                <strong style={{ color: "#0f172a" }}>Invoice Collection Rate</strong>
+                <strong style={{ color: collectionRate < 80 ? "#dc2626" : "#059669" }}>{collectionRate}%</strong>
               </div>
               <input
                 type="range"
@@ -654,7 +661,7 @@ function Simulator() {
                 step="2"
                 value={collectionRate}
                 onChange={(e) => { setCollectionRate(Number(e.target.value)); setActivePreset("custom"); }}
-                style={{ width: "100%", accentColor: "#a78bfa" }}
+                style={{ width: "100%", accentColor: "#7c3aed" }}
               />
               <small style={{ color: "#64748b", fontSize: "11px" }}>
                 Percentage of invoiced amounts actually collected within the period.
@@ -664,8 +671,8 @@ function Simulator() {
             {/* GST Rate Slider */}
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px" }}>
-                <strong style={{ color: "#f8fafc" }}>GST Rate</strong>
-                <strong style={{ color: "#94a3b8" }}>{gstRate}%</strong>
+                <strong style={{ color: "#0f172a" }}>GST Rate</strong>
+                <strong style={{ color: "#475569" }}>{gstRate}%</strong>
               </div>
               <input
                 type="range"
@@ -674,7 +681,7 @@ function Simulator() {
                 step="1"
                 value={gstRate}
                 onChange={(e) => { setGstRate(Number(e.target.value)); setActivePreset("custom"); }}
-                style={{ width: "100%", accentColor: "#60a5fa" }}
+                style={{ width: "100%", accentColor: "#0284c7" }}
               />
               <small style={{ color: "#64748b", fontSize: "11px" }}>
                 Effective GST rate applied to receivables and outflows for tax liability estimation.
@@ -684,8 +691,8 @@ function Simulator() {
             {/* Additional Revenue Slider */}
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px" }}>
-                <strong style={{ color: "#f8fafc" }}>Additional Revenue</strong>
-                <strong style={{ color: additionalRevenue > 0 ? "#10b981" : "#94a3b8" }}>
+                <strong style={{ color: "#0f172a" }}>Additional Revenue</strong>
+                <strong style={{ color: additionalRevenue > 0 ? "#059669" : "#64748b" }}>
                   {additionalRevenue > 0 ? `+${formatMoney(additionalRevenue)}` : "₹0"}
                 </strong>
               </div>
@@ -696,7 +703,7 @@ function Simulator() {
                 step="50000"
                 value={additionalRevenue}
                 onChange={(e) => { setAdditionalRevenue(Number(e.target.value)); setActivePreset("custom"); }}
-                style={{ width: "100%", accentColor: "#10b981" }}
+                style={{ width: "100%", accentColor: "#059669" }}
               />
               <small style={{ color: "#64748b", fontSize: "11px" }}>
                 Inject projected pipeline orders or fresh sales commitments into the simulation.
@@ -718,61 +725,62 @@ function Simulator() {
               onClick={runSimulation}
               disabled={loading}
               style={{
-                padding: "9px 18px",
+                padding: "10px 20px",
                 border: "none",
                 borderRadius: "8px",
-                background: "linear-gradient(135deg, #7A9CAE 0%, #2563eb 100%)",
-                color: "#fff",
+                background: "linear-gradient(135deg, #0284c7 0%, #2563eb 100%)",
+                color: "#ffffff",
                 cursor: loading ? "not-allowed" : "pointer",
                 fontWeight: "700",
-                fontSize: "12.5px",
+                fontSize: "13px",
                 display: "flex",
                 alignItems: "center",
-                gap: "7px",
-                boxShadow: "0 4px 14px rgba(59,130,246,0.35)",
+                gap: "8px",
+                boxShadow: "0 4px 14px rgba(2,132,199,0.3)",
               }}
             >
-              <Sparkles size={15} />
+              <Sparkles size={16} />
               {loading ? "Running Twin..." : "Run Simulation"}
             </button>
 
             <button
               onClick={applyToDashboard}
               style={{
-                padding: "9px 14px",
-                border: "1px solid rgba(16,185,129,0.4)",
+                padding: "10px 16px",
+                border: "1px solid rgba(5,150,105,0.3)",
                 borderRadius: "8px",
-                background: appliedToast ? "rgba(16,185,129,0.25)" : "rgba(16,185,129,0.1)",
-                color: "#34d399",
+                background: appliedToast ? "rgba(16,185,129,0.2)" : "rgba(16,185,129,0.1)",
+                color: "#059669",
                 cursor: "pointer",
-                fontSize: "12.5px",
-                fontWeight: "600",
+                fontSize: "13px",
+                fontWeight: "700",
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",
                 transition: "all 0.2s ease",
               }}
             >
-              <ShieldCheck size={15} />
+              <ShieldCheck size={16} />
               {appliedToast ? "✓ Applied!" : "Apply to Dashboard"}
             </button>
 
             <button
               onClick={resetSimulation}
               style={{
-                padding: "9px 14px",
-                border: "1px solid rgba(255,255,255,0.15)",
+                padding: "10px 16px",
+                border: "1px solid #cbd5e1",
                 borderRadius: "8px",
-                background: "rgba(255,255,255,0.05)",
-                color: "#cbd5e1",
+                background: "#f8fafc",
+                color: "#475569",
                 cursor: "pointer",
-                fontSize: "12.5px",
+                fontSize: "13px",
+                fontWeight: "600",
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",
               }}
             >
-              <RotateCcw size={13} />
+              <RotateCcw size={14} />
               Reset
             </button>
           </div>
@@ -781,38 +789,39 @@ function Simulator() {
         {/* =================================================================
             RIGHT COLUMN: INTERACTIVE GRAPH VISUALIZER SECTION
             ================================================================= */}
-        <div className="module-card" style={{ margin: 0, padding: "22px" }}>
+        <div className="module-card" style={{ margin: 0, padding: "24px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px", marginBottom: "16px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div className="section-heading-icon" style={{ background: "rgba(59,130,246,0.2)", color: "#7A9CAE" }}>
+              <div className="section-heading-icon" style={{ background: "rgba(2,132,199,0.1)", color: "#0284c7" }}>
                 <BarChart3 size={18} />
               </div>
               <div>
-                <h2 style={{ fontSize: "15px", fontWeight: "800", color: "#fff", margin: 0 }}>
+                <h2 style={{ fontSize: "16px", fontWeight: "800", color: "#0f172a", margin: 0 }}>
                   Live Scenario Comparison
                 </h2>
-                <p style={{ margin: "2px 0 0", fontSize: "11.5px", color: "#94a3b8" }}>
+                <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#64748b" }}>
                   Interactive charts comparing baseline solvency vs stressed depletion curves.
                 </p>
               </div>
             </div>
 
             {/* Chart Mode Toggle */}
-            <div style={{ display: "flex", background: "rgba(15, 23, 42, 0.6)", padding: "3px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)" }}>
+            <div style={{ display: "flex", background: "#f1f5f9", padding: "3px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
               <button
                 onClick={() => setActiveChartTab("trajectory")}
                 style={{
-                  padding: "5px 11px",
+                  padding: "6px 12px",
                   borderRadius: "6px",
                   border: "none",
-                  background: activeChartTab === "trajectory" ? "#7A9CAE" : "transparent",
-                  color: activeChartTab === "trajectory" ? "#fff" : "#94a3b8",
-                  fontSize: "11.5px",
-                  fontWeight: "600",
+                  background: activeChartTab === "trajectory" ? "#ffffff" : "transparent",
+                  color: activeChartTab === "trajectory" ? "#0284c7" : "#64748b",
+                  fontSize: "12px",
+                  fontWeight: "700",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  gap: "5px",
+                  gap: "6px",
+                  boxShadow: activeChartTab === "trajectory" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
                 }}
               >
                 <LineChart size={13} />
@@ -822,17 +831,18 @@ function Simulator() {
               <button
                 onClick={() => setActiveChartTab("bar")}
                 style={{
-                  padding: "5px 11px",
+                  padding: "6px 12px",
                   borderRadius: "6px",
                   border: "none",
-                  background: activeChartTab === "bar" ? "#7A9CAE" : "transparent",
-                  color: activeChartTab === "bar" ? "#fff" : "#94a3b8",
-                  fontSize: "11.5px",
-                  fontWeight: "600",
+                  background: activeChartTab === "bar" ? "#ffffff" : "transparent",
+                  color: activeChartTab === "bar" ? "#0284c7" : "#64748b",
+                  fontSize: "12px",
+                  fontWeight: "700",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  gap: "5px",
+                  gap: "6px",
+                  boxShadow: activeChartTab === "bar" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
                 }}
               >
                 <BarChart3 size={13} />
@@ -842,17 +852,18 @@ function Simulator() {
               <button
                 onClick={() => setActiveChartTab("cards")}
                 style={{
-                  padding: "5px 11px",
+                  padding: "6px 12px",
                   borderRadius: "6px",
                   border: "none",
-                  background: activeChartTab === "cards" ? "#7A9CAE" : "transparent",
-                  color: activeChartTab === "cards" ? "#fff" : "#94a3b8",
-                  fontSize: "11.5px",
-                  fontWeight: "600",
+                  background: activeChartTab === "cards" ? "#ffffff" : "transparent",
+                  color: activeChartTab === "cards" ? "#0284c7" : "#64748b",
+                  fontSize: "12px",
+                  fontWeight: "700",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  gap: "5px",
+                  gap: "6px",
+                  boxShadow: activeChartTab === "cards" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
                 }}
               >
                 <Layers size={13} />
@@ -862,19 +873,20 @@ function Simulator() {
               <button
                 onClick={() => setActiveChartTab("aiRisk")}
                 style={{
-                  padding: "5px 11px",
+                  padding: "6px 12px",
                   borderRadius: "6px",
                   border: "none",
                   background: activeChartTab === "aiRisk"
                     ? "linear-gradient(135deg, #8b5cf6, #6366f1)"
                     : "transparent",
-                  color: activeChartTab === "aiRisk" ? "#fff" : "#94a3b8",
-                  fontSize: "11.5px",
-                  fontWeight: "600",
+                  color: activeChartTab === "aiRisk" ? "#ffffff" : "#64748b",
+                  fontSize: "12px",
+                  fontWeight: "700",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  gap: "5px",
+                  gap: "6px",
+                  boxShadow: activeChartTab === "aiRisk" ? "0 2px 10px rgba(139,92,246,0.3)" : "none",
                 }}
               >
                 <Zap size={13} />
@@ -970,19 +982,20 @@ function Simulator() {
                           <stop offset="95%" stopColor="#C07F7F" stopOpacity={0.0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-                      <XAxis dataKey="day" stroke="#94a3b8" fontSize={11} tickLine={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="day" stroke="#64748b" fontSize={11} tickLine={false} />
                       <YAxis
-                        stroke="#94a3b8"
+                        stroke="#64748b"
                         fontSize={11}
                         tickLine={false}
                         tickFormatter={(val) => `₹${(val / 100000).toFixed(1)}L`}
                       />
                       <Tooltip
                         contentStyle={{
-                          background: "rgba(15, 23, 42, 0.95)",
-                          border: "1px solid rgba(255,255,255,0.15)",
+                          background: "#0f172a",
+                          border: "1px solid #334155",
                           borderRadius: 8,
+                          color: "#ffffff",
                           fontSize: 12,
                         }}
                         formatter={(val, name) => [
@@ -994,17 +1007,17 @@ function Simulator() {
                         verticalAlign="top"
                         height={36}
                         formatter={(value) => (
-                          <span style={{ color: "#cbd5e1", fontSize: "12px" }}>
+                          <span style={{ color: "#334155", fontSize: "12px", fontWeight: "600" }}>
                             {value === "baseline" ? "Baseline Cash (Normal Flow)" : "Stressed Cash (With Active Shocks)"}
                           </span>
                         )}
                       />
-                      <ReferenceLine y={0} stroke="#C07F7F" strokeDasharray="4 4" label={{ value: "Solvency Breach Line (₹0)", fill: "#C07F7F", fontSize: 11 }} />
+                      <ReferenceLine y={0} stroke="#dc2626" strokeDasharray="4 4" label={{ value: "Solvency Breach Line (₹0)", fill: "#dc2626", fontSize: 11, fontWeight: "600" }} />
                       <Area
                         type="monotone"
                         dataKey="baseline"
                         name="baseline"
-                        stroke="#38bdf8"
+                        stroke="#0284c7"
                         strokeWidth={2.5}
                         fillOpacity={1}
                         fill="url(#colorBaseline)"
@@ -1013,7 +1026,7 @@ function Simulator() {
                         type="monotone"
                         dataKey="stressed"
                         name="stressed"
-                        stroke="#C07F7F"
+                        stroke="#dc2626"
                         strokeWidth={2.5}
                         fillOpacity={1}
                         fill="url(#colorStressed)"
@@ -1021,15 +1034,15 @@ function Simulator() {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-                <div style={{ marginTop: "12px", fontSize: "12px", color: "#cbd5e1" }}>
+                <div style={{ marginTop: "12px", fontSize: "12px", color: "#475569" }}>
                   💡 <strong>Digital Twin Takeaway:</strong> The red area illustrates your cash depletion trajectory under {revenueChange}% revenue change, +{expenseChange}% expense surge, and {paymentDelay} days customer delay.
                 </div>
 
                 {/* =====================================
                     IMPACT SUMMARY
                 ====================================== */}
-                <div style={{ marginTop: "20px", paddingTop: "18px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-                  <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#f8fafc", margin: "0 0 12px" }}>
+                <div style={{ marginTop: "20px", paddingTop: "18px", borderTop: "1px solid #e2e8f0" }}>
+                  <h3 style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", margin: "0 0 12px" }}>
                     Impact Summary
                   </h3>
 
@@ -1038,17 +1051,17 @@ function Simulator() {
                     <div style={{
                       padding: "14px 16px",
                       borderRadius: "10px",
-                      background: "rgba(15, 23, 42, 0.6)",
-                      border: "1px solid rgba(255,255,255,0.08)",
+                      background: "#f8fafc",
+                      border: "1px solid #e2e8f0",
                     }}>
-                      <span style={{ fontSize: "10px", fontWeight: "700", color: "#94a3b8", letterSpacing: "0.5px", textTransform: "uppercase" }}>
+                      <span style={{ fontSize: "10px", fontWeight: "700", color: "#64748b", letterSpacing: "0.5px", textTransform: "uppercase" }}>
                         DAY 30 DIFFERENCE
                       </span>
                       <div style={{
                         fontSize: "18px",
                         fontWeight: "800",
                         marginTop: "4px",
-                        color: day30Diff < 0 ? "#ef4444" : day30Diff > 0 ? "#10b981" : "#cbd5e1",
+                        color: day30Diff < 0 ? "#dc2626" : day30Diff > 0 ? "#059669" : "#0f172a",
                       }}>
                         {day30Diff < 0 ? `-₹${Math.abs(day30Diff).toLocaleString("en-IN")}` : day30Diff > 0 ? `+₹${day30Diff.toLocaleString("en-IN")}` : "₹0"}
                       </div>
@@ -1058,17 +1071,17 @@ function Simulator() {
                     <div style={{
                       padding: "14px 16px",
                       borderRadius: "10px",
-                      background: "rgba(15, 23, 42, 0.6)",
-                      border: "1px solid rgba(255,255,255,0.08)",
+                      background: "#f8fafc",
+                      border: "1px solid #e2e8f0",
                     }}>
-                      <span style={{ fontSize: "10px", fontWeight: "700", color: "#94a3b8", letterSpacing: "0.5px", textTransform: "uppercase" }}>
+                      <span style={{ fontSize: "10px", fontWeight: "700", color: "#64748b", letterSpacing: "0.5px", textTransform: "uppercase" }}>
                         DAY 60 DIFFERENCE
                       </span>
                       <div style={{
                         fontSize: "18px",
                         fontWeight: "800",
                         marginTop: "4px",
-                        color: day60Diff < 0 ? "#ef4444" : day60Diff > 0 ? "#10b981" : "#cbd5e1",
+                        color: day60Diff < 0 ? "#dc2626" : day60Diff > 0 ? "#059669" : "#0f172a",
                       }}>
                         {day60Diff < 0 ? `-₹${Math.abs(day60Diff).toLocaleString("en-IN")}` : day60Diff > 0 ? `+₹${day60Diff.toLocaleString("en-IN")}` : "₹0"}
                       </div>
@@ -1078,17 +1091,17 @@ function Simulator() {
                     <div style={{
                       padding: "14px 16px",
                       borderRadius: "10px",
-                      background: "rgba(15, 23, 42, 0.6)",
-                      border: "1px solid rgba(255,255,255,0.08)",
+                      background: "#f8fafc",
+                      border: "1px solid #e2e8f0",
                     }}>
-                      <span style={{ fontSize: "10px", fontWeight: "700", color: "#94a3b8", letterSpacing: "0.5px", textTransform: "uppercase" }}>
+                      <span style={{ fontSize: "10px", fontWeight: "700", color: "#64748b", letterSpacing: "0.5px", textTransform: "uppercase" }}>
                         DAY 90 DIFFERENCE
                       </span>
                       <div style={{
                         fontSize: "18px",
                         fontWeight: "800",
                         marginTop: "4px",
-                        color: day90Diff < 0 ? "#ef4444" : day90Diff > 0 ? "#10b981" : "#cbd5e1",
+                        color: day90Diff < 0 ? "#dc2626" : day90Diff > 0 ? "#059669" : "#0f172a",
                       }}>
                         {day90Diff < 0 ? `-₹${Math.abs(day90Diff).toLocaleString("en-IN")}` : day90Diff > 0 ? `+₹${day90Diff.toLocaleString("en-IN")}` : "₹0"}
                       </div>
@@ -1100,20 +1113,20 @@ function Simulator() {
                     marginTop: "12px",
                     padding: "14px 16px",
                     borderRadius: "10px",
-                    background: firstShortfallDay ? "rgba(239, 68, 68, 0.1)" : "rgba(16, 185, 129, 0.08)",
-                    border: `1px solid ${firstShortfallDay ? "rgba(239, 68, 68, 0.3)" : "rgba(16, 185, 129, 0.2)"}`,
+                    background: firstShortfallDay ? "rgba(239, 68, 68, 0.08)" : "rgba(16, 185, 129, 0.08)",
+                    border: `1px solid ${firstShortfallDay ? "rgba(239, 68, 68, 0.25)" : "rgba(16, 185, 129, 0.2)"}`,
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
                   }}>
                     <div>
-                      <span style={{ fontSize: "10px", fontWeight: "700", color: "#94a3b8", letterSpacing: "0.5px", textTransform: "uppercase" }}>
+                      <span style={{ fontSize: "10px", fontWeight: "700", color: "#64748b", letterSpacing: "0.5px", textTransform: "uppercase" }}>
                         FIRST SHORTFALL DAY
                       </span>
                       <div style={{
                         fontSize: "16px",
                         fontWeight: "800",
-                        color: firstShortfallDay ? "#fca5a5" : "#34d399",
+                        color: firstShortfallDay ? "#dc2626" : "#059669",
                         marginTop: "2px",
                       }}>
                         {firstShortfallDay
@@ -1127,8 +1140,8 @@ function Simulator() {
                       borderRadius: "6px",
                       fontSize: "11px",
                       fontWeight: "700",
-                      background: firstShortfallDay ? "rgba(239, 68, 68, 0.2)" : "rgba(16, 185, 129, 0.2)",
-                      color: firstShortfallDay ? "#ef4444" : "#10b981",
+                      background: firstShortfallDay ? "rgba(239, 68, 68, 0.15)" : "rgba(16, 185, 129, 0.15)",
+                      color: firstShortfallDay ? "#dc2626" : "#059669",
                     }}>
                       {firstShortfallDay ? "BREACH RISK" : "SOLVENT"}
                     </div>
@@ -1151,9 +1164,9 @@ function Simulator() {
                     key={`${scenario.scenario}-${index}`}
                     style={{
                       padding: "18px",
-                      border: "1px solid rgba(255,255,255,0.1)",
+                      border: "1px solid #e2e8f0",
                       borderRadius: "10px",
-                      background: "rgba(15, 23, 42, 0.4)",
+                      background: "#f8fafc",
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -1161,16 +1174,16 @@ function Simulator() {
                         style={{
                           color:
                             scenario.risk === "HIGH"
-                              ? "#C07F7F"
+                              ? "#dc2626"
                               : scenario.risk === "MEDIUM"
-                              ? "#C78150"
-                              : "#1C6758",
+                              ? "#d97706"
+                              : "#059669",
                         }}
                       >
                         {getScenarioIcon(scenario.scenario)}
                       </div>
 
-                      <strong style={{ flex: 1, fontSize: "14px", color: "#f8fafc" }}>
+                      <strong style={{ flex: 1, fontSize: "14px", color: "#0f172a" }}>
                         {scenario.scenario}
                       </strong>
 
@@ -1329,15 +1342,16 @@ function Simulator() {
                           return (
                             <div key={tier} style={{
                               padding: "12px",
-                              background: "rgba(15,23,42,0.5)",
-                              border: `1px solid ${tierColors[tier]}33`,
+                              background: "#ffffff",
+                              border: `1px solid ${tierColors[tier]}55`,
                               borderRadius: "8px",
                               textAlign: "center",
+                              boxShadow: "0 1px 4px rgba(15,23,42,0.04)",
                             }}>
-                              <div style={{ fontSize: "10px", color: tierColors[tier], fontWeight: "700", marginBottom: "4px" }}>{tier}</div>
-                              <div style={{ fontSize: "18px", fontWeight: "800", color: "#f8fafc" }}>{stressedCount}</div>
+                              <div style={{ fontSize: "11px", color: tierColors[tier], fontWeight: "800", marginBottom: "4px" }}>{tier}</div>
+                              <div style={{ fontSize: "19px", fontWeight: "800", color: "#0f172a" }}>{stressedCount}</div>
                               {delta !== 0 && (
-                                <div style={{ fontSize: "10px", color: delta > 0 ? "#ef4444" : "#10b981", marginTop: "2px" }}>
+                                <div style={{ fontSize: "11px", fontWeight: "600", color: delta > 0 ? "#dc2626" : "#059669", marginTop: "2px" }}>
                                   {delta > 0 ? `↑ +${delta}` : `↓ ${delta}`} from baseline
                                 </div>
                               )}
@@ -1356,12 +1370,12 @@ function Simulator() {
         {/* Baseline KPI Cards */}
         <div className="module-card" style={{ marginTop: "20px" }}>
           <div className="section-heading">
-            <div className="section-heading-icon" style={{ background: "rgba(16,185,129,0.2)", color: "#1C6758" }}>
+            <div className="section-heading-icon" style={{ background: "rgba(16,185,129,0.12)", color: "#059669" }}>
               <Brain size={19} />
             </div>
             <div>
-              <h2 style={{ fontSize: "15px", fontWeight: "700" }}>Current Baseline Financial Position</h2>
-              <p style={{ fontSize: "12px", color: "#94a3b8" }}>
+              <h2 style={{ fontSize: "16px", fontWeight: "800", color: "#0f172a" }}>Current Baseline Financial Position</h2>
+              <p style={{ fontSize: "12px", color: "#64748b" }}>
                 Pre-shock operating parameters used by the Digital Twin model.
               </p>
             </div>
@@ -1369,29 +1383,29 @@ function Simulator() {
 
           <div className="module-grid" style={{ marginTop: "18px" }}>
             <div className="module-stat">
-              <span style={{ fontSize: "11px", color: "#94a3b8" }}>CURRENT CASH</span>
-              <strong style={{ fontSize: "18px", color: "#38bdf8" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", color: "#64748b" }}>CURRENT CASH</span>
+              <strong style={{ fontSize: "19px", fontWeight: "800", color: "#0284c7" }}>
                 {formatMoney(simulation?.base?.current_cash)}
               </strong>
             </div>
 
             <div className="module-stat">
-              <span style={{ fontSize: "11px", color: "#94a3b8" }}>RECEIVABLES</span>
-              <strong style={{ fontSize: "18px", color: "#1C6758" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", color: "#64748b" }}>RECEIVABLES</span>
+              <strong style={{ fontSize: "19px", fontWeight: "800", color: "#059669" }}>
                 {formatMoney(simulation?.base?.receivables)}
               </strong>
             </div>
 
             <div className="module-stat">
-              <span style={{ fontSize: "11px", color: "#94a3b8" }}>TOTAL EXPENSES</span>
-              <strong style={{ fontSize: "18px", color: "#C07F7F" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", color: "#64748b" }}>TOTAL EXPENSES</span>
+              <strong style={{ fontSize: "19px", fontWeight: "800", color: "#dc2626" }}>
                 {formatMoney(simulation?.base?.total_expenses)}
               </strong>
             </div>
 
             <div className="module-stat">
-              <span style={{ fontSize: "11px", color: "#94a3b8" }}>NET POSITION</span>
-              <strong style={{ fontSize: "18px", color: Number(simulation?.base?.net_position || 0) >= 0 ? "#1C6758" : "#C07F7F" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", color: "#64748b" }}>NET POSITION</span>
+              <strong style={{ fontSize: "19px", fontWeight: "800", color: Number(simulation?.base?.net_position || 0) >= 0 ? "#059669" : "#dc2626" }}>
                 {formatMoney(simulation?.base?.net_position)}
               </strong>
             </div>

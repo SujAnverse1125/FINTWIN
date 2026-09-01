@@ -150,6 +150,43 @@ input, button, select, textarea {
   color: inherit;
 }
 
+/* Universal Executive Form Controls Reset (Prevents Dark-mode OS black inputs) */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="search"],
+select,
+textarea {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1px solid #CBD5E1 !important;
+  color-scheme: light !important;
+  border-radius: var(--radius-sm, 8px);
+  padding: 10px 14px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+input[type="search"]:focus,
+select:focus,
+textarea:focus {
+  border-color: #0284C7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+input[type="range"] {
+  accent-color: #0284C7;
+  cursor: pointer;
+}
+
 button {
   cursor: pointer;
   border: none;
@@ -160,6 +197,176 @@ button {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* ==========================================================================
+   MODULE PAGE & EXECUTIVE CARD SYSTEM
+   ========================================================================== */
+
+.module-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.module-header {
+  margin-bottom: 4px;
+}
+
+.module-header .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748B !important;
+  margin-bottom: 12px;
+  transition: color var(--transition-fast);
+}
+
+.module-header .back-link:hover {
+  color: #0284C7 !important;
+}
+
+.module-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.module-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(2, 132, 199, 0.1);
+  border: 1px solid rgba(2, 132, 199, 0.2);
+  color: #0284C7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.module-title h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0F172A !important;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.module-title p {
+  font-size: 13px;
+  color: #64748B !important;
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+
+.module-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.module-card {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  color: #0F172A;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.module-card:hover {
+  box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.06);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.section-heading-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.section-heading h2 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0F172A !important;
+  margin: 0;
+}
+
+.section-heading p {
+  font-size: 12px;
+  color: #64748B !important;
+  margin: 2px 0 0;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.module-stat {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.module-stat span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.module-stat strong {
+  font-size: 19px;
+  font-weight: 800;
+  color: #0F172A !important;
+  letter-spacing: -0.3px;
+}
+
+.cash-success {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(2, 132, 199, 0.06) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 16px 20px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #065F46;
+}
+
+.cash-success strong {
+  font-size: 14px;
+  font-weight: 800;
+  color: #065F46;
+  display: block;
+}
+
+.cash-success p {
+  font-size: 12.5px;
+  color: #047857;
+  margin: 2px 0 0;
 }
 
 /* Scrollbar customization */

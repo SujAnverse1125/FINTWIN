@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import {
   Brain,
   Wallet,
@@ -243,81 +243,70 @@ function Financing() {
       {/* =====================================
           HEADER
       ====================================== */}
-
       <div
         className="cash-success"
         style={{
           marginBottom: "18px",
+          display: "flex",
+          alignItems: "center",
+          gap: "14px",
+          background: "linear-gradient(135deg, rgba(2,132,199,0.08) 0%, rgba(16,185,129,0.08) 100%)",
+          border: "1px solid rgba(2,132,199,0.2)",
+          padding: "16px 20px",
+          borderRadius: "14px",
         }}
       >
-
-        <Brain size={21} />
-
+        <div style={{ color: "#0284c7" }}>
+          <Brain size={24} />
+        </div>
         <div>
-
-          <strong>
+          <strong style={{ fontSize: "14px", color: "#0f172a", display: "block" }}>
             Decision-Support Financing Analysis
           </strong>
-
-          <p>
-            FinTwin compares illustrative
-            non-debt, invoice-financing and
-            working-capital options.
+          <p style={{ margin: "4px 0 0", color: "#64748b", fontSize: "12.5px" }}>
+            FinTwin compares illustrative non-debt, invoice-financing and working-capital options.
           </p>
-
         </div>
-
       </div>
-
 
       {/* =====================================
           LIQUIDITY GAP INPUT
       ====================================== */}
-
       <div className="module-card">
-
         <div className="section-heading">
-
           <div
             className="section-heading-icon"
+            style={{ background: "rgba(2,132,199,0.1)", color: "#0284c7" }}
           >
             <IndianRupee size={19} />
           </div>
-
           <div>
-
-            <h2>
+            <h2 style={{ fontSize: "16px", fontWeight: "800", color: "#0f172a" }}>
               Liquidity Requirement
             </h2>
-
-            <p>
-              Enter the amount you may need to
-              cover the projected cash gap.
+            <p style={{ fontSize: "12px", color: "#64748b" }}>
+              Enter the amount you may need to cover the projected cash gap.
             </p>
-
           </div>
-
         </div>
-
 
         <div
           style={{
-            marginTop: "22px",
+            marginTop: "20px",
             maxWidth: "500px",
           }}
         >
-
           <label
             style={{
               display: "block",
-              fontSize: "11px",
+              fontSize: "12px",
               fontWeight: "700",
+              color: "#0f172a",
               marginBottom: "8px",
             }}
           >
             Estimated liquidity gap
           </label>
-
 
           <div
             style={{
@@ -326,10 +315,11 @@ function Financing() {
               gap: "8px",
             }}
           >
-
             <span
               style={{
-                fontWeight: "700",
+                fontWeight: "800",
+                fontSize: "16px",
+                color: "#0f172a",
               }}
             >
               ₹
@@ -349,40 +339,37 @@ function Financing() {
               }
               style={{
                 width: "100%",
-                padding: "10px",
-                border:
-                  "1px solid #e5e7eb",
+                padding: "10px 14px",
+                border: "1px solid #cbd5e1",
                 borderRadius: "8px",
+                background: "#ffffff",
+                color: "#0f172a",
+                fontSize: "14px",
+                fontWeight: "700",
               }}
             />
-
           </div>
-
 
           <button
             onClick={runAnalysis}
             disabled={loading}
             style={{
-              marginTop: "15px",
-              padding: "10px 18px",
+              marginTop: "16px",
+              padding: "10px 20px",
+              background: "linear-gradient(135deg, #0284c7 0%, #2563eb 100%)",
+              color: "#ffffff",
               border: "none",
               borderRadius: "8px",
-              cursor:
-                loading
-                  ? "not-allowed"
-                  : "pointer",
+              cursor: loading ? "not-allowed" : "pointer",
               fontWeight: "700",
+              fontSize: "13px",
+              boxShadow: "0 4px 14px rgba(2,132,199,0.3)",
+              transition: "all 0.2s ease",
             }}
           >
-
-            {loading
-              ? "Analyzing..."
-              : "Compare Options"}
-
+            {loading ? "Analyzing Options..." : "Compare Options"}
           </button>
-
         </div>
-
       </div>
 
 

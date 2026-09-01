@@ -433,12 +433,12 @@ function Risk() {
         {/* Total Exposure */}
         <div className="module-card" style={{ margin: 0, padding: "20px 24px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: "11px", fontWeight: "700", color: "#94a3b8", letterSpacing: "0.8px", textTransform: "uppercase" }}>
+            <span style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", letterSpacing: "0.8px", textTransform: "uppercase" }}>
               TOTAL EXPOSURE
             </span>
-            <Shield size={17} style={{ color: "#94a3b8", opacity: 0.8 }} />
+            <Shield size={17} style={{ color: "#0284c7", opacity: 0.9 }} />
           </div>
-          <div style={{ fontSize: "28px", fontWeight: "900", color: "#f8fafc", marginTop: "8px", letterSpacing: "-0.5px" }}>
+          <div style={{ fontSize: "28px", fontWeight: "900", color: "#0f172a", marginTop: "8px", letterSpacing: "-0.5px" }}>
             {formatMoney(totalExposure)}
           </div>
           <p style={{ fontSize: "11.5px", color: "#64748b", margin: "4px 0 0" }}>
@@ -449,12 +449,12 @@ function Risk() {
         {/* Buyers at Risk */}
         <div className="module-card" style={{ margin: 0, padding: "20px 24px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: "11px", fontWeight: "700", color: "#94a3b8", letterSpacing: "0.8px", textTransform: "uppercase" }}>
+            <span style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", letterSpacing: "0.8px", textTransform: "uppercase" }}>
               BUYERS AT RISK
             </span>
-            <Users size={17} style={{ color: "#94a3b8", opacity: 0.8 }} />
+            <Users size={17} style={{ color: "#7c3aed", opacity: 0.9 }} />
           </div>
-          <div style={{ fontSize: "28px", fontWeight: "900", color: "#f8fafc", marginTop: "8px", letterSpacing: "-0.5px" }}>
+          <div style={{ fontSize: "28px", fontWeight: "900", color: "#0f172a", marginTop: "8px", letterSpacing: "-0.5px" }}>
             {buyersAtRiskCount} of {totalBuyersCount}
           </div>
           <p style={{ fontSize: "11.5px", color: "#64748b", margin: "4px 0 0" }}>
@@ -465,12 +465,12 @@ function Risk() {
         {/* Days to First Shortfall */}
         <div className="module-card" style={{ margin: 0, padding: "20px 24px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: "11px", fontWeight: "700", color: "#94a3b8", letterSpacing: "0.8px", textTransform: "uppercase" }}>
+            <span style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", letterSpacing: "0.8px", textTransform: "uppercase" }}>
               DAYS TO FIRST SHORTFALL
             </span>
             <AlertTriangle size={17} style={{ color: "#d97706", opacity: 0.9 }} />
           </div>
-          <div style={{ fontSize: "28px", fontWeight: "900", color: "#f8fafc", marginTop: "8px", letterSpacing: "-0.5px" }}>
+          <div style={{ fontSize: "28px", fontWeight: "900", color: "#0f172a", marginTop: "8px", letterSpacing: "-0.5px" }}>
             {shortfallText}
           </div>
           <p style={{ fontSize: "11.5px", color: "#64748b", margin: "4px 0 0" }}>
@@ -486,10 +486,10 @@ function Risk() {
 
         {/* Left: Buyer × Month Risk Grid */}
         <div className="module-card" style={{ margin: 0, padding: "24px" }}>
-          <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#f8fafc", margin: "0 0 4px" }}>
+          <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#0f172a", margin: "0 0 4px" }}>
             Buyer × month risk grid
           </h3>
-          <p style={{ fontSize: "12px", color: "#94a3b8", margin: "0 0 20px" }}>
+          <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 20px" }}>
             Color intensity reflects buyer exposure and payment delay in the active data.
           </p>
 
@@ -530,7 +530,7 @@ function Risk() {
                     alignItems: "center",
                   }}
                 >
-                  <span style={{ fontSize: "13px", fontWeight: "600", color: "#f8fafc", paddingLeft: "4px" }}>
+                  <span style={{ fontSize: "13px", fontWeight: "700", color: "#0f172a", paddingLeft: "4px" }}>
                     {buyer.name}
                   </span>
 
@@ -544,7 +544,7 @@ function Risk() {
                       textAlign: "center",
                       fontWeight: "800",
                       fontSize: "12px",
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
                     }}
                   >
                     ₹{buyer.m1.toLocaleString("en-IN")}
@@ -560,7 +560,7 @@ function Risk() {
                       textAlign: "center",
                       fontWeight: "800",
                       fontSize: "12px",
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
                     }}
                   >
                     ₹{buyer.m2.toLocaleString("en-IN")}
@@ -576,7 +576,7 @@ function Risk() {
                       textAlign: "center",
                       fontWeight: "800",
                       fontSize: "12px",
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
                     }}
                   >
                     ₹{buyer.m3.toLocaleString("en-IN")}
@@ -589,10 +589,10 @@ function Risk() {
 
         {/* Right: Receivable Concentration Donut Chart */}
         <div className="module-card" style={{ margin: 0, padding: "24px", display: "flex", flexDirection: "column" }}>
-          <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#f8fafc", margin: "0 0 4px" }}>
+          <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#0f172a", margin: "0 0 4px" }}>
             Receivable concentration
           </h3>
-          <p style={{ fontSize: "12px", color: "#94a3b8", margin: "0 0 16px" }}>
+          <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 16px" }}>
             Buyers above 40% indicate concentration risk.
           </p>
 
@@ -629,8 +629,8 @@ function Risk() {
                         key={i}
                         d={pathData}
                         fill={slice.color}
-                        stroke="#0f172a"
-                        strokeWidth="1.5"
+                        stroke="#ffffff"
+                        strokeWidth="2"
                       />
                     );
                   });
@@ -644,9 +644,9 @@ function Risk() {
                 <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "12px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: d.color }} />
-                    <span style={{ color: "#cbd5e1", fontWeight: "500" }}>{d.name}</span>
+                    <span style={{ color: "#334155", fontWeight: "600" }}>{d.name}</span>
                   </div>
-                  <strong style={{ color: "#f8fafc", fontWeight: "700" }}>
+                  <strong style={{ color: "#0f172a", fontWeight: "800" }}>
                     ₹{d.value.toLocaleString("en-IN")}
                   </strong>
                 </div>
@@ -661,7 +661,7 @@ function Risk() {
           BOTTOM SECTION: RISK ALERTS AND MITIGATION QUEUE (3 CARDS)
           ========================================================================= */}
       <div className="module-card" style={{ marginBottom: "20px", padding: "24px" }}>
-        <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#f8fafc", margin: "0 0 18px" }}>
+        <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#0f172a", margin: "0 0 18px" }}>
           Risk alerts and mitigation queue
         </h3>
 
@@ -670,26 +670,27 @@ function Risk() {
           {/* Card 1: Customer Concentration */}
           <div
             style={{
-              background: "rgba(15, 23, 42, 0.6)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              borderRadius: "12px",
-              padding: "18px 20px",
+              background: "#f8fafc",
+              border: "1px solid #e2e8f0",
+              borderRadius: "14px",
+              padding: "20px 22px",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
+              boxShadow: "0 2px 8px rgba(15,23,42,0.03)",
             }}
           >
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                <strong style={{ fontSize: "14px", color: "#f8fafc" }}>Customer Concentration</strong>
+                <strong style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>Customer Concentration</strong>
                 <span
                   style={{
-                    background: "rgba(244, 63, 94, 0.15)",
-                    color: "#f43f5e",
-                    border: "1px solid rgba(244, 63, 94, 0.3)",
-                    padding: "2px 8px",
+                    background: "rgba(244, 63, 94, 0.12)",
+                    color: "#e11d48",
+                    border: "1px solid rgba(244, 63, 94, 0.25)",
+                    padding: "3px 9px",
                     borderRadius: "6px",
-                    fontSize: "10px",
+                    fontSize: "10.5px",
                     fontWeight: "800",
                     textTransform: "uppercase",
                   }}
@@ -697,13 +698,13 @@ function Risk() {
                   HIGH
                 </span>
               </div>
-              <p style={{ margin: "0 0 12px", fontSize: "12px", color: "#94a3b8" }}>
+              <p style={{ margin: "0 0 12px", fontSize: "12.5px", color: "#475569", fontWeight: "500" }}>
                 {topCustomerName} = {topCustomerPct}% of total receivables
               </p>
-              <div style={{ fontSize: "13px", fontWeight: "700", color: "#f8fafc", marginBottom: "6px" }}>
+              <div style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", marginBottom: "6px" }}>
                 Impact: ₹{topCustomerImpact.toLocaleString("en-IN")}
               </div>
-              <p style={{ margin: "0 0 16px", fontSize: "12px", color: "#64748b", lineHeight: "1.5" }}>
+              <p style={{ margin: "0 0 18px", fontSize: "12px", color: "#64748b", lineHeight: "1.5" }}>
                 Start invoice discounting before the Day 18 GST obligation.
               </p>
             </div>
@@ -712,23 +713,24 @@ function Risk() {
               onClick={() => handleActivateMitigation("TReDS Early Invoice Discounting", topCustomerImpact)}
               style={{
                 width: "100%",
-                padding: "10px",
-                background: "#090d16",
+                padding: "11px",
+                background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
                 color: "#ffffff",
-                border: "1px solid rgba(255,255,255,0.15)",
+                border: "none",
                 borderRadius: "8px",
                 fontWeight: "700",
-                fontSize: "12.5px",
+                fontSize: "13px",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
+                boxShadow: "0 2px 8px rgba(15,23,42,0.15)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "#1e293b";
-                e.currentTarget.style.borderColor = "#38bdf8";
+                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(15,23,42,0.25)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "#090d16";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 2px 8px rgba(15,23,42,0.15)";
               }}
             >
               Activate Mitigation
@@ -738,26 +740,27 @@ function Risk() {
           {/* Card 2: Payment Delays */}
           <div
             style={{
-              background: "rgba(15, 23, 42, 0.6)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              borderRadius: "12px",
-              padding: "18px 20px",
+              background: "#f8fafc",
+              border: "1px solid #e2e8f0",
+              borderRadius: "14px",
+              padding: "20px 22px",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
+              boxShadow: "0 2px 8px rgba(15,23,42,0.03)",
             }}
           >
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                <strong style={{ fontSize: "14px", color: "#f8fafc" }}>Payment Delays</strong>
+                <strong style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>Payment Delays</strong>
                 <span
                   style={{
-                    background: "rgba(245, 158, 11, 0.15)",
-                    color: "#f59e0b",
-                    border: "1px solid rgba(245, 158, 11, 0.3)",
-                    padding: "2px 8px",
+                    background: "rgba(245, 158, 11, 0.12)",
+                    color: "#d97706",
+                    border: "1px solid rgba(245, 158, 11, 0.25)",
+                    padding: "3px 9px",
                     borderRadius: "6px",
-                    fontSize: "10px",
+                    fontSize: "10.5px",
                     fontWeight: "800",
                     textTransform: "uppercase",
                   }}
@@ -765,13 +768,13 @@ function Risk() {
                   MEDIUM
                 </span>
               </div>
-              <p style={{ margin: "0 0 12px", fontSize: "12px", color: "#94a3b8" }}>
+              <p style={{ margin: "0 0 12px", fontSize: "12.5px", color: "#475569", fontWeight: "500" }}>
                 Average delay increased by 12 days this month
               </p>
-              <div style={{ fontSize: "13px", fontWeight: "700", color: "#f8fafc", marginBottom: "6px" }}>
+              <div style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", marginBottom: "6px" }}>
                 Impact: ₹{delayImpact.toLocaleString("en-IN")}
               </div>
-              <p style={{ margin: "0 0 16px", fontSize: "12px", color: "#64748b", lineHeight: "1.5" }}>
+              <p style={{ margin: "0 0 18px", fontSize: "12px", color: "#64748b", lineHeight: "1.5" }}>
                 Escalate collection follow-up and request an early-payment commitment.
               </p>
             </div>
@@ -780,23 +783,24 @@ function Risk() {
               onClick={() => handleActivateMitigation("Automated Payment Collection Escalation", delayImpact)}
               style={{
                 width: "100%",
-                padding: "10px",
-                background: "#090d16",
+                padding: "11px",
+                background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
                 color: "#ffffff",
-                border: "1px solid rgba(255,255,255,0.15)",
+                border: "none",
                 borderRadius: "8px",
                 fontWeight: "700",
-                fontSize: "12.5px",
+                fontSize: "13px",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
+                boxShadow: "0 2px 8px rgba(15,23,42,0.15)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "#1e293b";
-                e.currentTarget.style.borderColor = "#f59e0b";
+                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(15,23,42,0.25)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "#090d16";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 2px 8px rgba(15,23,42,0.15)";
               }}
             >
               Activate Mitigation
@@ -806,26 +810,27 @@ function Risk() {
           {/* Card 3: GST Reserve Health */}
           <div
             style={{
-              background: "rgba(15, 23, 42, 0.6)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              borderRadius: "12px",
-              padding: "18px 20px",
+              background: "#f8fafc",
+              border: "1px solid #e2e8f0",
+              borderRadius: "14px",
+              padding: "20px 22px",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
+              boxShadow: "0 2px 8px rgba(15,23,42,0.03)",
             }}
           >
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                <strong style={{ fontSize: "14px", color: "#f8fafc" }}>GST Reserve Health</strong>
+                <strong style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>GST Reserve Health</strong>
                 <span
                   style={{
-                    background: "rgba(16, 185, 129, 0.15)",
-                    color: "#10b981",
-                    border: "1px solid rgba(16, 185, 129, 0.3)",
-                    padding: "2px 8px",
+                    background: "rgba(16, 185, 129, 0.12)",
+                    color: "#059669",
+                    border: "1px solid rgba(16, 185, 129, 0.25)",
+                    padding: "3px 9px",
                     borderRadius: "6px",
-                    fontSize: "10px",
+                    fontSize: "10.5px",
                     fontWeight: "800",
                     textTransform: "uppercase",
                   }}
@@ -833,38 +838,39 @@ function Risk() {
                   LOW
                 </span>
               </div>
-              <p style={{ margin: "0 0 12px", fontSize: "12px", color: "#94a3b8" }}>
+              <p style={{ margin: "0 0 12px", fontSize: "12.5px", color: "#475569", fontWeight: "500" }}>
                 Reserve funded at 87% — on track for next filing
               </p>
-              <div style={{ fontSize: "13px", fontWeight: "700", color: "#f8fafc", marginBottom: "6px" }}>
+              <div style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", marginBottom: "6px" }}>
                 Impact: ₹{gstSurplusImpact.toLocaleString("en-IN")}
               </div>
-              <p style={{ margin: "0 0 16px", fontSize: "12px", color: "#64748b", lineHeight: "1.5" }}>
+              <p style={{ margin: "0 0 18px", fontSize: "12px", color: "#64748b", lineHeight: "1.5" }}>
                 Move the current surplus into the GST operating reserve.
               </p>
             </div>
 
             <button
-              onClick={() => handleActivateMitigation("GST Tax Surplus Reserve Allocation", gstSurplusImpact)}
+              onClick={() => handleActivateMitigation("GST Tax Buffer Allocation", gstSurplusImpact)}
               style={{
                 width: "100%",
-                padding: "10px",
-                background: "#090d16",
+                padding: "11px",
+                background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
                 color: "#ffffff",
-                border: "1px solid rgba(255,255,255,0.15)",
+                border: "none",
                 borderRadius: "8px",
                 fontWeight: "700",
-                fontSize: "12.5px",
+                fontSize: "13px",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
+                boxShadow: "0 2px 8px rgba(15,23,42,0.15)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "#1e293b";
-                e.currentTarget.style.borderColor = "#10b981";
+                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(15,23,42,0.25)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "#090d16";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 2px 8px rgba(15,23,42,0.15)";
               }}
             >
               Activate Mitigation
