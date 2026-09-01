@@ -471,283 +471,13 @@ function Simulator() {
       </div>
 
       {/* =====================================
-          CONTROLS CARD
-      ====================================== */}
-      <div className="module-card">
-        <div className="section-heading">
-          <div className="section-heading-icon" style={{ background: "rgba(59,130,246,0.2)", color: "#7A9CAE" }}>
-            <Brain size={19} />
-          </div>
-          <div>
-            <h2 style={{ fontSize: "15px", fontWeight: "700" }}>Scenario Assumptions</h2>
-            <p style={{ fontSize: "12px", color: "#94a3b8" }}>
-              Configure your stress test parameters and run the digital twin calculation.
-            </p>
-          </div>
-        </div>
-
-        {/* Scenario Presets */}
-        <div style={{ marginTop: "18px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
-          {Object.entries(presets).map(([key, p]) => (
-            <button
-              key={key}
-              onClick={() => applyPreset(key)}
-              style={{
-                padding: "8px 16px",
-                borderRadius: "8px",
-                border: activePreset === key ? "2px solid #7A9CAE" : "1px solid rgba(255,255,255,0.15)",
-                background: activePreset === key ? "rgba(122,156,174,0.15)" : "rgba(255,255,255,0.04)",
-                color: activePreset === key ? "#fff" : "#94a3b8",
-                cursor: "pointer",
-                fontSize: "12px",
-                fontWeight: activePreset === key ? "700" : "500",
-                transition: "all 0.2s ease",
-              }}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-
-        <div
-          style={{
-            marginTop: "22px",
-            display: "grid",
-            gap: "22px",
-          }}
-        >
-          {/* Revenue Slider */}
-          <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: "8px",
-                fontSize: "13px",
-              }}
-            >
-              <strong style={{ color: "#f8fafc" }}>Revenue Change (Demand Shock)</strong>
-              <strong style={{ color: revenueChange < 0 ? "#C07F7F" : revenueChange > 0 ? "#1C6758" : "#94a3b8" }}>
-                {revenueChange > 0 ? `+${revenueChange}%` : `${revenueChange}%`}
-              </strong>
-            </div>
-            <input
-              type="range"
-              min="-50"
-              max="50"
-              step="5"
-              value={revenueChange}
-              onChange={(e) => setRevenueChange(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "#7A9CAE" }}
-            />
-            <small style={{ color: "#64748b", fontSize: "11px" }}>
-              Negative values simulate a decline in sales orders or client cancellations.
-            </small>
-          </div>
-
-          {/* Expenses Slider */}
-          <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: "8px",
-                fontSize: "13px",
-              }}
-            >
-              <strong style={{ color: "#f8fafc" }}>Expense Surge (Inflation / OpEx Shock)</strong>
-              <strong style={{ color: expenseChange > 0 ? "#C07F7F" : "#94a3b8" }}>
-                +{expenseChange}%
-              </strong>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="50"
-              step="5"
-              value={expenseChange}
-              onChange={(e) => setExpenseChange(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "#C07F7F" }}
-            />
-            <small style={{ color: "#64748b", fontSize: "11px" }}>
-              Simulate an increase in raw material costs, rent, or unexpected operational disbursements.
-            </small>
-          </div>
-
-          {/* Payment Delay Slider */}
-          <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: "8px",
-                fontSize: "13px",
-              }}
-            >
-              <strong style={{ color: "#f8fafc" }}>Customer Payment Delay (Debtor Lag)</strong>
-              <strong style={{ color: paymentDelay > 0 ? "#C78150" : "#94a3b8" }}>
-                {paymentDelay} days
-              </strong>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="90"
-              step="5"
-              value={paymentDelay}
-              onChange={(e) => setPaymentDelay(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "#C78150" }}
-            />
-            <small style={{ color: "#64748b", fontSize: "11px" }}>
-              Simulate enterprise buyers delaying settlements past agreed credit periods.
-            </small>
-          </div>
-
-          {/* Invoice Collection Rate Slider */}
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px" }}>
-              <strong style={{ color: "#f8fafc" }}>Invoice Collection Rate</strong>
-              <strong style={{ color: collectionRate < 80 ? "#C07F7F" : "#1C6758" }}>{collectionRate}%</strong>
-            </div>
-            <input
-              type="range"
-              min="40"
-              max="100"
-              step="2"
-              value={collectionRate}
-              onChange={(e) => { setCollectionRate(Number(e.target.value)); setActivePreset("custom"); }}
-              style={{ width: "100%", accentColor: "#a78bfa" }}
-            />
-            <small style={{ color: "#64748b", fontSize: "11px" }}>
-              Percentage of invoiced amounts actually collected within the period.
-            </small>
-          </div>
-
-          {/* GST Rate Slider */}
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px" }}>
-              <strong style={{ color: "#f8fafc" }}>GST Rate</strong>
-              <strong style={{ color: "#94a3b8" }}>{gstRate}%</strong>
-            </div>
-            <input
-              type="range"
-              min="5"
-              max="28"
-              step="1"
-              value={gstRate}
-              onChange={(e) => { setGstRate(Number(e.target.value)); setActivePreset("custom"); }}
-              style={{ width: "100%", accentColor: "#60a5fa" }}
-            />
-            <small style={{ color: "#64748b", fontSize: "11px" }}>
-              Effective GST rate applied to receivables and outflows for tax liability estimation.
-            </small>
-          </div>
-
-          {/* Additional Revenue Slider */}
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px" }}>
-              <strong style={{ color: "#f8fafc" }}>Additional Revenue</strong>
-              <strong style={{ color: additionalRevenue > 0 ? "#10b981" : "#94a3b8" }}>
-                {additionalRevenue > 0 ? `+${formatMoney(additionalRevenue)}` : "₹0"}
-              </strong>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="5000000"
-              step="50000"
-              value={additionalRevenue}
-              onChange={(e) => { setAdditionalRevenue(Number(e.target.value)); setActivePreset("custom"); }}
-              style={{ width: "100%", accentColor: "#10b981" }}
-            />
-            <small style={{ color: "#64748b", fontSize: "11px" }}>
-              Inject projected pipeline orders or fresh sales commitments into the simulation.
-            </small>
-          </div>
-        </div>
-
-        {/* Buttons */}
-        <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            marginTop: "24px",
-            alignItems: "center",
-            flexWrap: "wrap",
-          }}
-        >
-          <button
-            onClick={runSimulation}
-            disabled={loading}
-            style={{
-              padding: "10px 22px",
-              border: "none",
-              borderRadius: "8px",
-              background: "linear-gradient(135deg, #7A9CAE 0%, #2563eb 100%)",
-              color: "#fff",
-              cursor: loading ? "not-allowed" : "pointer",
-              fontWeight: "700",
-              fontSize: "13px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              boxShadow: "0 4px 14px rgba(59,130,246,0.35)",
-            }}
-          >
-            <Sparkles size={16} />
-            {loading ? "Running Twin Simulation..." : "Run Graphical Simulation"}
-          </button>
-
-          <button
-            onClick={applyToDashboard}
-            style={{
-              padding: "10px 18px",
-              border: "1px solid rgba(16,185,129,0.4)",
-              borderRadius: "8px",
-              background: appliedToast ? "rgba(16,185,129,0.25)" : "rgba(16,185,129,0.1)",
-              color: "#34d399",
-              cursor: "pointer",
-              fontSize: "13px",
-              fontWeight: "600",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              transition: "all 0.2s ease",
-            }}
-          >
-            <ShieldCheck size={16} />
-            {appliedToast ? "✓ Applied to Dashboard!" : "Apply to Dashboard"}
-          </button>
-
-          <button
-            onClick={resetSimulation}
-            style={{
-              padding: "10px 16px",
-              border: "1px solid rgba(255,255,255,0.15)",
-              borderRadius: "8px",
-              background: "rgba(255,255,255,0.05)",
-              color: "#cbd5e1",
-              cursor: "pointer",
-              fontSize: "13px",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
-          >
-            <RotateCcw size={14} />
-            Reset
-          </button>
-        </div>
-      </div>
-
-      {/* =====================================
           ERROR
       ====================================== */}
       {error && (
         <div
           className="module-alert"
           style={{
-            marginTop: "18px",
+            marginBottom: "18px",
             background: "rgba(239, 68, 68, 0.15)",
             border: "1px solid rgba(239, 68, 68, 0.3)",
             padding: "14px 18px",
@@ -766,164 +496,395 @@ function Simulator() {
         </div>
       )}
 
-      {/* =====================================
-          SIMULATION VISUAL RESULTS
-      ====================================== */}
-      {simulation && (
-        <>
-          {/* Baseline KPI Cards */}
-          <div className="module-card" style={{ marginTop: "20px" }}>
-            <div className="section-heading">
-              <div className="section-heading-icon" style={{ background: "rgba(16,185,129,0.2)", color: "#1C6758" }}>
-                <Brain size={19} />
+      {/* =========================================================================
+          SIDE-BY-SIDE: SCENARIO CONTROLS (LEFT) + GRAPHICAL SIMULATION (RIGHT)
+          ========================================================================= */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))",
+          gap: "20px",
+          alignItems: "start",
+          marginBottom: "20px",
+        }}
+      >
+        {/* =====================================
+            LEFT COLUMN: CONTROLS CARD
+        ====================================== */}
+        <div className="module-card" style={{ margin: 0 }}>
+          <div className="section-heading">
+            <div className="section-heading-icon" style={{ background: "rgba(59,130,246,0.2)", color: "#7A9CAE" }}>
+              <Brain size={19} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: "15px", fontWeight: "700" }}>Scenario Assumptions</h2>
+              <p style={{ fontSize: "12px", color: "#94a3b8" }}>
+                Configure your stress test parameters and run the digital twin calculation.
+              </p>
+            </div>
+          </div>
+
+          {/* Scenario Presets */}
+          <div style={{ marginTop: "18px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            {Object.entries(presets).map(([key, p]) => (
+              <button
+                key={key}
+                onClick={() => applyPreset(key)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  border: activePreset === key ? "2px solid #7A9CAE" : "1px solid rgba(255,255,255,0.15)",
+                  background: activePreset === key ? "rgba(122,156,174,0.15)" : "rgba(255,255,255,0.04)",
+                  color: activePreset === key ? "#fff" : "#94a3b8",
+                  cursor: "pointer",
+                  fontSize: "12px",
+                  fontWeight: activePreset === key ? "700" : "500",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+
+          <div
+            style={{
+              marginTop: "22px",
+              display: "grid",
+              gap: "20px",
+            }}
+          >
+            {/* Revenue Slider */}
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "8px",
+                  fontSize: "13px",
+                }}
+              >
+                <strong style={{ color: "#f8fafc" }}>Revenue Change (Demand Shock)</strong>
+                <strong style={{ color: revenueChange < 0 ? "#C07F7F" : revenueChange > 0 ? "#1C6758" : "#94a3b8" }}>
+                  {revenueChange > 0 ? `+${revenueChange}%` : `${revenueChange}%`}
+                </strong>
+              </div>
+              <input
+                type="range"
+                min="-50"
+                max="50"
+                step="5"
+                value={revenueChange}
+                onChange={(e) => setRevenueChange(Number(e.target.value))}
+                style={{ width: "100%", accentColor: "#7A9CAE" }}
+              />
+              <small style={{ color: "#64748b", fontSize: "11px" }}>
+                Negative values simulate a decline in sales orders or client cancellations.
+              </small>
+            </div>
+
+            {/* Expenses Slider */}
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "8px",
+                  fontSize: "13px",
+                }}
+              >
+                <strong style={{ color: "#f8fafc" }}>Expense Surge (Inflation / OpEx Shock)</strong>
+                <strong style={{ color: expenseChange > 0 ? "#C07F7F" : "#94a3b8" }}>
+                  +{expenseChange}%
+                </strong>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                step="5"
+                value={expenseChange}
+                onChange={(e) => setExpenseChange(Number(e.target.value))}
+                style={{ width: "100%", accentColor: "#C07F7F" }}
+              />
+              <small style={{ color: "#64748b", fontSize: "11px" }}>
+                Simulate an increase in raw material costs, rent, or unexpected operational disbursements.
+              </small>
+            </div>
+
+            {/* Payment Delay Slider */}
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "8px",
+                  fontSize: "13px",
+                }}
+              >
+                <strong style={{ color: "#f8fafc" }}>Customer Payment Delay (Debtor Lag)</strong>
+                <strong style={{ color: paymentDelay > 0 ? "#C78150" : "#94a3b8" }}>
+                  {paymentDelay} days
+                </strong>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="90"
+                step="5"
+                value={paymentDelay}
+                onChange={(e) => setPaymentDelay(Number(e.target.value))}
+                style={{ width: "100%", accentColor: "#C78150" }}
+              />
+              <small style={{ color: "#64748b", fontSize: "11px" }}>
+                Simulate enterprise buyers delaying settlements past agreed credit periods.
+              </small>
+            </div>
+
+            {/* Invoice Collection Rate Slider */}
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px" }}>
+                <strong style={{ color: "#f8fafc" }}>Invoice Collection Rate</strong>
+                <strong style={{ color: collectionRate < 80 ? "#C07F7F" : "#1C6758" }}>{collectionRate}%</strong>
+              </div>
+              <input
+                type="range"
+                min="40"
+                max="100"
+                step="2"
+                value={collectionRate}
+                onChange={(e) => { setCollectionRate(Number(e.target.value)); setActivePreset("custom"); }}
+                style={{ width: "100%", accentColor: "#a78bfa" }}
+              />
+              <small style={{ color: "#64748b", fontSize: "11px" }}>
+                Percentage of invoiced amounts actually collected within the period.
+              </small>
+            </div>
+
+            {/* GST Rate Slider */}
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px" }}>
+                <strong style={{ color: "#f8fafc" }}>GST Rate</strong>
+                <strong style={{ color: "#94a3b8" }}>{gstRate}%</strong>
+              </div>
+              <input
+                type="range"
+                min="5"
+                max="28"
+                step="1"
+                value={gstRate}
+                onChange={(e) => { setGstRate(Number(e.target.value)); setActivePreset("custom"); }}
+                style={{ width: "100%", accentColor: "#60a5fa" }}
+              />
+              <small style={{ color: "#64748b", fontSize: "11px" }}>
+                Effective GST rate applied to receivables and outflows for tax liability estimation.
+              </small>
+            </div>
+
+            {/* Additional Revenue Slider */}
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px" }}>
+                <strong style={{ color: "#f8fafc" }}>Additional Revenue</strong>
+                <strong style={{ color: additionalRevenue > 0 ? "#10b981" : "#94a3b8" }}>
+                  {additionalRevenue > 0 ? `+${formatMoney(additionalRevenue)}` : "₹0"}
+                </strong>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="5000000"
+                step="50000"
+                value={additionalRevenue}
+                onChange={(e) => { setAdditionalRevenue(Number(e.target.value)); setActivePreset("custom"); }}
+                style={{ width: "100%", accentColor: "#10b981" }}
+              />
+              <small style={{ color: "#64748b", fontSize: "11px" }}>
+                Inject projected pipeline orders or fresh sales commitments into the simulation.
+              </small>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              marginTop: "22px",
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            <button
+              onClick={runSimulation}
+              disabled={loading}
+              style={{
+                padding: "9px 18px",
+                border: "none",
+                borderRadius: "8px",
+                background: "linear-gradient(135deg, #7A9CAE 0%, #2563eb 100%)",
+                color: "#fff",
+                cursor: loading ? "not-allowed" : "pointer",
+                fontWeight: "700",
+                fontSize: "12.5px",
+                display: "flex",
+                alignItems: "center",
+                gap: "7px",
+                boxShadow: "0 4px 14px rgba(59,130,246,0.35)",
+              }}
+            >
+              <Sparkles size={15} />
+              {loading ? "Running Twin..." : "Run Simulation"}
+            </button>
+
+            <button
+              onClick={applyToDashboard}
+              style={{
+                padding: "9px 14px",
+                border: "1px solid rgba(16,185,129,0.4)",
+                borderRadius: "8px",
+                background: appliedToast ? "rgba(16,185,129,0.25)" : "rgba(16,185,129,0.1)",
+                color: "#34d399",
+                cursor: "pointer",
+                fontSize: "12.5px",
+                fontWeight: "600",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <ShieldCheck size={15} />
+              {appliedToast ? "✓ Applied!" : "Apply to Dashboard"}
+            </button>
+
+            <button
+              onClick={resetSimulation}
+              style={{
+                padding: "9px 14px",
+                border: "1px solid rgba(255,255,255,0.15)",
+                borderRadius: "8px",
+                background: "rgba(255,255,255,0.05)",
+                color: "#cbd5e1",
+                cursor: "pointer",
+                fontSize: "12.5px",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              <RotateCcw size={13} />
+              Reset
+            </button>
+          </div>
+        </div>
+
+        {/* =================================================================
+            RIGHT COLUMN: INTERACTIVE GRAPH VISUALIZER SECTION
+            ================================================================= */}
+        <div className="module-card" style={{ margin: 0, padding: "22px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px", marginBottom: "16px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div className="section-heading-icon" style={{ background: "rgba(59,130,246,0.2)", color: "#7A9CAE" }}>
+                <BarChart3 size={18} />
               </div>
               <div>
-                <h2 style={{ fontSize: "15px", fontWeight: "700" }}>Current Baseline Financial Position</h2>
-                <p style={{ fontSize: "12px", color: "#94a3b8" }}>
-                  Pre-shock operating parameters used by the Digital Twin model.
+                <h2 style={{ fontSize: "15px", fontWeight: "800", color: "#fff", margin: 0 }}>
+                  Live Scenario Comparison
+                </h2>
+                <p style={{ margin: "2px 0 0", fontSize: "11.5px", color: "#94a3b8" }}>
+                  Interactive charts comparing baseline solvency vs stressed depletion curves.
                 </p>
               </div>
             </div>
 
-            <div className="module-grid" style={{ marginTop: "18px" }}>
-              <div className="module-stat">
-                <span style={{ fontSize: "11px", color: "#94a3b8" }}>CURRENT CASH</span>
-                <strong style={{ fontSize: "18px", color: "#38bdf8" }}>
-                  {formatMoney(simulation.base?.current_cash)}
-                </strong>
-              </div>
+            {/* Chart Mode Toggle */}
+            <div style={{ display: "flex", background: "rgba(15, 23, 42, 0.6)", padding: "3px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)" }}>
+              <button
+                onClick={() => setActiveChartTab("trajectory")}
+                style={{
+                  padding: "5px 11px",
+                  borderRadius: "6px",
+                  border: "none",
+                  background: activeChartTab === "trajectory" ? "#7A9CAE" : "transparent",
+                  color: activeChartTab === "trajectory" ? "#fff" : "#94a3b8",
+                  fontSize: "11.5px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <LineChart size={13} />
+                90-Day Trajectory
+              </button>
 
-              <div className="module-stat">
-                <span style={{ fontSize: "11px", color: "#94a3b8" }}>RECEIVABLES</span>
-                <strong style={{ fontSize: "18px", color: "#1C6758" }}>
-                  {formatMoney(simulation.base?.receivables)}
-                </strong>
-              </div>
+              <button
+                onClick={() => setActiveChartTab("bar")}
+                style={{
+                  padding: "5px 11px",
+                  borderRadius: "6px",
+                  border: "none",
+                  background: activeChartTab === "bar" ? "#7A9CAE" : "transparent",
+                  color: activeChartTab === "bar" ? "#fff" : "#94a3b8",
+                  fontSize: "11.5px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <BarChart3 size={13} />
+                Scenario Bar
+              </button>
 
-              <div className="module-stat">
-                <span style={{ fontSize: "11px", color: "#94a3b8" }}>TOTAL EXPENSES</span>
-                <strong style={{ fontSize: "18px", color: "#C07F7F" }}>
-                  {formatMoney(simulation.base?.total_expenses)}
-                </strong>
-              </div>
+              <button
+                onClick={() => setActiveChartTab("cards")}
+                style={{
+                  padding: "5px 11px",
+                  borderRadius: "6px",
+                  border: "none",
+                  background: activeChartTab === "cards" ? "#7A9CAE" : "transparent",
+                  color: activeChartTab === "cards" ? "#fff" : "#94a3b8",
+                  fontSize: "11.5px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <Layers size={13} />
+                Matrix
+              </button>
 
-              <div className="module-stat">
-                <span style={{ fontSize: "11px", color: "#94a3b8" }}>NET POSITION</span>
-                <strong style={{ fontSize: "18px", color: Number(simulation.base?.net_position || 0) >= 0 ? "#1C6758" : "#C07F7F" }}>
-                  {formatMoney(simulation.base?.net_position)}
-                </strong>
-              </div>
+              <button
+                onClick={() => setActiveChartTab("aiRisk")}
+                style={{
+                  padding: "5px 11px",
+                  borderRadius: "6px",
+                  border: "none",
+                  background: activeChartTab === "aiRisk"
+                    ? "linear-gradient(135deg, #8b5cf6, #6366f1)"
+                    : "transparent",
+                  color: activeChartTab === "aiRisk" ? "#fff" : "#94a3b8",
+                  fontSize: "11.5px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                <Zap size={13} />
+                AI Risk Map
+              </button>
             </div>
           </div>
 
-          {/* =================================================================
-              INTERACTIVE GRAPH VISUALIZER SECTION
-              ================================================================= */}
-          <div className="module-card" style={{ marginTop: "20px", padding: "24px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "14px", marginBottom: "18px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <div className="section-heading-icon" style={{ background: "rgba(59,130,246,0.2)", color: "#7A9CAE" }}>
-                  <BarChart3 size={20} />
-                </div>
-                <div>
-                  <h2 style={{ fontSize: "16px", fontWeight: "800", color: "#fff", margin: 0 }}>
-                    Visual Shock Graphs & Impact Trajectories
-                  </h2>
-                  <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#94a3b8" }}>
-                    Interactive charts comparing scenario solvency and 90-day cash depletion curves.
-                  </p>
-                </div>
-              </div>
-
-              {/* Chart Mode Toggle */}
-              <div style={{ display: "flex", background: "rgba(15, 23, 42, 0.6)", padding: "3px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                <button
-                  onClick={() => setActiveChartTab("bar")}
-                  style={{
-                    padding: "6px 14px",
-                    borderRadius: "6px",
-                    border: "none",
-                    background: activeChartTab === "bar" ? "#7A9CAE" : "transparent",
-                    color: activeChartTab === "bar" ? "#fff" : "#94a3b8",
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                  }}
-                >
-                  <BarChart3 size={14} />
-                  Scenario Bar Chart
-                </button>
-
-                <button
-                  onClick={() => setActiveChartTab("trajectory")}
-                  style={{
-                    padding: "6px 14px",
-                    borderRadius: "6px",
-                    border: "none",
-                    background: activeChartTab === "trajectory" ? "#7A9CAE" : "transparent",
-                    color: activeChartTab === "trajectory" ? "#fff" : "#94a3b8",
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                  }}
-                >
-                  <LineChart size={14} />
-                  90-Day Trajectory
-                </button>
-
-                <button
-                  onClick={() => setActiveChartTab("cards")}
-                  style={{
-                    padding: "6px 14px",
-                    borderRadius: "6px",
-                    border: "none",
-                    background: activeChartTab === "cards" ? "#7A9CAE" : "transparent",
-                    color: activeChartTab === "cards" ? "#fff" : "#94a3b8",
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                  }}
-                >
-                  <Layers size={14} />
-                  Detailed Matrix
-                </button>
-
-                <button
-                  onClick={() => setActiveChartTab("aiRisk")}
-                  style={{
-                    padding: "6px 14px",
-                    borderRadius: "6px",
-                    border: "none",
-                    background: activeChartTab === "aiRisk"
-                      ? "linear-gradient(135deg, #8b5cf6, #6366f1)"
-                      : "transparent",
-                    color: activeChartTab === "aiRisk" ? "#fff" : "#94a3b8",
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    boxShadow: activeChartTab === "aiRisk" ? "0 2px 10px rgba(139,92,246,0.35)" : "none",
-                  }}
-                >
-                  <Zap size={14} />
-                  AI Risk Map
-                </button>
-              </div>
-            </div>
-
-            {/* GRAPH VIEW 1: SCENARIO COMPARISON BAR CHART */}
-            {activeChartTab === "bar" && (
+          {/* GRAPH VIEW 1: SCENARIO COMPARISON BAR CHART */}
+          {activeChartTab === "bar" && (
               <div>
                 <div style={{ height: 340, width: "100%", marginTop: "10px" }}>
                   <ResponsiveContainer width="100%" height="100%">
@@ -1390,11 +1351,57 @@ function Simulator() {
               </div>
             )}
           </div>
+        </div>
 
-          {/* =====================================
-              AI INSIGHTS PANEL
-          ====================================== */}
-          {aiInsights && (
+        {/* Baseline KPI Cards */}
+        <div className="module-card" style={{ marginTop: "20px" }}>
+          <div className="section-heading">
+            <div className="section-heading-icon" style={{ background: "rgba(16,185,129,0.2)", color: "#1C6758" }}>
+              <Brain size={19} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: "15px", fontWeight: "700" }}>Current Baseline Financial Position</h2>
+              <p style={{ fontSize: "12px", color: "#94a3b8" }}>
+                Pre-shock operating parameters used by the Digital Twin model.
+              </p>
+            </div>
+          </div>
+
+          <div className="module-grid" style={{ marginTop: "18px" }}>
+            <div className="module-stat">
+              <span style={{ fontSize: "11px", color: "#94a3b8" }}>CURRENT CASH</span>
+              <strong style={{ fontSize: "18px", color: "#38bdf8" }}>
+                {formatMoney(simulation?.base?.current_cash)}
+              </strong>
+            </div>
+
+            <div className="module-stat">
+              <span style={{ fontSize: "11px", color: "#94a3b8" }}>RECEIVABLES</span>
+              <strong style={{ fontSize: "18px", color: "#1C6758" }}>
+                {formatMoney(simulation?.base?.receivables)}
+              </strong>
+            </div>
+
+            <div className="module-stat">
+              <span style={{ fontSize: "11px", color: "#94a3b8" }}>TOTAL EXPENSES</span>
+              <strong style={{ fontSize: "18px", color: "#C07F7F" }}>
+                {formatMoney(simulation?.base?.total_expenses)}
+              </strong>
+            </div>
+
+            <div className="module-stat">
+              <span style={{ fontSize: "11px", color: "#94a3b8" }}>NET POSITION</span>
+              <strong style={{ fontSize: "18px", color: Number(simulation?.base?.net_position || 0) >= 0 ? "#1C6758" : "#C07F7F" }}>
+                {formatMoney(simulation?.base?.net_position)}
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        {/* =====================================
+            AI INSIGHTS PANEL
+        ====================================== */}
+        {aiInsights && (
             <div className="module-card" style={{ marginTop: "20px" }}>
               <div className="section-heading">
                 <div
@@ -1588,8 +1595,6 @@ function Simulator() {
             <strong>Simulation assumptions:</strong> Revenue {revenueChange}%, Expenses +{expenseChange}%, Payment delay {paymentDelay} days. These are mathematical scenarios based on your digital twin ledger.
             {aiInsights && " • AI suggestions powered by ML pipeline trained on 88,305 payment records."}
           </div>
-        </>
-      )}
     </ModulePage>
   );
 }
