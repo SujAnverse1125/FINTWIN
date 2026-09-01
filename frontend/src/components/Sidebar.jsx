@@ -21,6 +21,13 @@ import {
   UserCheck,
   LogOut,
   X,
+  ShieldCheck,
+  Building2,
+  SlidersHorizontal,
+  Bell,
+  Cpu,
+  PanelLeftClose,
+  PanelLeftOpen
 } from "lucide-react";
 
 import {
@@ -31,21 +38,38 @@ import {
 import { calculateRunwayDays } from "../engines/digitalTwin";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
+import FinTwinLogo from "./FinTwinLogo";
 
-const primaryNav = [
-  { key: "dashboard", name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-  { key: "cashFlow", name: "Cash Flow Twin", path: "/cash-flow", icon: Wallet },
-  { key: "invoices", name: "Invoices", path: "/invoices", icon: FileText, badge: "Live" },
-  { key: "expenses", name: "Expenses & Burn", path: "/expenses", icon: CreditCard },
-  { key: "customers", name: "Customers & Risk", path: "/customers", icon: Users },
-  { key: "forecast", name: "90-Day Forecast", path: "/forecast", icon: TrendingUp },
-  { key: "simulator", name: "What-If Simulator", path: "/simulator", icon: FlaskConical },
-  { key: "financing", name: "MSME Financing", path: "/financing", icon: Landmark, badge: "New" },
-  { key: "gst", name: "GST & Tax Calculator", path: "/gst", icon: Percent, badge: "Tax" },
-  { key: "payroll", name: "Payroll & Workers", path: "/payroll", icon: UserCheck, badge: "Payroll" },
-  { key: "reports", name: "Reports & P&L", path: "/reports", icon: FileSpreadsheet },
-  { key: "integrations", name: "Integrations", path: "/integrations", icon: Layers },
-  { key: "settings", name: "Settings", path: "/settings", icon: Settings },
+// Grouped navigation structure (Light Translucent Glass Theme)
+const NAV_GROUPS = [
+  {
+    groupTitle: "FINANCIAL TWIN",
+    items: [
+      { key: "dashboard", name: "Dashboard", path: "/dashboard", icon: LayoutDashboard, iconColor: "#0284c7" },
+      { key: "cashFlow", name: "Cash Flow Twin", path: "/cash-flow", icon: Wallet, iconColor: "#059669" },
+      { key: "invoices", name: "Invoices & Inflow", path: "/invoices", icon: FileText, badge: "Live", badgeType: "live", iconColor: "#7c3aed" },
+      { key: "forecast", name: "90-Day Forecast", path: "/forecast", icon: TrendingUp, iconColor: "#d97706" },
+      { key: "simulator", name: "What-If Simulator", path: "/simulator", icon: FlaskConical, iconColor: "#db2777" },
+    ],
+  },
+  {
+    groupTitle: "MSME OPERATIONS",
+    items: [
+      { key: "expenses", name: "Expenses & Burn", path: "/expenses", icon: CreditCard, iconColor: "#dc2626" },
+      { key: "customers", name: "Customers & Risk", path: "/customers", icon: Users, iconColor: "#0891b2" },
+      { key: "financing", name: "MSME Financing", path: "/financing", icon: Landmark, badge: "TReDS", badgeType: "treds", iconColor: "#2563eb" },
+      { key: "gst", name: "GST Reconciler", path: "/gst", icon: Percent, badge: "Tax", badgeType: "tax", iconColor: "#9333ea" },
+      { key: "payroll", name: "Payroll & Workers", path: "/payroll", icon: UserCheck, badge: "Payroll", badgeType: "payroll", iconColor: "#16a34a" },
+    ],
+  },
+  {
+    groupTitle: "SYSTEM & INSIGHTS",
+    items: [
+      { key: "reports", name: "Reports & P&L", path: "/reports", icon: FileSpreadsheet, iconColor: "#64748b" },
+      { key: "integrations", name: "Integrations", path: "/integrations", icon: Layers, iconColor: "#64748b" },
+      { key: "settings", name: "Settings", path: "/settings", icon: Settings, iconColor: "#64748b" },
+    ],
+  },
 ];
 
 export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMobile }) {
@@ -57,6 +81,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMo
   const [business, setBusiness] = useState(getBusiness());
   const [dbConnected, setDbConnected] = useState(isDatabaseConnected());
   const [runway, setRunway] = useState(calculateRunwayDays());
+  const [hoveredItem, setHoveredItem] = useState(null);
 
   useEffect(() => {
     const unsub = subscribeFinancialData(() => {
@@ -73,164 +98,543 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMo
     }
   };
 
+  const isActive = (path) => {
+    if (path === "/dashboard" && location.pathname === "/dashboard") return true;
+    if (path !== "/dashboard" && location.pathname.startsWith(path)) return true;
+    return false;
+  };
+
   return (
     <aside
       className={`app-sidebar ${collapsed ? "collapsed" : ""} ${
         mobileOpen ? "mobile-open" : ""
       }`}
+      style={{
+        width: collapsed ? "76px" : "268px",
+        height: "calc(100vh - 24px)",
+        position: "fixed",
+        top: "12px",
+        left: "12px",
+        bottom: "12px",
+        borderRadius: "22px",
+        // Warm Alabaster & Raw Silk Frosted Translucent Glassmorphism
+        background: "rgba(245, 246, 241, 0.82)",
+        backdropFilter: "blur(30px) saturate(180%)",
+        WebkitBackdropFilter: "blur(30px) saturate(180%)",
+        border: "1px solid rgba(255, 255, 255, 0.85)",
+        boxShadow: "0 20px 48px rgba(30, 40, 30, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95)",
+        display: "flex",
+        flexDirection: "column",
+        zIndex: 100,
+        transition: "width 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
+        userSelect: "none",
+        fontFamily: "'Inter', sans-serif",
+        overflow: "hidden",
+        color: "#121316",
+      }}
     >
-      {/* Brand Header */}
-      <div className="sidebar-header">
-        <Link to="/landing" className="brand-logo-wrap" onClick={handleNavClick}>
-          <div className="brand-logo-icon">FT</div>
-          {!collapsed && (
-            <div className="brand-text">
-              <span className="brand-title">FinTwin</span>
-              <span className="brand-subtitle">
-                <Sparkles size={11} /> AI Digital Twin
-              </span>
-            </div>
-          )}
-        </Link>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {/* Desktop collapse toggle */}
-          <button
-            className="sidebar-collapse-btn desktop-only"
-            onClick={() => setCollapsed(!collapsed)}
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+      {/* =========================================================================
+          1. TOP BRAND HEADER (ZERO OVERLAPPING GUARANTEED)
+          ========================================================================= */}
+      <div
+        style={{
+          padding: collapsed ? "16px 0" : "18px 18px 14px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: collapsed ? "center" : "space-between",
+          borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
+          flexShrink: 0,
+          position: "relative",
+        }}
+      >
+        {collapsed ? (
+          /* Collapsed Mode: Monogram Emblem Only */
+          <div
+            onClick={() => setCollapsed(false)}
+            title="Expand Sidebar"
+            style={{
+              cursor: "pointer",
+              transition: "transform 0.15s ease",
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.06)")}
+            onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
           >
-            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-          </button>
+            <FinTwinLogo size={36} variant="mark-only" />
+          </div>
+        ) : (
+          /* Expanded Mode: Full Logo + Title + Collapse Toggle on the Far Right */
+          <>
+            <Link
+              to="/dashboard"
+              onClick={handleNavClick}
+              style={{
+                textDecoration: "none",
+                minWidth: 0,
+              }}
+            >
+              <FinTwinLogo size={36} fontSize={17} badgeText="AI TWIN" />
+            </Link>
 
-          {/* Mobile close toggle */}
-          <button
-            className="sidebar-collapse-btn mobile-close-btn"
-            onClick={onCloseMobile}
-            title="Close menu"
-          >
-            <X size={18} />
-          </button>
-        </div>
+            {/* Collapse Toggle Button (Far Right in Expanded Mode) */}
+            <button
+              onClick={() => setCollapsed(true)}
+              title="Collapse Sidebar"
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: "8px",
+                background: "rgba(0, 0, 0, 0.04)",
+                border: "1px solid rgba(0, 0, 0, 0.06)",
+                color: "#52525b",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+                padding: 0,
+                flexShrink: 0,
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = "#ffffff";
+                e.currentTarget.style.color = "#121316";
+                e.currentTarget.style.boxShadow = "0 2px 6px rgba(0,0,0,0.06)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "rgba(0, 0, 0, 0.04)";
+                e.currentTarget.style.color = "#52525b";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              <ChevronLeft size={15} />
+            </button>
+          </>
+        )}
       </div>
 
-      {/* Logged in User Profile Card */}
-      {!collapsed && (
-        <div style={{ padding: "0 14px", marginBottom: 12 }}>
+      {/* =========================================================================
+          2. ENTERPRISE SELECTOR CAPSULE (LIGHT FROSTED GLASS CARD)
+          ========================================================================= */}
+      {!collapsed ? (
+        <div
+          style={{
+            margin: "12px 14px 6px",
+            padding: "10px 12px",
+            borderRadius: "14px",
+            background: "rgba(255, 255, 255, 0.7)",
+            border: "1px solid rgba(0, 0, 0, 0.06)",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexShrink: 0,
+          }}
+        >
           <div
-            className="sidebar-business-card"
-            onClick={() => {
-              navigate("/settings");
-              handleNavClick();
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: "9px",
+              background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 700,
+              fontSize: 13,
+              boxShadow: "0 2px 8px rgba(2, 132, 199, 0.25)",
+              border: "1px solid rgba(255, 255, 255, 0.5)",
+              flexShrink: 0,
             }}
-            title="Manage Company Settings"
           >
-            <div className="biz-avatar">
-              {user?.company ? user.company.charAt(0) : "B"}
+            {business?.name ? business.name[0].toUpperCase() : "E"}
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: "12.5px",
+                fontWeight: 700,
+                color: "#121316",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {business?.name || "Enterprise Twin"}
             </div>
-              <div className="biz-details">
-                <div className="biz-name">{user?.company || business.name || "My Enterprise"}</div>
-                <div className="biz-type" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
-                  <span>{user?.name || "Executive"}</span>
-                  {user?.role && (
-                    <span
+            <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 1 }}>
+              <span
+                style={{
+                  fontSize: "9px",
+                  fontWeight: 700,
+                  color: "#0284c7",
+                  background: "rgba(2, 132, 199, 0.12)",
+                  border: "1px solid rgba(2, 132, 199, 0.25)",
+                  padding: "1px 5px",
+                  borderRadius: "4px",
+                  textTransform: "uppercase",
+                }}
+              >
+                {user?.role || "CEO"}
+              </span>
+              <span style={{ fontSize: "11px", color: "#64748b" }}>
+                {user?.name?.split(" ")[0] || "Owner"}
+              </span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div style={{ padding: "8px 0", display: "flex", justifyContent: "center" }}>
+          <div
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: "10px",
+              background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 700,
+              fontSize: 13,
+              boxShadow: "0 2px 8px rgba(2, 132, 199, 0.25)",
+              border: "1px solid rgba(255, 255, 255, 0.5)",
+            }}
+          >
+            {business?.name ? business.name[0].toUpperCase() : "E"}
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          3. SCROLLABLE NAVIGATION MENU (WHITE FROSTED GLASS PILLS & SQUIRCLES)
+          ========================================================================= */}
+      <div
+        className="sidebar-nav"
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          overflowX: "hidden",
+          padding: collapsed ? "8px 8px" : "8px 12px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "14px",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
+        {NAV_GROUPS.map((group, gIdx) => (
+          <div key={gIdx} style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+            {/* Semantic Group Header */}
+            {!collapsed && (
+              <div
+                style={{
+                  fontSize: "9.5px",
+                  fontWeight: 700,
+                  color: "#94a3b8",
+                  letterSpacing: "0.9px",
+                  padding: "0 10px 4px",
+                  textTransform: "uppercase",
+                }}
+              >
+                {group.groupTitle}
+              </div>
+            )}
+
+            {/* Navigation Items */}
+            {group.items.map((item) => {
+              const active = isActive(item.path);
+              const Icon = item.icon;
+
+              let badgeStyle = {
+                background: "rgba(16, 185, 129, 0.12)",
+                color: "#059669",
+                border: "1px solid rgba(16, 185, 129, 0.25)",
+              };
+              if (item.badgeType === "treds") {
+                badgeStyle = {
+                  background: "rgba(2, 132, 199, 0.12)",
+                  color: "#0284c7",
+                  border: "1px solid rgba(2, 132, 199, 0.25)",
+                };
+              } else if (item.badgeType === "tax") {
+                badgeStyle = {
+                  background: "rgba(124, 58, 237, 0.12)",
+                  color: "#7c3aed",
+                  border: "1px solid rgba(124, 58, 237, 0.25)",
+                };
+              } else if (item.badgeType === "payroll") {
+                badgeStyle = {
+                  background: "rgba(217, 119, 6, 0.12)",
+                  color: "#d97706",
+                  border: "1px solid rgba(217, 119, 6, 0.25)",
+                };
+              }
+
+              return (
+                <div
+                  key={item.key}
+                  style={{ position: "relative" }}
+                  onMouseEnter={() => setHoveredItem(item.key)}
+                  onMouseLeave={() => setHoveredItem(null)}
+                >
+                  <Link
+                    to={item.path}
+                    onClick={handleNavClick}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: collapsed ? "center" : "space-between",
+                      padding: collapsed ? "8px 0" : "7px 10px",
+                      borderRadius: "12px",
+                      textDecoration: "none",
+                      position: "relative",
+                      background: active
+                        ? "#ffffff"
+                        : hoveredItem === item.key
+                        ? "rgba(255, 255, 255, 0.65)"
+                        : "transparent",
+                      color: active ? "#121316" : "#475569",
+                      fontWeight: active ? 700 : 500,
+                      fontSize: "12.5px",
+                      boxShadow: active
+                        ? "0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9)"
+                        : "none",
+                      border: active
+                        ? "1px solid rgba(0, 0, 0, 0.06)"
+                        : "1px solid transparent",
+                      transition: "all 0.15s cubic-bezier(0.16, 1, 0.3, 1)",
+                    }}
+                  >
+                    {/* Left Active Accent Pill Indicator */}
+                    {active && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          left: 0,
+                          top: "8px",
+                          bottom: "8px",
+                          width: "3.5px",
+                          borderRadius: "0 4px 4px 0",
+                          background: "#059669",
+                          boxShadow: "0 0 8px rgba(5, 150, 105, 0.4)",
+                        }}
+                      />
+                    )}
+
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      {/* Tactile Icon Squircle Container */}
+                      <div
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: "9px",
+                          background: active
+                            ? "rgba(5, 150, 105, 0.1)"
+                            : "rgba(0, 0, 0, 0.03)",
+                          border: active
+                            ? "1px solid rgba(5, 150, 105, 0.2)"
+                            : "1px solid rgba(0, 0, 0, 0.04)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                          transition: "all 0.15s ease",
+                        }}
+                      >
+                        <Icon
+                          size={16}
+                          color={active ? "#059669" : item.iconColor || "#64748b"}
+                        />
+                      </div>
+
+                      {!collapsed && <span style={{ color: active ? "#121316" : "#475569" }}>{item.name}</span>}
+                    </div>
+
+                    {!collapsed && item.badge && (
+                      <span
+                        style={{
+                          fontSize: "9px",
+                          fontWeight: 700,
+                          padding: "2px 6px",
+                          borderRadius: "5px",
+                          textTransform: "uppercase",
+                          ...badgeStyle,
+                        }}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+
+                  {/* Collapsed Mode Floating Hover Tooltip (Robin Holesinsky style) */}
+                  {collapsed && hoveredItem === item.key && (
+                    <div
                       style={{
-                        fontSize: 10,
-                        fontWeight: 700,
-                        padding: "1px 6px",
-                        borderRadius: "var(--radius-full)",
-                        background:
-                          user.role === "Accountant"
-                            ? "rgba(16,185,129,0.15)"
-                            : user.role === "CFO"
-                            ? "rgba(139,92,246,0.15)"
-                            : "rgba(59,130,246,0.15)",
-                        color:
-                          user.role === "Accountant"
-                            ? "#34d399"
-                            : user.role === "CFO"
-                            ? "#c4b5fd"
-                            : "#60a5fa",
+                        position: "absolute",
+                        left: "calc(100% + 14px)",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        zIndex: 1000,
+                        background: "#121316",
+                        border: "1px solid rgba(255, 255, 255, 0.15)",
+                        color: "#ffffff",
+                        padding: "7px 12px",
+                        borderRadius: "9px",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        pointerEvents: "none",
                       }}
                     >
-                      {user.role}
-                    </span>
+                      <span>{item.name}</span>
+                      {item.badge && (
+                        <span
+                          style={{
+                            fontSize: "9px",
+                            fontWeight: 700,
+                            padding: "1px 5px",
+                            borderRadius: "4px",
+                            background: "rgba(255, 255, 255, 0.2)",
+                            color: "#ffffff",
+                          }}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
-              </div>
+              );
+            })}
           </div>
-        </div>
-      )}
+        ))}
+      </div>
 
-      {/* Navigation */}
-      <nav className="sidebar-nav">
-        {!collapsed && <div className="nav-section-title">Operations</div>}
-        {primaryNav.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`nav-item ${isActive ? "active" : ""}`}
-              onClick={handleNavClick}
-              title={collapsed ? item.name : undefined}
+      {/* =========================================================================
+          4. BOTTOM RUNWAY & CONTROLS (EXPAND/COLLAPSE TOGGLE FOR COMPACT MODE)
+          ========================================================================= */}
+      <div
+        style={{
+          padding: collapsed ? "12px 0" : "12px 14px",
+          borderTop: "1px solid rgba(0, 0, 0, 0.05)",
+          background: "rgba(255, 255, 255, 0.5)",
+          flexShrink: 0,
+        }}
+      >
+        {!collapsed ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {/* Runway Health Indicator */}
+            <div
+              style={{
+                background: "#ffffff",
+                border: "1px solid rgba(0, 0, 0, 0.06)",
+                borderRadius: "10px",
+                padding: "8px 12px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                boxShadow: "0 2px 6px rgba(0, 0, 0, 0.02)",
+              }}
             >
-              <div className="nav-item-icon">
-                <Icon size={18} />
-              </div>
-              {!collapsed && <span>{t(item.key, item.name)}</span>}
-              {!collapsed && item.badge && (
-                <span className={`nav-badge ${item.badge === "Live" ? "success" : item.badge === "Tax" ? "alert" : ""}`}>
-                  {item.badge}
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span
+                  style={{
+                    width: 7,
+                    height: 7,
+                    borderRadius: "50%",
+                    background: runway > 30 ? "#10b981" : "#f59e0b",
+                    boxShadow: `0 0 8px ${runway > 30 ? "#10b981" : "#f59e0b"}`,
+                  }}
+                />
+                <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 500 }}>
+                  Safe Runway
                 </span>
-              )}
-            </Link>
-          );
-        })}
-      </nav>
+              </div>
+              <span style={{ fontSize: "12px", fontWeight: 700, color: "#121316" }}>
+                {runway > 0 ? `${runway} Days` : "Stable"}
+              </span>
+            </div>
 
-      {/* Footer Area */}
-      {!collapsed && (
-        <div className="sidebar-footer">
-          <div className="sidebar-runway-chip">
-            <div className="runway-pulse"></div>
-            <div>
-              <div className="runway-label">{t("netRunway", "Estimated Runway")}</div>
-              <div className="runway-val">{runway} {t("daysBuffer", "Days Buffer")}</div>
+            {/* Logout Action */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: "11px", color: "#64748b" }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10b981" }} />
+                <span>Twin Active</span>
+              </div>
+
+              <button
+                onClick={logout}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                  border: "none",
+                  background: "transparent",
+                  color: "#ef4444",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  padding: "4px",
+                }}
+              >
+                <LogOut size={12} />
+                <span>Logout</span>
+              </button>
             </div>
           </div>
-
-          <div className="sidebar-db-status">
-            <span className="status-indicator">
-              <span className={dbConnected ? "dot-connected" : "dot-offline"} />
-              {dbConnected ? t("Database Synced", "Database Synced") : t("Local Twin Mode", "Local Twin Mode")}
-            </span>
+        ) : (
+          /* Collapsed Mode: Expand Toggle Button Cleanly Centered at Bottom */
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
             <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                logout();
-                handleNavClick();
-                navigate("/login");
-              }}
+              onClick={() => setCollapsed(false)}
+              title="Expand Sidebar"
               style={{
-                display: "inline-flex",
+                width: 36,
+                height: 36,
+                borderRadius: "10px",
+                background: "#ffffff",
+                border: "1px solid rgba(0, 0, 0, 0.08)",
+                color: "#52525b",
+                display: "flex",
                 alignItems: "center",
-                gap: 4,
-                fontSize: 11,
-                color: "#fb7185",
-                background: "transparent",
-                border: "none",
+                justifyContent: "center",
                 cursor: "pointer",
-                padding: 0,
+                transition: "all 0.15s ease",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = "#f4f6f8";
+                e.currentTarget.style.color = "#121316";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "#ffffff";
+                e.currentTarget.style.color = "#52525b";
               }}
             >
-              <LogOut size={11} /> {t("logout", "Logout")}
+              <PanelLeftOpen size={17} />
+            </button>
+
+            <button
+              onClick={logout}
+              title="Logout"
+              style={{
+                border: "none",
+                background: "transparent",
+                color: "#ef4444",
+                cursor: "pointer",
+                padding: "4px",
+              }}
+            >
+              <LogOut size={15} />
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </aside>
   );
 }
