@@ -1061,6 +1061,7 @@ export default function LandingPage() {
             justifyContent: "center",
             minHeight: "720px",
             zIndex: 10,
+            zoom: 0.85, // Scales the entire hero grid down by 15%
           }}
         >
           {/* CENTER COLUMN: The Dominant Glassmorphism Card */}
