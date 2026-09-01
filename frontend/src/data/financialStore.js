@@ -2,7 +2,7 @@
 // FinTwin Financial Data Store (User-Linked & Backend Synced)
 // ==========================================
 
-import { cleanBusiness } from "./sampleData";
+import { cleanBusiness, demoPresets } from "./sampleData";
 import { API_URL } from "../config";
 
 let activeUserId = null;
@@ -419,6 +419,22 @@ export function clearAllData() {
     payments: [],
     recurringExpenses: [],
     expenses: [],
+  };
+  notifySubscribers();
+}
+
+export function loadDemoPreset(presetKey = "BUS-001") {
+  const preset = demoPresets[presetKey] || demoPresets["BUS-001"];
+  if (!preset) return;
+  financialData = {
+    business: { ...cleanBusiness, id: activeBusinessId || "BUS-001", ...preset.business },
+    customers: [...(preset.customers || [])],
+    invoices: [...(preset.invoices || [])],
+    payments: [...(preset.payments || [])],
+    recurringExpenses: [...(preset.recurringExpenses || [])],
+    expenses: [...(preset.expenses || [])],
+    workers: [...(preset.workers || [])],
+    payrollDisbursements: [...(preset.payrollDisbursements || [])],
   };
   notifySubscribers();
 }

@@ -40,6 +40,7 @@ import {
   getCustomers,
   updateBusinessProfile,
   subscribeFinancialData,
+  loadDemoPreset,
 } from "../data/financialStore";
 import {
   getCashFlowSummary,
@@ -265,11 +266,19 @@ export default function Dashboard() {
 
             <div style={{ display: "flex", flexDirection: "column", gap: 10, minWidth: 220 }}>
               <button
-                className="btn btn-primary"
+                className="btn btn-emerald"
                 style={{ justifyContent: "center", padding: "12px 20px" }}
+                onClick={() => loadDemoPreset("BUS-001")}
+              >
+                <Sparkles size={16} />
+                <span>Load Demo MSME Data</span>
+              </button>
+              <button
+                className="btn btn-primary"
+                style={{ justifyContent: "center", padding: "10px 18px" }}
                 onClick={() => navigate("/invoices")}
               >
-                <Upload size={16} />
+                <Upload size={15} />
                 <span>Upload Invoices (CSV / Excel / PDF)</span>
               </button>
               <button

@@ -234,19 +234,19 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                   width: 28,
                   height: 28,
                   borderRadius: "50%",
-                  background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+                  background: "linear-gradient(135deg, #1C6758, #425F6B)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontSize: 11,
                   fontWeight: 700,
-                  color: "#fff",
+                  color: "#ffffff",
                 }}
               >
                 {user?.avatar || "FT"}
               </div>
               <div className="topbar-user-text" style={{ textAlign: "left", display: "flex", flexDirection: "column" }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: "#fff", lineHeight: 1.2 }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)", lineHeight: 1.2 }}>
                   {user?.name || "Executive"}
                 </span>
                 <span style={{ fontSize: 9.5, color: "var(--accent-emerald)", fontWeight: 600 }}>
@@ -289,7 +289,7 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
               }}
             >
               <div style={{ paddingBottom: 10, borderBottom: "1px solid var(--border-subtle)", marginBottom: 8 }}>
-                <div style={{ fontWeight: 700, fontSize: 13.5, color: "#fff" }}>{user?.name}</div>
+                <div style={{ fontWeight: 700, fontSize: 13.5, color: "var(--text-primary)" }}>{user?.name}</div>
                 <div style={{ fontSize: 11.5, color: "var(--text-muted)" }}>{user?.email}</div>
                 <div
                   style={{
@@ -297,8 +297,8 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                     fontWeight: 700,
                     padding: "2px 8px",
                     borderRadius: "var(--radius-full)",
-                    background: "rgba(59,130,246,0.15)",
-                    color: "#60a5fa",
+                    background: "rgba(28,103,88,0.15)",
+                    color: "#1C6758",
                     display: "inline-block",
                     marginTop: 6,
                   }}
@@ -311,6 +311,28 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                 <span>🏢 Company Settings & Targets</span>
               </div>
 
+              <div
+                style={{
+                  padding: "6px 8px",
+                  borderRadius: "var(--radius-sm)",
+                  cursor: "pointer",
+                  fontSize: 12,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  color: "#1C6758",
+                  fontWeight: 600,
+                }}
+                onClick={() => {
+                  setShowUserDropdown(false);
+                  navigate("/dashboard");
+                  window.location.reload();
+                }}
+              >
+                <Sparkles size={13} />
+                <span>Reload Demo State</span>
+              </div>
+
               <div style={{ height: 1, background: "var(--border-subtle)", margin: "8px 0" }} />
 
               <div
@@ -319,7 +341,7 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                   borderRadius: "var(--radius-sm)",
                   cursor: "pointer",
                   fontSize: 12,
-                  color: "#fb7185",
+                  color: "#C07F7F",
                   display: "flex",
                   alignItems: "center",
                   gap: 6,
@@ -331,7 +353,7 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
                 }}
               >
                 <LogOut size={13} />
-                <span>Sign Out & Save</span>
+                <span>Sign Out</span>
               </div>
             </div>
           )}
