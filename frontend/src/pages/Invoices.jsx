@@ -188,6 +188,76 @@ const INITIAL_DEMO_BUYERS = [
   },
 ];
 
+// Dynamic Corporate Buyers Generator from Invoices Dataset
+function deriveBuyersFromInvoices(invoicesList) {
+  if (!Array.isArray(invoicesList) || invoicesList.length === 0) {
+    return INITIAL_DEMO_BUYERS;
+  }
+
+  const customerMap = {};
+  const icons = ["🚗", "🛍️", "🏗️", "⚙️", "🚜", "⚡", "🏭", "📦", "🏢", "🚢"];
+
+  invoicesList.forEach((inv, idx) => {
+    const custName = inv.customer || inv.client || "Enterprise Buyer";
+    if (!customerMap[custName]) {
+      const delay = Number(inv.previousAvgDelay || inv.predictedDelayDays || 3);
+      const rating = delay > 14 ? "BBB" : delay > 7 ? "AA+" : "AAA";
+      const onTime = delay > 14 ? 78 : delay > 7 ? 89 : 98;
+      const avatar = icons[Object.keys(customerMap).length % icons.length];
+
+      customerMap[custName] = {
+        id: `CUST-AUTO-${Object.keys(customerMap).length + 1}`,
+        name: custName,
+        industry: "Commercial & Industrial",
+        location: "Industrial Hub, IN",
+        gstin: "27AAAC" + Math.floor(1000 + Math.random() * 9000) + "Q1Z" + (idx % 10),
+        rating: rating,
+        onTimeScore: onTime,
+        avatar: avatar,
+        clearedCount: `${Math.floor(4 + Math.random() * 8)}/10 Invoices Cleared`,
+        invoices: [],
+      };
+    }
+
+    let dayNum = 1 + (idx * 3) % 15;
+    if (inv.dueDate) {
+      try {
+        const d = new Date(inv.dueDate);
+        const dayOfMonth = d.getDate();
+        if (!isNaN(dayOfMonth)) {
+          dayNum = ((dayOfMonth - 1) % 16) + 1;
+        }
+      } catch (e) {
+        dayNum = (idx % 15) + 1;
+      }
+    }
+
+    const amt = Number(inv.amount) || 250000;
+    const isPaid = String(inv.status).toLowerCase() === "paid";
+    const isOverdue = String(inv.status).toLowerCase().includes("overdue");
+    const isTreds = amt >= 400000 && !isPaid && !isOverdue;
+
+    let type = isPaid ? "paid" : isOverdue ? "pending" : isTreds ? "treds" : "scheduled";
+    let statusLabel = isPaid ? "Paid" : isOverdue ? "Sec 15 Audit" : isTreds ? "TReDS Ready" : "Scheduled";
+
+    const formattedLakhs = amt >= 100000 ? `₹${(amt / 100000).toFixed(1)}L` : `₹${amt.toLocaleString("en-IN")}`;
+
+    customerMap[custName].invoices.push({
+      id: inv.id || `INV-${idx + 100}`,
+      amount: amt,
+      day: Math.min(15, Math.max(1, dayNum)),
+      span: Math.min(4, Math.max(2, Math.floor(amt / 350000) + 1)),
+      status: statusLabel,
+      type: type,
+      label: `${formattedLakhs} • ${statusLabel}`,
+      dueText: isPaid ? "Settled" : isOverdue ? "Overdue / Follow up" : `Due in ${dayNum + 2} days`,
+    });
+  });
+
+  const list = Object.values(customerMap);
+  return list.length > 0 ? list.slice(0, 8) : INITIAL_DEMO_BUYERS;
+}
+
 // 16 Calendar Days
 const TIMELINE_DAYS = [
   { dayName: "Mon", dayNum: 1, isWeekend: false },
@@ -209,7 +279,8 @@ const TIMELINE_DAYS = [
 ];
 
 export default function Invoices() {
-  const [invoices, setInvoices] = useState(getInvoices());
+  const initialInvoices = getInvoices();
+  const [invoices, setInvoices] = useState(initialInvoices);
   const [customers, setCustomers] = useState(getCustomers());
   const [viewMode, setViewMode] = useState("timeline"); // "timeline" or "table"
   const [activeTab, setActiveTab] = useState("all");
@@ -223,7 +294,7 @@ export default function Invoices() {
   // ==========================================
   // DRAG & DROP + UNDO / REDO STATE
   // ==========================================
-  const [demoBuyers, setDemoBuyers] = useState(INITIAL_DEMO_BUYERS);
+  const [demoBuyers, setDemoBuyers] = useState(() => deriveBuyersFromInvoices(initialInvoices));
   const [historyStack, setHistoryStack] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
   const [draggedItem, setDraggedItem] = useState(null);
@@ -244,8 +315,10 @@ export default function Invoices() {
 
   useEffect(() => {
     const unsub = subscribeFinancialData(() => {
-      setInvoices(getInvoices());
+      const updated = getInvoices();
+      setInvoices(updated);
       setCustomers(getCustomers());
+      setDemoBuyers(deriveBuyersFromInvoices(updated));
     });
     return unsub;
   }, []);
@@ -1140,97 +1213,124 @@ export default function Invoices() {
                 </div>
 
                 {/* Highlighted Active Yellow Event Card */}
-                <div
-                  style={{
-                    background: "linear-gradient(135deg, #fef08a 0%, #fde047 100%)",
-                    borderRadius: "14px",
-                    padding: "16px",
-                    color: "#713f12",
-                    boxShadow: "0 6px 18px rgba(234, 179, 8, 0.2)",
-                    marginBottom: "12px",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-                    <div>
-                      <div style={{ fontSize: "14px", fontWeight: 800, color: "#422006" }}>
-                        Tata Motors CV Hub (₹4,51,350)
+                {(() => {
+                  const pendingInvoices = invoices.filter((i) => String(i.status).toLowerCase() !== "paid");
+                  const urgentList = pendingInvoices.length > 0 ? pendingInvoices : invoices;
+                  const leadInvoice = urgentList[0] || {
+                    customer: "Mehta Heavy Traders",
+                    amount: 850000,
+                    dueDate: "2026-09-15",
+                    status: "Pending",
+                  };
+                  const secondInvoice = urgentList[1] || {
+                    customer: "Sona Global Exports",
+                    amount: 460000,
+                    dueDate: "2026-09-18",
+                    status: "Pending",
+                  };
+                  const thirdInvoice = urgentList[2] || {
+                    customer: "Reliance Retail Supply",
+                    amount: 940000,
+                    dueDate: "2026-09-20",
+                    status: "Pending",
+                  };
+
+                  return (
+                    <>
+                      <div
+                        style={{
+                          background: "linear-gradient(135deg, #fef08a 0%, #fde047 100%)",
+                          borderRadius: "14px",
+                          padding: "16px",
+                          color: "#713f12",
+                          boxShadow: "0 6px 18px rgba(234, 179, 8, 0.2)",
+                          marginBottom: "12px",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                          <div>
+                            <div style={{ fontSize: "14px", fontWeight: 800, color: "#422006" }}>
+                              {leadInvoice.customer} (₹{(Number(leadInvoice.amount) || 0).toLocaleString("en-IN")})
+                            </div>
+                            <div style={{ fontSize: "11.5px", color: "#713f12", marginTop: 2 }}>
+                              {Number(leadInvoice.amount) >= 400000 ? "TReDS 24hr settlement ready at 8.1% APR" : "Standard 30-Day Net Commercial Inflow"}
+                            </div>
+                          </div>
+                          <span
+                            style={{
+                              background: "rgba(0,0,0,0.08)",
+                              padding: "2px 7px",
+                              borderRadius: "9999px",
+                              fontSize: "10px",
+                              fontWeight: 700,
+                            }}
+                          >
+                            • {leadInvoice.status || "Pending"}
+                          </span>
+                        </div>
+
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14 }}>
+                          <div
+                            style={{
+                              background: "rgba(255, 255, 255, 0.7)",
+                              padding: "3px 8px",
+                              borderRadius: "6px",
+                              fontSize: "11px",
+                              fontWeight: 600,
+                            }}
+                          >
+                            🕒 Due: {leadInvoice.dueDate || "Next 7 Days"}
+                          </div>
+                          <div
+                            style={{
+                              background: "rgba(255, 255, 255, 0.7)",
+                              padding: "3px 8px",
+                              borderRadius: "6px",
+                              fontSize: "11px",
+                              fontWeight: 600,
+                            }}
+                          >
+                            📅 MSMED Sec 15
+                          </div>
+                        </div>
                       </div>
-                      <div style={{ fontSize: "11.5px", color: "#713f12", marginTop: 2 }}>
-                        TReDS 24hr settlement ready at 8.1% APR
+
+                      {/* Secondary Cards */}
+                      <div
+                        style={{
+                          background: "#f8fafc",
+                          borderRadius: "12px",
+                          padding: "12px 14px",
+                          border: "1px solid #f1f5f9",
+                          marginBottom: 8,
+                        }}
+                      >
+                        <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>
+                          {secondInvoice.customer} (₹{(Number(secondInvoice.amount) || 0).toLocaleString("en-IN")})
+                        </div>
+                        <div style={{ fontSize: "11.5px", color: "#64748b", marginTop: 2 }}>
+                          {secondInvoice.status === "Overdue" ? "Section 15 MSMED 45-Day statutory notice trigger" : "Scheduled Commercial Receivable"}
+                        </div>
                       </div>
-                    </div>
-                    <span
-                      style={{
-                        background: "rgba(0,0,0,0.08)",
-                        padding: "2px 7px",
-                        borderRadius: "9999px",
-                        fontSize: "10px",
-                        fontWeight: 700,
-                      }}
-                    >
-                      • Due in 2 days
-                    </span>
-                  </div>
 
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14 }}>
-                    <div
-                      style={{
-                        background: "rgba(255, 255, 255, 0.7)",
-                        padding: "3px 8px",
-                        borderRadius: "6px",
-                        fontSize: "11px",
-                        fontWeight: 600,
-                      }}
-                    >
-                      🕒 Due Dec 11
-                    </div>
-                    <div
-                      style={{
-                        background: "rgba(255, 255, 255, 0.7)",
-                        padding: "3px 8px",
-                        borderRadius: "6px",
-                        fontSize: "11px",
-                        fontWeight: 600,
-                      }}
-                    >
-                      📅 45-Day Sec 15
-                    </div>
-                  </div>
-                </div>
-
-                {/* Secondary Cards */}
-                <div
-                  style={{
-                    background: "#f8fafc",
-                    borderRadius: "12px",
-                    padding: "12px 14px",
-                    border: "1px solid #f1f5f9",
-                    marginBottom: 8,
-                  }}
-                >
-                  <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>
-                    Reliance Retail (₹12,40,000)
-                  </div>
-                  <div style={{ fontSize: "11.5px", color: "#64748b", marginTop: 2 }}>
-                    Section 15 MSMED 45-Day statutory notice trigger
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: "#f8fafc",
-                    borderRadius: "12px",
-                    padding: "12px 14px",
-                    border: "1px solid #f1f5f9",
-                  }}
-                >
-                  <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>
-                    L&T Infrastructure (₹14,80,000)
-                  </div>
-                  <div style={{ fontSize: "11.5px", color: "#64748b", marginTop: 2 }}>
-                    100% GSTR-2B ITC reconciled & approved
-                  </div>
-                </div>
+                      <div
+                        style={{
+                          background: "#f8fafc",
+                          borderRadius: "12px",
+                          padding: "12px 14px",
+                          border: "1px solid #f1f5f9",
+                        }}
+                      >
+                        <div style={{ fontSize: "13px", fontWeight: 700, color: "#1e293b" }}>
+                          {thirdInvoice.customer} (₹{(Number(thirdInvoice.amount) || 0).toLocaleString("en-IN")})
+                        </div>
+                        <div style={{ fontSize: "11.5px", color: "#64748b", marginTop: 2 }}>
+                          100% GSTR-2B ITC reconciled & approved
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </div>
 
