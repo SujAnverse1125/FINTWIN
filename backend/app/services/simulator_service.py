@@ -527,6 +527,9 @@ def run_simulation(
     revenue_change_percent: float = 0,
     expense_change_percent: float = 0,
     payment_delay_days: int = 0,
+    collection_rate_percent: float = 100,
+    gst_rate_percent: float = 18,
+    additional_revenue: float = 0,
 ) -> dict:
 
     # --------------------------------------
@@ -535,16 +538,10 @@ def run_simulation(
 
     base = calculate_base_position(
         current_cash=current_cash,
-
         invoices=invoices,
-
-        recurring_expenses=
-            recurring_expenses,
-
-        one_time_expenses=
-            one_time_expenses,
+        recurring_expenses=recurring_expenses,
+        one_time_expenses=one_time_expenses,
     )
-
 
     # --------------------------------------
     # Base scenario
@@ -552,172 +549,118 @@ def run_simulation(
 
     base_scenario = {
         "scenario": "Base Case",
-
-        "projected_cash":
-            base["net_position"],
-
+        "projected_cash": base["net_position"],
         "cash_impact": 0,
-
-        "liquidity_gap": max(
-            0,
-            -base["net_position"],
-        ),
+        "liquidity_gap": max(0, -base["net_position"]),
     }
 
-    base_scenario["risk"] = (
-        classify_scenario(
-            base_scenario[
-                "projected_cash"
-            ],
-            base_scenario[
-                "liquidity_gap"
-            ],
-        )
+    base_scenario["risk"] = classify_scenario(
+        base_scenario["projected_cash"],
+        base_scenario["liquidity_gap"],
     )
 
-    base_scenario["explanation"] = (
-        "Current financial position without "
-        "applying any additional shock."
+    base_scenario["explanation"] = "Current financial position without applying any additional shock."
+
+    # --------------------------------------
+    # Revenue scenario (factoring in collection rate and additional revenue)
+    # --------------------------------------
+
+    effective_revenue_change = revenue_change_percent
+    revenue_scenario = simulate_revenue_shock(
+        base,
+        effective_revenue_change,
     )
-
-
-    # --------------------------------------
-    # Revenue scenario
-    # --------------------------------------
-
-    revenue_scenario = (
-        simulate_revenue_shock(
-            base,
-            revenue_change_percent,
-        )
+    # Apply collection rate and additional revenue
+    coll_factor = max(0.1, min(1.0, collection_rate_percent / 100.0))
+    revenue_scenario["projected_cash"] = round_money(
+        revenue_scenario["projected_cash"] * coll_factor + safe_number(additional_revenue)
+    )
+    revenue_scenario["cash_impact"] = round_money(
+        revenue_scenario["projected_cash"] - base["net_position"]
     )
 
     revenue_scenario["liquidity_gap"] = max(
         0,
-        -revenue_scenario[
-            "projected_cash"
-        ],
+        -revenue_scenario["projected_cash"],
     )
 
-    revenue_scenario["risk"] = (
-        classify_scenario(
-            revenue_scenario[
-                "projected_cash"
-            ],
-            revenue_scenario[
-                "liquidity_gap"
-            ],
-        )
+    revenue_scenario["risk"] = classify_scenario(
+        revenue_scenario["projected_cash"],
+        revenue_scenario["liquidity_gap"],
     )
 
-    revenue_scenario["explanation"] = (
-        explain_scenario(
-            revenue_scenario
-        )
-    )
-
+    revenue_scenario["explanation"] = explain_scenario(revenue_scenario)
 
     # --------------------------------------
-    # Expense scenario
+    # Expense scenario (factoring in GST rate)
     # --------------------------------------
 
-    expense_scenario = (
-        simulate_expense_shock(
-            base,
-            expense_change_percent,
-        )
+    gst_factor = 1.0 + (safe_number(gst_rate_percent) - 18.0) / 100.0
+    effective_expense_change = (1.0 + safe_number(expense_change_percent) / 100.0) * gst_factor - 1.0
+    effective_expense_change = effective_expense_change * 100.0
+
+    expense_scenario = simulate_expense_shock(
+        base,
+        effective_expense_change,
     )
 
     expense_scenario["liquidity_gap"] = max(
         0,
-        -expense_scenario[
-            "projected_cash"
-        ],
+        -expense_scenario["projected_cash"],
     )
 
-    expense_scenario["risk"] = (
-        classify_scenario(
-            expense_scenario[
-                "projected_cash"
-            ],
-            expense_scenario[
-                "liquidity_gap"
-            ],
-        )
+    expense_scenario["risk"] = classify_scenario(
+        expense_scenario["projected_cash"],
+        expense_scenario["liquidity_gap"],
     )
 
-    expense_scenario["explanation"] = (
-        explain_scenario(
-            expense_scenario
-        )
-    )
-
+    expense_scenario["explanation"] = explain_scenario(expense_scenario)
 
     # --------------------------------------
     # Payment delay scenario
     # --------------------------------------
 
-    payment_scenario = (
-        simulate_payment_delay(
-            base,
-            payment_delay_days,
-        )
+    payment_scenario = simulate_payment_delay(
+        base,
+        payment_delay_days,
     )
 
-    payment_scenario["risk"] = (
-        classify_scenario(
-            payment_scenario[
-                "projected_cash"
-            ],
-            payment_scenario[
-                "liquidity_gap"
-            ],
-        )
+    payment_scenario["risk"] = classify_scenario(
+        payment_scenario["projected_cash"],
+        payment_scenario["liquidity_gap"],
     )
 
-    payment_scenario["explanation"] = (
-        explain_scenario(
-            payment_scenario
-        )
-    )
-
+    payment_scenario["explanation"] = explain_scenario(payment_scenario)
 
     # --------------------------------------
     # Combined scenario
     # --------------------------------------
 
-    combined_scenario = (
-        simulate_combined_shock(
-            base=base,
-
-            revenue_change_percent=
-                revenue_change_percent,
-
-            expense_change_percent=
-                expense_change_percent,
-
-            payment_delay_days=
-                payment_delay_days,
-        )
+    combined_scenario = simulate_combined_shock(
+        base=base,
+        revenue_change_percent=revenue_change_percent,
+        expense_change_percent=effective_expense_change,
+        payment_delay_days=payment_delay_days,
     )
 
-    combined_scenario["risk"] = (
-        classify_scenario(
-            combined_scenario[
-                "projected_cash"
-            ],
-            combined_scenario[
-                "liquidity_gap"
-            ],
-        )
+    # Apply collection rate and additional revenue to combined
+    combined_scenario["projected_cash"] = round_money(
+        (combined_scenario["projected_cash"] + safe_number(additional_revenue)) * coll_factor
+    )
+    combined_scenario["cash_impact"] = round_money(
+        combined_scenario["projected_cash"] - base["net_position"]
+    )
+    combined_scenario["liquidity_gap"] = max(
+        0,
+        -combined_scenario["projected_cash"],
     )
 
-    combined_scenario["explanation"] = (
-        explain_scenario(
-            combined_scenario
-        )
+    combined_scenario["risk"] = classify_scenario(
+        combined_scenario["projected_cash"],
+        combined_scenario["liquidity_gap"],
     )
 
+    combined_scenario["explanation"] = explain_scenario(combined_scenario)
 
     # --------------------------------------
     # Return complete simulation
@@ -725,26 +668,14 @@ def run_simulation(
 
     return {
         "base": base,
-
         "assumptions": {
-            "revenue_change_percent":
-                safe_number(
-                    revenue_change_percent
-                ),
-
-            "expense_change_percent":
-                safe_number(
-                    expense_change_percent
-                ),
-
-            "payment_delay_days":
-                int(
-                    safe_number(
-                        payment_delay_days
-                    )
-                ),
+            "revenue_change_percent": safe_number(revenue_change_percent),
+            "expense_change_percent": safe_number(expense_change_percent),
+            "payment_delay_days": int(safe_number(payment_delay_days)),
+            "collection_rate_percent": safe_number(collection_rate_percent),
+            "gst_rate_percent": safe_number(gst_rate_percent),
+            "additional_revenue": safe_number(additional_revenue),
         },
-
         "scenarios": [
             base_scenario,
             revenue_scenario,

@@ -1,0 +1,47 @@
+{
+  "pipeline_version": "2.0.0",
+  "training_timestamp": "2026-09-01T21:08:04.941489",
+  "total_records_trained": 88305,
+  "selected_model": "RandomForest",
+  "benchmarks": {
+    "LightGBM": {
+      "mae": 3.1943,
+      "rmse": 7.7665,
+      "r2": 0.3479,
+      "training_time_sec": 2.09
+    },
+    "XGBoost": {
+      "mae": 3.1636,
+      "rmse": 7.7563,
+      "r2": 0.3496,
+      "training_time_sec": 0.63
+    },
+    "RandomForest": {
+      "mae": 3.1499,
+      "rmse": 7.7844,
+      "r2": 0.3449,
+      "training_time_sec": 2.39
+    }
+  },
+  "feature_importances": {
+    "previous_avg_delay": 0.546,
+    "invoice_amount": 0.2443,
+    "days_until_due": 0.1404,
+    "late_ratio": 0.0309,
+    "customer_invoice_count": 0.0151,
+    "previous_late_payments": 0.0133,
+    "customer_tenure_months": 0.0052,
+    "amount_tier": 0.0025,
+    "is_disputed": 0.0023
+  },
+  "classifier_metrics": {
+    "accuracy": 0.9137,
+    "f1_score": 0.8879,
+    "classes": [
+      "CRITICAL",
+      "HIGH",
+      "LOW",
+      "MEDIUM"
+    ]
+  }
+}

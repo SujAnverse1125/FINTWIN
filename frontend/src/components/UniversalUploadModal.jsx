@@ -18,7 +18,7 @@ import {
   Copy,
   FileCheck,
 } from "lucide-react";
-import { parseInvoiceFile } from "../utils/invoiceParser";
+import { parseInvoiceFile, enrichInvoicesWithML } from "../utils/invoiceParser";
 import { createInvoices, addExpense } from "../data/financialStore";
 
 const UPLOAD_CATEGORIES = [
@@ -130,7 +130,8 @@ export default function UniversalUploadModal({ isOpen, onClose }) {
   };
 
   // Quick Load Sample Test Invoices into preview
-  const handleLoadSamplePreview = () => {
+  const handleLoadSamplePreview = async () => {
+    setIsProcessing(true);
     const sampleInvoices = [
       {
         id: "INV-DEMO-101",
@@ -139,8 +140,8 @@ export default function UniversalUploadModal({ isOpen, onClose }) {
         invoiceDate: "2026-08-15",
         dueDate: "2026-09-15",
         status: "Pending",
-        predictedDelayDays: 4,
-        riskScore: "Low",
+        previousAvgDelay: 5.2,
+        previousLatePayments: 1,
       },
       {
         id: "INV-DEMO-102",
@@ -149,8 +150,8 @@ export default function UniversalUploadModal({ isOpen, onClose }) {
         invoiceDate: "2026-08-20",
         dueDate: "2026-09-20",
         status: "Pending",
-        predictedDelayDays: 14,
-        riskScore: "Medium",
+        previousAvgDelay: 14.5,
+        previousLatePayments: 3,
       },
       {
         id: "INV-DEMO-103",
@@ -159,8 +160,8 @@ export default function UniversalUploadModal({ isOpen, onClose }) {
         invoiceDate: "2026-08-10",
         dueDate: "2026-09-10",
         status: "Pending",
-        predictedDelayDays: 2,
-        riskScore: "Low",
+        previousAvgDelay: 1.8,
+        previousLatePayments: 0,
       },
       {
         id: "INV-DEMO-104",
@@ -169,8 +170,8 @@ export default function UniversalUploadModal({ isOpen, onClose }) {
         invoiceDate: "2026-08-01",
         dueDate: "2026-09-30",
         status: "Pending",
-        predictedDelayDays: 18,
-        riskScore: "High",
+        previousAvgDelay: 22.0,
+        previousLatePayments: 5,
       },
       {
         id: "INV-DEMO-105",
@@ -179,16 +180,19 @@ export default function UniversalUploadModal({ isOpen, onClose }) {
         invoiceDate: "2026-08-25",
         dueDate: "2026-09-25",
         status: "Paid",
-        predictedDelayDays: 0,
-        riskScore: "Low",
+        previousAvgDelay: 0.0,
+        previousLatePayments: 0,
       },
     ];
 
+    const enriched = await enrichInvoicesWithML(sampleInvoices);
+
     setParsedPreview({
-      format: "Pre-Populated MSME Test Data",
-      invoices: sampleInvoices,
+      format: "AI-Enriched MSME Test Dataset (ML Model v2.0)",
+      invoices: enriched,
       fileName: "sample_msme_invoices.csv",
     });
+    setIsProcessing(false);
   };
 
   const handleConfirmIngestion = () => {

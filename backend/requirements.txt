@@ -26,3 +26,5 @@ typing_extensions
 tzdata
 uvicorn
 python-dotenv
+xgboost>=2.0.0
+lightgbm>=4.0.0

@@ -14,7 +14,12 @@ from app.models.payment import Payment
 from app.models.expense import Expense
 from app.models.recurring_expense import RecurringExpense
 
-from app.ml.predict import predict_payment_delay
+from app.ml.predict import (
+    predict_payment_delay,
+    predict_batch_payment_delays,
+    get_model_telemetry,
+)
+from app.ml.ai_suggestions import generate_ai_suggestions
 from app.services.forecast_service import generate_cash_forecast
 from app.services.risk_service import generate_risk_analysis
 from app.services.simulator_service import run_simulation
@@ -56,10 +61,17 @@ app.add_middleware(
 
 class PaymentPredictionRequest(BaseModel):
     invoice_amount: float
-    days_until_due: int
-    previous_avg_delay: float
-    previous_late_payments: int
-    customer_invoice_count: int
+    days_until_due: int = 30
+    previous_avg_delay: float = 0.0
+    previous_late_payments: int = 0
+    customer_invoice_count: int = 1
+    customer_tenure_months: float = 12.0
+    is_disputed: int = 0
+    due_date: str | None = None
+
+
+class BatchPaymentPredictionRequest(BaseModel):
+    invoices: list[dict]
 
 
 class ForecastRequest(BaseModel):
@@ -87,6 +99,22 @@ class SimulationRequest(BaseModel):
     revenue_change_percent: float = 0
     expense_change_percent: float = 0
     payment_delay_days: int = 0
+    collection_rate_percent: float = 100.0
+    gst_rate_percent: float = 18.0
+    additional_revenue: float = 0.0
+
+
+class SimulatorAIRequest(BaseModel):
+    current_cash: float
+    invoices: list[dict]
+    recurring_expenses: list[dict]
+    one_time_expenses: list[dict]
+    revenue_change_percent: float = 0
+    expense_change_percent: float = 0
+    payment_delay_days: int = 0
+    collection_rate_percent: float = 100.0
+    gst_rate_percent: float = 18.0
+    additional_revenue: float = 0.0
 
 
 class FinancingRequest(BaseModel):
@@ -366,18 +394,41 @@ def get_recurring_expenses(
 def predict_payment(
     request: PaymentPredictionRequest,
 ):
-
     result = predict_payment_delay(
         invoice_amount=request.invoice_amount,
         days_until_due=request.days_until_due,
         previous_avg_delay=request.previous_avg_delay,
         previous_late_payments=request.previous_late_payments,
         customer_invoice_count=request.customer_invoice_count,
+        customer_tenure_months=request.customer_tenure_months,
+        is_disputed=request.is_disputed,
+        due_date=request.due_date,
     )
 
     return {
         "success": True,
         "prediction": result,
+    }
+
+
+@app.post("/api/ml/predict-batch")
+def predict_batch(
+    request: BatchPaymentPredictionRequest,
+):
+    predictions = predict_batch_payment_delays(request.invoices)
+    return {
+        "success": True,
+        "count": len(predictions),
+        "invoices": predictions,
+    }
+
+
+@app.get("/api/ml/model-info")
+def get_model_info():
+    telemetry = get_model_telemetry()
+    return {
+        "success": True,
+        "model": telemetry,
     }
 
 
@@ -444,11 +495,47 @@ def create_simulation(
         revenue_change_percent=request.revenue_change_percent,
         expense_change_percent=request.expense_change_percent,
         payment_delay_days=request.payment_delay_days,
+        collection_rate_percent=request.collection_rate_percent,
+        gst_rate_percent=request.gst_rate_percent,
+        additional_revenue=request.additional_revenue,
     )
 
     return {
         "success": True,
         "simulation": result,
+    }
+
+
+@app.post("/api/simulator/ai-suggestions")
+def get_simulator_ai_suggestions(
+    request: SimulatorAIRequest,
+):
+    # First run the simulation to get scenario results
+    sim_result = run_simulation(
+        current_cash=request.current_cash,
+        invoices=request.invoices,
+        recurring_expenses=request.recurring_expenses,
+        one_time_expenses=request.one_time_expenses,
+        revenue_change_percent=request.revenue_change_percent,
+        expense_change_percent=request.expense_change_percent,
+        payment_delay_days=request.payment_delay_days,
+        collection_rate_percent=request.collection_rate_percent,
+        gst_rate_percent=request.gst_rate_percent,
+        additional_revenue=request.additional_revenue,
+    )
+
+    # Generate AI suggestions using ML pipeline
+    ai_result = generate_ai_suggestions(
+        invoices=request.invoices,
+        simulation_result=sim_result,
+        revenue_change_percent=request.revenue_change_percent,
+        expense_change_percent=request.expense_change_percent,
+        payment_delay_days=request.payment_delay_days,
+    )
+
+    return {
+        "success": True,
+        "ai_insights": ai_result,
     }
 
 

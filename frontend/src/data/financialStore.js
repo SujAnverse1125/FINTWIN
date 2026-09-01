@@ -247,22 +247,53 @@ export function createInvoices(newInvoices) {
 
 export function addInvoice(invoice) {
   const bizId = activeBusinessId || financialData.business.id || "BUS-001";
+  const amt = Number(invoice.amount) || 0;
+  const initialDelay = invoice.predictedDelayDays !== undefined
+    ? Number(invoice.predictedDelayDays)
+    : (amt > 500000 ? 14 : amt > 200000 ? 7 : 3);
+  const initialRisk = invoice.riskScore || (initialDelay > 10 ? "HIGH" : initialDelay > 5 ? "MEDIUM" : "LOW");
+
   const newInvoice = {
     id: invoice.id || `INV-${Math.floor(1000 + Math.random() * 9000)}`,
     businessId: bizId,
     customerId: invoice.customerId || `CUS-${financialData.customers.length + 1}`,
     customer: invoice.customer || "General Client",
-    amount: Number(invoice.amount) || 0,
+    amount: amt,
     invoiceDate: invoice.invoiceDate || new Date().toISOString().slice(0, 10),
     dueDate: invoice.dueDate || new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
     status: invoice.status || "Pending",
-    predictedDelayDays: Number(invoice.predictedDelayDays) || 5,
-    riskScore: invoice.riskScore || "Medium",
+    predictedDelayDays: initialDelay,
+    riskScore: initialRisk,
     paymentDate: invoice.status === "Paid" ? new Date().toISOString().slice(0, 10) : null,
     source: invoice.source || "user_upload",
   };
 
   createInvoices([newInvoice]);
+
+  // Asynchronously enrich with live ML backend if online
+  fetch(`${API_URL}/api/ml/predict-payment-delay`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      invoice_amount: amt,
+      days_until_due: 30,
+      previous_avg_delay: initialDelay,
+      previous_late_payments: 0,
+      customer_invoice_count: 5,
+      due_date: newInvoice.dueDate,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success && data.prediction) {
+        newInvoice.predictedDelayDays = data.prediction.predicted_delay_days;
+        newInvoice.riskScore = data.prediction.risk;
+        newInvoice.confidenceScore = data.prediction.confidence_score;
+        notifySubscribers();
+      }
+    })
+    .catch(() => {});
+
   return newInvoice;
 }
 
