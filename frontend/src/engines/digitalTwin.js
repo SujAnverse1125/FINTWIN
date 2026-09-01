@@ -186,10 +186,11 @@ export function generateLocalForecast(days = 90) {
   const uncertaintyDay = 75;
 
   for (let d = 0; d <= days; d += step) {
+    const hasData = currentCash > 0 || revenue > 0;
     // Monte Carlo: Add controlled randomness for realistic jagged lines
-    const noise = currentCash > 0 ? (Math.sin(d * 0.7) * 0.08 + Math.cos(d * 1.3) * 0.05) : 0;
-    const noiseUpper = currentCash > 0 ? (Math.sin(d * 0.5) * 0.06 + Math.cos(d * 0.9) * 0.04) : 0;
-    const noiseLower = currentCash > 0 ? (Math.sin(d * 1.1) * 0.07 + Math.cos(d * 0.6) * 0.05) : 0;
+    const noise = hasData ? (Math.sin(d * 0.7) * 0.08 + Math.cos(d * 1.3) * 0.05) : 0;
+    const noiseUpper = hasData ? (Math.sin(d * 0.5) * 0.06 + Math.cos(d * 0.9) * 0.04) : 0;
+    const noiseLower = hasData ? (Math.sin(d * 1.1) * 0.07 + Math.cos(d * 0.6) * 0.05) : 0;
 
     const dailyInflowExpected = revenue > 0 ? (d / 30) * (revenue / 3) : 0;
     const dailyInflowWorst = dailyInflowExpected * 0.7;
@@ -197,15 +198,16 @@ export function generateLocalForecast(days = 90) {
 
     const cumulativeBurn = dailyBurn * d;
 
-    // GST spike: simulated dip around GST payment dates
-    const gstSpike = (d >= gstRiskDay - 2 && d <= gstRiskDay + 2) ? currentCash * 0.08 :
-                     (d >= gstDueDay - 2 && d <= gstDueDay + 2) ? currentCash * 0.12 : 0;
+    // GST spike: simulated dip around statutory tax settlement windows
+    const baseScale = currentCash > 0 ? currentCash : (revenue > 0 ? revenue / 2 : 0);
+    const gstSpike = (d >= gstRiskDay - 2 && d <= gstRiskDay + 2) ? baseScale * 0.08 :
+                     (d >= gstDueDay - 2 && d <= gstDueDay + 2) ? baseScale * 0.12 : 0;
 
     const expectedVal = Math.round((currentCash + dailyInflowExpected - cumulativeBurn - gstSpike) * (1 + noise));
     const worstVal = Math.round((currentCash + dailyInflowWorst - cumulativeBurn * 1.15 - gstSpike) * (1 + noiseLower));
     const bestVal = Math.round((currentCash + dailyInflowBest - cumulativeBurn * 0.9) * (1 + noiseUpper));
 
-    if (worstVal < 0 && breachDay === null && currentCash > 0) {
+    if (worstVal < 0 && breachDay === null && hasData) {
       breachDay = d;
     }
 
