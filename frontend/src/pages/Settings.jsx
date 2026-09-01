@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   Building,
   ShieldCheck,
@@ -91,7 +91,7 @@ export default function Settings() {
             position: "fixed",
             top: 85,
             right: 36,
-            background: "linear-gradient(135deg, #10b981, #059669)",
+            background: "linear-gradient(135deg, #1C6758, #059669)",
             color: "#fff",
             padding: "12px 20px",
             borderRadius: "var(--radius-md)",
@@ -128,7 +128,7 @@ export default function Settings() {
                     padding: "2px 8px",
                     borderRadius: "var(--radius-full)",
                     background: "rgba(139, 92, 246, 0.2)",
-                    color: "#c4b5fd",
+                    color: "#425F6B",
                     border: "1px solid rgba(139, 92, 246, 0.3)",
                   }}
                 >
@@ -145,7 +145,7 @@ export default function Settings() {
             <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>
               {t("currentLanguage", "Active")}:
             </span>
-            <span style={{ fontSize: 13, fontWeight: 700, color: "#a78bfa", display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#425F6B", display: "flex", alignItems: "center", gap: 6 }}>
               <span>{activeLanguageMeta.flag}</span>
               <span>{activeLanguageMeta.name} ({activeLanguageMeta.englishName})</span>
             </span>
@@ -178,7 +178,7 @@ export default function Settings() {
                     ? "linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(59, 130, 246, 0.2))"
                     : "rgba(255, 255, 255, 0.03)",
                   border: isSelected
-                    ? "1px solid #8b5cf6"
+                    ? "1px solid #425F6B"
                     : "1px solid var(--border-subtle)",
                   cursor: "pointer",
                   textAlign: "left",
@@ -208,7 +208,7 @@ export default function Settings() {
                       ({lang.englishName})
                     </span>
                   </div>
-                  <div style={{ fontSize: 11, color: isSelected ? "#c4b5fd" : "var(--text-secondary)", fontWeight: 500 }}>
+                  <div style={{ fontSize: 11, color: isSelected ? "#425F6B" : "var(--text-secondary)", fontWeight: 500 }}>
                     {lang.region}
                   </div>
                   <div style={{ fontSize: 10, color: "var(--text-dim)", marginTop: 2 }}>
@@ -222,7 +222,7 @@ export default function Settings() {
                       width: 20,
                       height: 20,
                       borderRadius: "50%",
-                      background: "#8b5cf6",
+                      background: "#425F6B",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -394,7 +394,7 @@ export default function Settings() {
             </div>
 
             <div style={{ padding: 14, borderRadius: "var(--radius-md)", background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)" }}>
-              <div style={{ fontWeight: 600, fontSize: 13, color: "#34d399", marginBottom: 4 }}>
+              <div style={{ fontWeight: 600, fontSize: 13, color: "#1C6758", marginBottom: 4 }}>
                 Account Security & Storage
               </div>
               <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5 }}>

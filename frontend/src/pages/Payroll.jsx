@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   Users,
   Plus,
@@ -221,7 +221,7 @@ export default function Payroll() {
             borderRadius: "var(--radius-md)",
             background: "rgba(16, 185, 129, 0.15)",
             border: "1px solid rgba(16, 185, 129, 0.35)",
-            color: "#34d399",
+            color: "#1C6758",
             fontWeight: 600,
             fontSize: 13.5,
             display: "flex",
@@ -248,7 +248,7 @@ export default function Payroll() {
                 padding: "3px 10px",
                 borderRadius: "var(--radius-full)",
                 background: "rgba(59, 130, 246, 0.15)",
-                color: "#60a5fa",
+                color: "#7A9CAE",
                 border: "1px solid rgba(59, 130, 246, 0.3)",
               }}
             >
@@ -301,7 +301,7 @@ export default function Payroll() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#60a5fa" }}>
+            <span className="kpi-value" style={{ color: "#7A9CAE" }}>
               {activeWorkers.length}
             </span>
           </div>
@@ -319,7 +319,7 @@ export default function Payroll() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#fbbf24" }}>
+            <span className="kpi-value" style={{ color: "#C78150" }}>
               {formatLakhs(totalMonthlyPayrollLiability)}
             </span>
           </div>
@@ -337,7 +337,7 @@ export default function Payroll() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#34d399" }}>
+            <span className="kpi-value" style={{ color: "#1C6758" }}>
               {formatLakhs(currentMonthPaid)}
             </span>
           </div>
@@ -355,7 +355,7 @@ export default function Payroll() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: pendingPayrollDue > 0 ? "#c4b5fd" : "#34d399" }}>
+            <span className="kpi-value" style={{ color: pendingPayrollDue > 0 ? "#425F6B" : "#1C6758" }}>
               {formatLakhs(pendingPayrollDue)}
             </span>
           </div>
@@ -449,7 +449,7 @@ export default function Payroll() {
                             width: 32,
                             height: 32,
                             borderRadius: "var(--radius-full)",
-                            background: "linear-gradient(135deg, #3b82f6, #1d4ed8)",
+                            background: "linear-gradient(135deg, #7A9CAE, #1d4ed8)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -472,7 +472,7 @@ export default function Payroll() {
                     </td>
 
                     <td>
-                      <span style={{ fontWeight: 700, color: "#34d399", fontFamily: "var(--font-mono)" }}>
+                      <span style={{ fontWeight: 700, color: "#1C6758", fontFamily: "var(--font-mono)" }}>
                         {formatCurrency(w.monthlySalary)}
                       </span>
                     </td>
@@ -480,7 +480,7 @@ export default function Payroll() {
                     <td>
                       <div style={{ fontSize: 12, color: "var(--text-secondary)", fontFamily: "var(--font-mono)" }}>
                         {w.upiId ? (
-                          <span style={{ color: "#60a5fa" }}>UPI: {w.upiId}</span>
+                          <span style={{ color: "#7A9CAE" }}>UPI: {w.upiId}</span>
                         ) : w.bankAccount ? (
                           <span>A/C: {w.bankAccount}</span>
                         ) : (
@@ -500,7 +500,7 @@ export default function Payroll() {
                         className="status-badge"
                         style={{
                           background: w.status === "Active" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)",
-                          color: w.status === "Active" ? "#34d399" : "#fbbf24",
+                          color: w.status === "Active" ? "#1C6758" : "#C78150",
                         }}
                       >
                         {w.status}
@@ -519,7 +519,7 @@ export default function Payroll() {
                         </button>
                         <button
                           className="btn btn-secondary btn-sm"
-                          style={{ padding: "6px 8px", color: "#fb7185" }}
+                          style={{ padding: "6px 8px", color: "#C07F7F" }}
                           onClick={() => {
                             if (window.confirm(`Remove ${w.name} from payroll?`)) {
                               deleteWorker(w.id);
@@ -576,7 +576,7 @@ export default function Payroll() {
                 {payrollHistory.map((p) => (
                   <tr key={p.id}>
                     <td>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, color: "#60a5fa" }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, color: "#7A9CAE" }}>
                         {p.id}
                       </span>
                     </td>
@@ -588,7 +588,7 @@ export default function Payroll() {
                       <span style={{ fontSize: 12 }}>{p.department}</span>
                     </td>
                     <td>
-                      <span style={{ fontWeight: 600, color: "#c4b5fd", fontSize: 12 }}>{p.month}</span>
+                      <span style={{ fontWeight: 600, color: "#425F6B", fontSize: 12 }}>{p.month}</span>
                     </td>
                     <td>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>
@@ -596,12 +596,12 @@ export default function Payroll() {
                       </span>
                     </td>
                     <td>
-                      <span style={{ fontSize: 11.5, color: p.bonus > 0 ? "#34d399" : p.deductions > 0 ? "#fb7185" : "var(--text-muted)" }}>
+                      <span style={{ fontSize: 11.5, color: p.bonus > 0 ? "#1C6758" : p.deductions > 0 ? "#C07F7F" : "var(--text-muted)" }}>
                         {p.bonus > 0 ? `+${formatCurrency(p.bonus)}` : p.deductions > 0 ? `-${formatCurrency(p.deductions)}` : "—"}
                       </span>
                     </td>
                     <td>
-                      <span style={{ fontWeight: 700, color: "#34d399", fontFamily: "var(--font-mono)", fontSize: 13 }}>
+                      <span style={{ fontWeight: 700, color: "#1C6758", fontFamily: "var(--font-mono)", fontSize: 13 }}>
                         {formatCurrency(p.netAmount)}
                       </span>
                     </td>
@@ -798,13 +798,13 @@ export default function Payroll() {
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                   <span style={{ color: "var(--text-secondary)", fontSize: 13 }}>Base Salary:</span>
-                  <span style={{ fontWeight: 700, color: "#34d399" }}>
+                  <span style={{ fontWeight: 700, color: "#1C6758" }}>
                     {formatCurrency(selectedWorkerForPay.monthlySalary)}
                   </span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <span style={{ color: "var(--text-secondary)", fontSize: 13 }}>Payment Target:</span>
-                  <span style={{ fontWeight: 600, color: "#60a5fa", fontSize: 12 }}>
+                  <span style={{ fontWeight: 600, color: "#7A9CAE", fontSize: 12 }}>
                     {selectedWorkerForPay.upiId || selectedWorkerForPay.bankAccount || "Direct Bank Transfer"}
                   </span>
                 </div>
@@ -858,7 +858,7 @@ export default function Payroll() {
                       background: "rgba(16,185,129,0.1)",
                       border: "1px solid rgba(16,185,129,0.3)",
                       fontWeight: 800,
-                      color: "#34d399",
+                      color: "#1C6758",
                       fontSize: 16,
                       fontFamily: "var(--font-mono)",
                     }}

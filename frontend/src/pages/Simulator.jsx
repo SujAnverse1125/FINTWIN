@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import {
   AlertTriangle,
   Brain,
@@ -313,7 +313,7 @@ function Simulator() {
           borderRadius: "12px",
         }}
       >
-        <div style={{ color: "#3b82f6" }}>
+        <div style={{ color: "#7A9CAE" }}>
           <Brain size={24} />
         </div>
         <div>
@@ -331,7 +331,7 @@ function Simulator() {
       ====================================== */}
       <div className="module-card">
         <div className="section-heading">
-          <div className="section-heading-icon" style={{ background: "rgba(59,130,246,0.2)", color: "#3b82f6" }}>
+          <div className="section-heading-icon" style={{ background: "rgba(59,130,246,0.2)", color: "#7A9CAE" }}>
             <Brain size={19} />
           </div>
           <div>
@@ -360,7 +360,7 @@ function Simulator() {
               }}
             >
               <strong style={{ color: "#f8fafc" }}>Revenue Change (Demand Shock)</strong>
-              <strong style={{ color: revenueChange < 0 ? "#f43f5e" : revenueChange > 0 ? "#10b981" : "#94a3b8" }}>
+              <strong style={{ color: revenueChange < 0 ? "#C07F7F" : revenueChange > 0 ? "#1C6758" : "#94a3b8" }}>
                 {revenueChange > 0 ? `+${revenueChange}%` : `${revenueChange}%`}
               </strong>
             </div>
@@ -371,7 +371,7 @@ function Simulator() {
               step="5"
               value={revenueChange}
               onChange={(e) => setRevenueChange(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "#3b82f6" }}
+              style={{ width: "100%", accentColor: "#7A9CAE" }}
             />
             <small style={{ color: "#64748b", fontSize: "11px" }}>
               Negative values simulate a decline in sales orders or client cancellations.
@@ -389,7 +389,7 @@ function Simulator() {
               }}
             >
               <strong style={{ color: "#f8fafc" }}>Expense Surge (Inflation / OpEx Shock)</strong>
-              <strong style={{ color: expenseChange > 0 ? "#f43f5e" : "#94a3b8" }}>
+              <strong style={{ color: expenseChange > 0 ? "#C07F7F" : "#94a3b8" }}>
                 +{expenseChange}%
               </strong>
             </div>
@@ -400,7 +400,7 @@ function Simulator() {
               step="5"
               value={expenseChange}
               onChange={(e) => setExpenseChange(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "#ef4444" }}
+              style={{ width: "100%", accentColor: "#C07F7F" }}
             />
             <small style={{ color: "#64748b", fontSize: "11px" }}>
               Simulate an increase in raw material costs, rent, or unexpected operational disbursements.
@@ -418,7 +418,7 @@ function Simulator() {
               }}
             >
               <strong style={{ color: "#f8fafc" }}>Customer Payment Delay (Debtor Lag)</strong>
-              <strong style={{ color: paymentDelay > 0 ? "#fbbf24" : "#94a3b8" }}>
+              <strong style={{ color: paymentDelay > 0 ? "#C78150" : "#94a3b8" }}>
                 {paymentDelay} days
               </strong>
             </div>
@@ -429,7 +429,7 @@ function Simulator() {
               step="5"
               value={paymentDelay}
               onChange={(e) => setPaymentDelay(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "#fbbf24" }}
+              style={{ width: "100%", accentColor: "#C78150" }}
             />
             <small style={{ color: "#64748b", fontSize: "11px" }}>
               Simulate enterprise buyers delaying settlements past agreed credit periods.
@@ -453,7 +453,7 @@ function Simulator() {
               padding: "10px 22px",
               border: "none",
               borderRadius: "8px",
-              background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+              background: "linear-gradient(135deg, #7A9CAE 0%, #2563eb 100%)",
               color: "#fff",
               cursor: loading ? "not-allowed" : "pointer",
               fontWeight: "700",
@@ -507,7 +507,7 @@ function Simulator() {
             color: "#fca5a5",
           }}
         >
-          <AlertTriangle size={20} color="#ef4444" />
+          <AlertTriangle size={20} color="#C07F7F" />
           <div>
             <strong>Simulation failed</strong>
             <p style={{ margin: "2px 0 0", fontSize: "12px" }}>{error}</p>
@@ -523,7 +523,7 @@ function Simulator() {
           {/* Baseline KPI Cards */}
           <div className="module-card" style={{ marginTop: "20px" }}>
             <div className="section-heading">
-              <div className="section-heading-icon" style={{ background: "rgba(16,185,129,0.2)", color: "#10b981" }}>
+              <div className="section-heading-icon" style={{ background: "rgba(16,185,129,0.2)", color: "#1C6758" }}>
                 <Brain size={19} />
               </div>
               <div>
@@ -544,21 +544,21 @@ function Simulator() {
 
               <div className="module-stat">
                 <span style={{ fontSize: "11px", color: "#94a3b8" }}>RECEIVABLES</span>
-                <strong style={{ fontSize: "18px", color: "#34d399" }}>
+                <strong style={{ fontSize: "18px", color: "#1C6758" }}>
                   {formatMoney(simulation.base?.receivables)}
                 </strong>
               </div>
 
               <div className="module-stat">
                 <span style={{ fontSize: "11px", color: "#94a3b8" }}>TOTAL EXPENSES</span>
-                <strong style={{ fontSize: "18px", color: "#fb7185" }}>
+                <strong style={{ fontSize: "18px", color: "#C07F7F" }}>
                   {formatMoney(simulation.base?.total_expenses)}
                 </strong>
               </div>
 
               <div className="module-stat">
                 <span style={{ fontSize: "11px", color: "#94a3b8" }}>NET POSITION</span>
-                <strong style={{ fontSize: "18px", color: Number(simulation.base?.net_position || 0) >= 0 ? "#34d399" : "#f43f5e" }}>
+                <strong style={{ fontSize: "18px", color: Number(simulation.base?.net_position || 0) >= 0 ? "#1C6758" : "#C07F7F" }}>
                   {formatMoney(simulation.base?.net_position)}
                 </strong>
               </div>
@@ -571,7 +571,7 @@ function Simulator() {
           <div className="module-card" style={{ marginTop: "20px", padding: "24px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "14px", marginBottom: "18px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <div className="section-heading-icon" style={{ background: "rgba(59,130,246,0.2)", color: "#3b82f6" }}>
+                <div className="section-heading-icon" style={{ background: "rgba(59,130,246,0.2)", color: "#7A9CAE" }}>
                   <BarChart3 size={20} />
                 </div>
                 <div>
@@ -592,7 +592,7 @@ function Simulator() {
                     padding: "6px 14px",
                     borderRadius: "6px",
                     border: "none",
-                    background: activeChartTab === "bar" ? "#3b82f6" : "transparent",
+                    background: activeChartTab === "bar" ? "#7A9CAE" : "transparent",
                     color: activeChartTab === "bar" ? "#fff" : "#94a3b8",
                     fontSize: "12px",
                     fontWeight: "600",
@@ -612,7 +612,7 @@ function Simulator() {
                     padding: "6px 14px",
                     borderRadius: "6px",
                     border: "none",
-                    background: activeChartTab === "trajectory" ? "#3b82f6" : "transparent",
+                    background: activeChartTab === "trajectory" ? "#7A9CAE" : "transparent",
                     color: activeChartTab === "trajectory" ? "#fff" : "#94a3b8",
                     fontSize: "12px",
                     fontWeight: "600",
@@ -632,7 +632,7 @@ function Simulator() {
                     padding: "6px 14px",
                     borderRadius: "6px",
                     border: "none",
-                    background: activeChartTab === "cards" ? "#3b82f6" : "transparent",
+                    background: activeChartTab === "cards" ? "#7A9CAE" : "transparent",
                     color: activeChartTab === "cards" ? "#fff" : "#94a3b8",
                     fontSize: "12px",
                     fontWeight: "600",
@@ -700,11 +700,11 @@ function Simulator() {
                         {comparisonChartData.map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
-                            fill={entry.projectedCash < 0 ? "#f43f5e" : entry.risk === "HIGH" ? "#fb923c" : "#38bdf8"}
+                            fill={entry.projectedCash < 0 ? "#C07F7F" : entry.risk === "HIGH" ? "#fb923c" : "#38bdf8"}
                           />
                         ))}
                       </Bar>
-                      <Bar dataKey="liquidityGap" name="liquidityGap" fill="#f43f5e" radius={[4, 4, 0, 0]} maxBarSize={38} />
+                      <Bar dataKey="liquidityGap" name="liquidityGap" fill="#C07F7F" radius={[4, 4, 0, 0]} maxBarSize={38} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -731,8 +731,8 @@ function Simulator() {
                           <stop offset="95%" stopColor="#38bdf8" stopOpacity={0.0} />
                         </linearGradient>
                         <linearGradient id="colorStressed" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.35} />
-                          <stop offset="95%" stopColor="#f43f5e" stopOpacity={0.0} />
+                          <stop offset="5%" stopColor="#C07F7F" stopOpacity={0.35} />
+                          <stop offset="95%" stopColor="#C07F7F" stopOpacity={0.0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
@@ -764,7 +764,7 @@ function Simulator() {
                           </span>
                         )}
                       />
-                      <ReferenceLine y={0} stroke="#ef4444" strokeDasharray="4 4" label={{ value: "Solvency Breach Line (₹0)", fill: "#ef4444", fontSize: 11 }} />
+                      <ReferenceLine y={0} stroke="#C07F7F" strokeDasharray="4 4" label={{ value: "Solvency Breach Line (₹0)", fill: "#C07F7F", fontSize: 11 }} />
                       <Area
                         type="monotone"
                         dataKey="baseline"
@@ -778,7 +778,7 @@ function Simulator() {
                         type="monotone"
                         dataKey="stressed"
                         name="stressed"
-                        stroke="#f43f5e"
+                        stroke="#C07F7F"
                         strokeWidth={2.5}
                         fillOpacity={1}
                         fill="url(#colorStressed)"
@@ -816,10 +816,10 @@ function Simulator() {
                         style={{
                           color:
                             scenario.risk === "HIGH"
-                              ? "#f43f5e"
+                              ? "#C07F7F"
                               : scenario.risk === "MEDIUM"
-                              ? "#fbbf24"
-                              : "#34d399",
+                              ? "#C78150"
+                              : "#1C6758",
                         }}
                       >
                         {getScenarioIcon(scenario.scenario)}
@@ -850,7 +850,7 @@ function Simulator() {
                             display: "block",
                             marginTop: "4px",
                             fontSize: "15px",
-                            color: Number(scenario.projected_cash) >= 0 ? "#38bdf8" : "#f43f5e",
+                            color: Number(scenario.projected_cash) >= 0 ? "#38bdf8" : "#C07F7F",
                           }}
                         >
                           {formatMoney(scenario.projected_cash)}
@@ -864,7 +864,7 @@ function Simulator() {
                             display: "block",
                             marginTop: "4px",
                             fontSize: "15px",
-                            color: Number(scenario.cash_impact) < 0 ? "#f43f5e" : "#34d399",
+                            color: Number(scenario.cash_impact) < 0 ? "#C07F7F" : "#1C6758",
                           }}
                         >
                           {formatMoney(scenario.cash_impact)}
@@ -878,7 +878,7 @@ function Simulator() {
                             display: "block",
                             marginTop: "4px",
                             fontSize: "15px",
-                            color: Number(scenario.liquidity_gap) > 0 ? "#f43f5e" : "#34d399",
+                            color: Number(scenario.liquidity_gap) > 0 ? "#C07F7F" : "#1C6758",
                           }}
                         >
                           {formatMoney(scenario.liquidity_gap)}

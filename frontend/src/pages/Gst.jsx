@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   FileText,
@@ -143,7 +143,7 @@ export default function Gst() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#60a5fa" }}>
+            <span className="kpi-value" style={{ color: "#7A9CAE" }}>
               {formatLakhs(gstSummary.totalOutputGst)}
             </span>
           </div>
@@ -162,7 +162,7 @@ export default function Gst() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#34d399" }}>
+            <span className="kpi-value" style={{ color: "#1C6758" }}>
               {formatLakhs(gstSummary.totalInputTaxCredit)}
             </span>
           </div>
@@ -184,7 +184,7 @@ export default function Gst() {
             <span
               className="kpi-value"
               style={{
-                color: gstSummary.netGstPayable > 0 ? "#fbbf24" : "#34d399",
+                color: gstSummary.netGstPayable > 0 ? "#C78150" : "#1C6758",
               }}
             >
               {formatLakhs(gstSummary.netGstPayable)}
@@ -205,7 +205,7 @@ export default function Gst() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#c4b5fd" }}>
+            <span className="kpi-value" style={{ color: "#425F6B" }}>
               {formatLakhs(gstSummary.excessItcCarryforward)}
             </span>
           </div>
@@ -335,7 +335,7 @@ export default function Gst() {
               {isInterstate ? (
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
                   <span style={{ color: "var(--text-secondary)" }}>IGST ({calcRate}%):</span>
-                  <span style={{ fontWeight: 700, color: "#60a5fa" }}>
+                  <span style={{ fontWeight: 700, color: "#7A9CAE" }}>
                     {formatCurrency(calcResult.igst)}
                   </span>
                 </div>
@@ -343,13 +343,13 @@ export default function Gst() {
                 <>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
                     <span style={{ color: "var(--text-secondary)" }}>CGST ({calcRate / 2}%):</span>
-                    <span style={{ fontWeight: 700, color: "#60a5fa" }}>
+                    <span style={{ fontWeight: 700, color: "#7A9CAE" }}>
                       {formatCurrency(calcResult.cgst)}
                     </span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
                     <span style={{ color: "var(--text-secondary)" }}>SGST ({calcRate / 2}%):</span>
-                    <span style={{ fontWeight: 700, color: "#60a5fa" }}>
+                    <span style={{ fontWeight: 700, color: "#7A9CAE" }}>
                       {formatCurrency(calcResult.sgst)}
                     </span>
                   </div>
@@ -360,14 +360,14 @@ export default function Gst() {
 
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
                 <span style={{ color: "var(--text-secondary)" }}>Total GST Amount:</span>
-                <span style={{ fontWeight: 700, color: "#fbbf24" }}>
+                <span style={{ fontWeight: 700, color: "#C78150" }}>
                   {formatCurrency(calcResult.totalGst)}
                 </span>
               </div>
 
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15, fontWeight: 800 }}>
                 <span style={{ color: "#fff" }}>Total Invoice Amount:</span>
-                <span style={{ color: "#34d399" }}>
+                <span style={{ color: "#1C6758" }}>
                   {formatCurrency(calcResult.totalAmount)}
                 </span>
               </div>
@@ -410,10 +410,10 @@ export default function Gst() {
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ fontWeight: 700, fontSize: 13, color: "#60a5fa" }}>
+                <div style={{ fontWeight: 700, fontSize: 13, color: "#7A9CAE" }}>
                   GSTR-1 Outward Supplies (Sales)
                 </div>
-                <span className="status-badge" style={{ background: "rgba(59,130,246,0.15)", color: "#60a5fa" }}>
+                <span className="status-badge" style={{ background: "rgba(59,130,246,0.15)", color: "#7A9CAE" }}>
                   {gstSummary.gstr1Summary.invoiceCount} Invoices
                 </span>
               </div>
@@ -425,7 +425,7 @@ export default function Gst() {
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, fontSize: 12.5 }}>
                 <span style={{ color: "var(--text-secondary)" }}>Output GST Tax Liability:</span>
-                <span style={{ fontWeight: 700, color: "#60a5fa" }}>
+                <span style={{ fontWeight: 700, color: "#7A9CAE" }}>
                   {formatLakhs(gstSummary.gstr1Summary.totalTaxLiability)}
                 </span>
               </div>
@@ -440,16 +440,16 @@ export default function Gst() {
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ fontWeight: 700, fontSize: 13, color: "#34d399" }}>
+                <div style={{ fontWeight: 700, fontSize: 13, color: "#1C6758" }}>
                   GSTR-2B Inward Supplies (ITC on Purchases)
                 </div>
-                <span className="status-badge" style={{ background: "rgba(16,185,129,0.15)", color: "#34d399" }}>
+                <span className="status-badge" style={{ background: "rgba(16,185,129,0.15)", color: "#1C6758" }}>
                   {gstSummary.gstr2bSummary.purchaseCount} Expenses
                 </span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 12.5 }}>
                 <span style={{ color: "var(--text-secondary)" }}>Total Eligible ITC:</span>
-                <span style={{ fontWeight: 700, color: "#34d399" }}>
+                <span style={{ fontWeight: 700, color: "#1C6758" }}>
                   {formatLakhs(gstSummary.gstr2bSummary.eligibleItc)}
                 </span>
               </div>
@@ -464,7 +464,7 @@ export default function Gst() {
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <div style={{ fontWeight: 800, fontSize: 14, color: "#fbbf24" }}>
+                <div style={{ fontWeight: 800, fontSize: 14, color: "#C78150" }}>
                   GSTR-3B Net Tax Payable in Cash
                 </div>
                 <span
@@ -474,7 +474,7 @@ export default function Gst() {
                     padding: "3px 10px",
                     borderRadius: "var(--radius-full)",
                     background: gstSummary.netGstPayable > 0 ? "rgba(245,158,11,0.2)" : "rgba(16,185,129,0.2)",
-                    color: gstSummary.netGstPayable > 0 ? "#fbbf24" : "#34d399",
+                    color: gstSummary.netGstPayable > 0 ? "#C78150" : "#1C6758",
                   }}
                 >
                   {gstSummary.netGstPayable > 0 ? "Challan Required" : "Zero Cash Due"}
@@ -546,9 +546,9 @@ export default function Gst() {
           >
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
               {validationResult.valid ? (
-                <CheckCircle2 size={18} style={{ color: "#34d399" }} />
+                <CheckCircle2 size={18} style={{ color: "#1C6758" }} />
               ) : (
-                <AlertTriangle size={18} style={{ color: "#fb7185" }} />
+                <AlertTriangle size={18} style={{ color: "#C07F7F" }} />
               )}
               <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>
                 {validationResult.message}
@@ -565,7 +565,7 @@ export default function Gst() {
                 </div>
                 <div>
                   <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Linked PAN</div>
-                  <div style={{ fontWeight: 600, color: "#60a5fa", marginTop: 2, fontFamily: "var(--font-mono)" }}>
+                  <div style={{ fontWeight: 600, color: "#7A9CAE", marginTop: 2, fontFamily: "var(--font-mono)" }}>
                     {validationResult.pan}
                   </div>
                 </div>
@@ -577,7 +577,7 @@ export default function Gst() {
                 </div>
                 <div>
                   <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Compliance Health Score</div>
-                  <div style={{ fontWeight: 700, color: "#34d399", marginTop: 2 }}>
+                  <div style={{ fontWeight: 700, color: "#1C6758", marginTop: 2 }}>
                     {validationResult.complianceRating}
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import {
   FileText,
   Plus,
@@ -533,7 +533,7 @@ export default function Invoices() {
             gap: 8,
           }}
         >
-          <CheckCircle2 size={16} color="#10b981" />
+          <CheckCircle2 size={16} color="#1C6758" />
           <span>{notification}</span>
         </div>
       )}
@@ -1022,17 +1022,17 @@ export default function Invoices() {
                           const leftPct = ((inv.day - 1) / 16) * 100;
                           const widthPct = (inv.span / 16) * 100;
 
-                          let pillBg = "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)";
+                          let pillBg = "linear-gradient(135deg, #425F6B 0%, #6d28d9 100%)";
                           let pillShadow = "0 4px 12px rgba(109, 40, 217, 0.25)";
 
                           if (inv.type === "paid") {
-                            pillBg = "linear-gradient(135deg, #10b981 0%, #059669 100%)";
+                            pillBg = "linear-gradient(135deg, #1C6758 0%, #059669 100%)";
                             pillShadow = "0 4px 12px rgba(5, 150, 105, 0.25)";
                           } else if (inv.type === "treds") {
                             pillBg = "linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)";
                             pillShadow = "0 6px 16px rgba(2, 132, 199, 0.3)";
                           } else if (inv.type === "pending") {
-                            pillBg = "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)";
+                            pillBg = "linear-gradient(135deg, #C78150 0%, #d97706 100%)";
                             pillShadow = "0 4px 12px rgba(217, 119, 6, 0.25)";
                           }
 
@@ -1325,7 +1325,7 @@ export default function Invoices() {
                     width: 54,
                     height: 54,
                     borderRadius: "50%",
-                    background: "radial-gradient(circle at 35% 35%, #93c5fd 0%, #3b82f6 50%, #1d4ed8 100%)",
+                    background: "radial-gradient(circle at 35% 35%, #93c5fd 0%, #7A9CAE 50%, #1d4ed8 100%)",
                     boxShadow: "0 10px 24px rgba(59, 130, 246, 0.35)",
                     margin: "0 auto 12px",
                   }}
@@ -1395,7 +1395,7 @@ export default function Invoices() {
                       cursor: "pointer",
                     }}
                   >
-                    <FileText size={12} color="#8b5cf6" />
+                    <FileText size={12} color="#425F6B" />
                     <span>Get Reports</span>
                   </button>
                 </div>
@@ -1597,7 +1597,7 @@ export default function Invoices() {
                             borderRadius: "6px",
                             border: "none",
                             background: "#fee2e2",
-                            color: "#ef4444",
+                            color: "#C07F7F",
                             cursor: "pointer",
                           }}
                         >

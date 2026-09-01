@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import {
   Layers,
   CheckCircle2,
@@ -114,7 +114,7 @@ export default function Integrations() {
             position: "fixed",
             top: 85,
             right: 36,
-            background: "linear-gradient(135deg, #10b981, #059669)",
+            background: "linear-gradient(135deg, #1C6758, #059669)",
             color: "#fff",
             padding: "12px 20px",
             borderRadius: "var(--radius-md)",
@@ -146,7 +146,7 @@ export default function Integrations() {
               </div>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#34d399" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#1C6758" }}>
             <ShieldCheck size={16} />
             <span>End-to-End Encrypted Pipelines</span>
           </div>
@@ -184,7 +184,7 @@ export default function Integrations() {
                       padding: "2px 8px",
                       borderRadius: "var(--radius-full)",
                       background: isConnected ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.06)",
-                      color: isConnected ? "#34d399" : "var(--text-muted)",
+                      color: isConnected ? "#1C6758" : "var(--text-muted)",
                     }}
                   >
                     {c.status}

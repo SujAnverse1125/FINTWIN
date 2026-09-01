@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   Users,
   Plus,
@@ -33,7 +33,7 @@ import {
 import { INDUSTRY_SECTORS } from "../data/sampleData";
 import { calculateReceivables } from "../engines/digitalTwin";
 
-const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
+const COLORS = ["#7A9CAE", "#1C6758", "#C78150", "#C07F7F", "#425F6B", "#06b6d4"];
 
 export default function Customers() {
   const [customers, setCustomers] = useState(getCustomers());
@@ -110,10 +110,10 @@ export default function Customers() {
         <div className="kpi-card">
           <div className="kpi-top">
             <span className="kpi-label">Active Customer Accounts</span>
-            <Users size={18} style={{ color: "#60a5fa" }} />
+            <Users size={18} style={{ color: "#7A9CAE" }} />
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#60a5fa" }}>
+            <span className="kpi-value" style={{ color: "#7A9CAE" }}>
               {customers.length}
             </span>
           </div>
@@ -125,10 +125,10 @@ export default function Customers() {
         <div className="kpi-card">
           <div className="kpi-top">
             <span className="kpi-label">Top Account Concentration</span>
-            <AlertTriangle size={18} style={{ color: "#fb7185" }} />
+            <AlertTriangle size={18} style={{ color: "#C07F7F" }} />
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#fb7185" }}>
+            <span className="kpi-value" style={{ color: "#C07F7F" }}>
               {highConcentrationCust ? `${highConcentrationCust.concentration}%` : "32.4%"}
             </span>
           </div>
@@ -140,10 +140,10 @@ export default function Customers() {
         <div className="kpi-card">
           <div className="kpi-top">
             <span className="kpi-label">Average Portfolio Delay</span>
-            <Clock size={18} style={{ color: "#fbbf24" }} />
+            <Clock size={18} style={{ color: "#C78150" }} />
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#fbbf24" }}>
+            <span className="kpi-value" style={{ color: "#C78150" }}>
               14.2 Days
             </span>
           </div>
@@ -155,10 +155,10 @@ export default function Customers() {
         <div className="kpi-card">
           <div className="kpi-top">
             <span className="kpi-label">Credit Safe Ratio</span>
-            <ShieldCheck size={18} style={{ color: "#34d399" }} />
+            <ShieldCheck size={18} style={{ color: "#1C6758" }} />
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#34d399" }}>
+            <span className="kpi-value" style={{ color: "#1C6758" }}>
               76.4%
             </span>
           </div>
@@ -233,7 +233,7 @@ export default function Customers() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 8 }}>
             <div style={{ padding: 14, borderRadius: "var(--radius-md)", background: "rgba(244,63,94,0.1)", border: "1px solid rgba(244,63,94,0.3)" }}>
-              <div style={{ fontWeight: 600, fontSize: 13, color: "#fb7185" }}>
+              <div style={{ fontWeight: 600, fontSize: 13, color: "#C07F7F" }}>
                 ⚠️ Critical Concentration: Customer A (Auto Corp)
               </div>
               <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4 }}>
@@ -242,7 +242,7 @@ export default function Customers() {
             </div>
 
             <div style={{ padding: 14, borderRadius: "var(--radius-md)", background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)" }}>
-              <div style={{ fontWeight: 600, fontSize: 13, color: "#34d399" }}>
+              <div style={{ fontWeight: 600, fontSize: 13, color: "#1C6758" }}>
                 ⭐ High Reliability Account: Customer C (Apex Infra)
               </div>
               <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4 }}>
@@ -289,7 +289,7 @@ export default function Customers() {
                     </div>
                   </td>
                   <td>{cust.industry}</td>
-                  <td style={{ fontWeight: 700, color: "#60a5fa" }}>
+                  <td style={{ fontWeight: 700, color: "#7A9CAE" }}>
                     {formatLakhs(cust.outstanding)}
                   </td>
                   <td>Net {cust.paymentTermsDays || 30} Days</td>
@@ -300,10 +300,10 @@ export default function Customers() {
                         fontWeight: 600,
                         color:
                           cust.avgDelayDays > 12
-                            ? "#fb7185"
+                            ? "#C07F7F"
                             : cust.avgDelayDays > 5
-                            ? "#fbbf24"
-                            : "#34d399",
+                            ? "#C78150"
+                            : "#1C6758",
                       }}
                     >
                       +{cust.avgDelayDays || 2} Days
@@ -324,10 +324,10 @@ export default function Customers() {
                             : "rgba(245,158,11,0.15)",
                         color:
                           cust.creditScore === "High Risk"
-                            ? "#fb7185"
+                            ? "#C07F7F"
                             : cust.creditScore === "Low Risk"
-                            ? "#34d399"
-                            : "#fbbf24",
+                            ? "#1C6758"
+                            : "#C78150",
                       }}
                     >
                       {cust.creditScore || "Medium Risk"}

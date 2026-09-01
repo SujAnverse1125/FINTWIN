@@ -694,31 +694,31 @@ a {
   width: 34px;
   height: 34px;
   border-radius: var(--radius-md);
-  background: rgba(59, 130, 246, 0.12);
-  color: #60a5fa;
+  background: rgba(122, 156, 174, 0.12);
+  color: #7A9CAE;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .card-icon-wrap.emerald {
-  background: rgba(16, 185, 129, 0.12);
-  color: #34d399;
+  background: rgba(28, 103, 88, 0.12);
+  color: #1C6758;
 }
 
 .card-icon-wrap.purple {
-  background: rgba(139, 92, 246, 0.12);
-  color: #a78bfa;
+  background: rgba(66, 95, 107, 0.12);
+  color: #425F6B;
 }
 
 .card-icon-wrap.amber {
-  background: rgba(245, 158, 11, 0.12);
-  color: #fbbf24;
+  background: rgba(199, 129, 80, 0.12);
+  color: #C78150;
 }
 
 .card-icon-wrap.rose {
-  background: rgba(244, 63, 94, 0.12);
-  color: #fb7185;
+  background: rgba(192, 127, 127, 0.12);
+  color: #C07F7F;
 }
 
 .card-title {

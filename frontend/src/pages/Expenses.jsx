@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   CreditCard,
   Plus,
@@ -38,11 +38,11 @@ import {
 } from "../engines/digitalTwin";
 
 const COLORS = [
-  "#3b82f6",
-  "#10b981",
-  "#f59e0b",
-  "#ef4444",
-  "#8b5cf6",
+  "#7A9CAE",
+  "#1C6758",
+  "#C78150",
+  "#C07F7F",
+  "#425F6B",
   "#06b6d4",
   "#ec4899",
   "#64748b",
@@ -116,7 +116,7 @@ export default function Expenses() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#fb7185" }}>
+            <span className="kpi-value" style={{ color: "#C07F7F" }}>
               {formatLakhs(totalBurn)}
             </span>
           </div>
@@ -133,7 +133,7 @@ export default function Expenses() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#fbbf24" }}>
+            <span className="kpi-value" style={{ color: "#C78150" }}>
               {formatLakhs(totalRecurring)}
             </span>
           </div>
@@ -150,7 +150,7 @@ export default function Expenses() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#60a5fa" }}>
+            <span className="kpi-value" style={{ color: "#7A9CAE" }}>
               {formatLakhs(totalOneTime)}
             </span>
           </div>
@@ -167,7 +167,7 @@ export default function Expenses() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#34d399" }}>
+            <span className="kpi-value" style={{ color: "#1C6758" }}>
               ₹0.85L
             </span>
           </div>
@@ -242,7 +242,7 @@ export default function Expenses() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 6 }}>
             <div style={{ padding: 14, borderRadius: "var(--radius-md)", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)" }}>
-              <div style={{ fontWeight: 600, fontSize: 13, color: "#60a5fa" }}>
+              <div style={{ fontWeight: 600, fontSize: 13, color: "#7A9CAE" }}>
                 💡 Vendor Term Renegotiation
               </div>
               <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4 }}>
@@ -251,7 +251,7 @@ export default function Expenses() {
             </div>
 
             <div style={{ padding: 14, borderRadius: "var(--radius-md)", background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)" }}>
-              <div style={{ fontWeight: 600, fontSize: 13, color: "#34d399" }}>
+              <div style={{ fontWeight: 600, fontSize: 13, color: "#1C6758" }}>
                 ⚡ Software & SaaS Rationalization
               </div>
               <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4 }}>
@@ -260,7 +260,7 @@ export default function Expenses() {
             </div>
 
             <div style={{ padding: 14, borderRadius: "var(--radius-md)", background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)" }}>
-              <div style={{ fontWeight: 600, fontSize: 13, color: "#fbbf24" }}>
+              <div style={{ fontWeight: 600, fontSize: 13, color: "#C78150" }}>
                 🚛 Freight Consolidation
               </div>
               <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4 }}>
@@ -324,12 +324,12 @@ export default function Expenses() {
                   <tr key={rec.id}>
                     <td style={{ fontWeight: 600, color: "#fff" }}>{rec.category}</td>
                     <td>{rec.description}</td>
-                    <td style={{ fontWeight: 700, color: "#fbbf24" }}>
+                    <td style={{ fontWeight: 700, color: "#C78150" }}>
                       {formatLakhs(rec.amount)}
                     </td>
                     <td>Monthly (Day {rec.dayOfMonth})</td>
                     <td>
-                      <span className="status-badge" style={{ background: "rgba(139,92,246,0.15)", color: "#c4b5fd" }}>
+                      <span className="status-badge" style={{ background: "rgba(139,92,246,0.15)", color: "#425F6B" }}>
                         Fixed Recurring
                       </span>
                     </td>
@@ -340,7 +340,7 @@ export default function Expenses() {
                         onClick={() => deleteExpense(rec.id, true)}
                         title="Remove Expense"
                       >
-                        <Trash2 size={13} style={{ color: "#fb7185" }} />
+                        <Trash2 size={13} style={{ color: "#C07F7F" }} />
                       </button>
                     </td>
                   </tr>
@@ -351,7 +351,7 @@ export default function Expenses() {
                   <tr key={exp.id}>
                     <td style={{ fontWeight: 600, color: "#fff" }}>{exp.category}</td>
                     <td>{exp.description}</td>
-                    <td style={{ fontWeight: 700, color: "#60a5fa" }}>
+                    <td style={{ fontWeight: 700, color: "#7A9CAE" }}>
                       {formatLakhs(exp.amount)}
                     </td>
                     <td>{exp.date || "2026-08-10"}</td>
@@ -367,7 +367,7 @@ export default function Expenses() {
                         onClick={() => deleteExpense(exp.id, false)}
                         title="Remove Expense"
                       >
-                        <Trash2 size={13} style={{ color: "#fb7185" }} />
+                        <Trash2 size={13} style={{ color: "#C07F7F" }} />
                       </button>
                     </td>
                   </tr>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   Wallet,
   TrendingUp,
@@ -66,7 +66,7 @@ export default function CashFlow() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#34d399" }}>
+            <span className="kpi-value" style={{ color: "#1C6758" }}>
               {formatLakhs(summary.currentCash)}
             </span>
           </div>
@@ -84,7 +84,7 @@ export default function CashFlow() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#60a5fa" }}>
+            <span className="kpi-value" style={{ color: "#7A9CAE" }}>
               {formatLakhs(summary.receivables)}
             </span>
           </div>
@@ -102,7 +102,7 @@ export default function CashFlow() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#fbbf24" }}>
+            <span className="kpi-value" style={{ color: "#C78150" }}>
               {formatLakhs(summary.totalExpenses)}
             </span>
           </div>
@@ -123,7 +123,7 @@ export default function CashFlow() {
             <span
               className="kpi-value"
               style={{
-                color: summary.projectedCash >= 0 ? "#c4b5fd" : "#fb7185",
+                color: summary.projectedCash >= 0 ? "#425F6B" : "#C07F7F",
               }}
             >
               {formatLakhs(summary.projectedCash)}
@@ -132,7 +132,7 @@ export default function CashFlow() {
           <div className="kpi-trend positive">
             <span
               style={{
-                color: summary.projectedCash >= 0 ? "#34d399" : "#fb7185",
+                color: summary.projectedCash >= 0 ? "#1C6758" : "#C07F7F",
                 fontWeight: 700,
               }}
             >
@@ -188,12 +188,12 @@ export default function CashFlow() {
                     key={`cell-${index}`}
                     fill={
                       entry.type === "start"
-                        ? "#3b82f6"
+                        ? "#7A9CAE"
                         : entry.type === "inflow"
-                        ? "#10b981"
+                        ? "#1C6758"
                         : entry.type === "outflow"
-                        ? "#f43f5e"
-                        : "#8b5cf6"
+                        ? "#C07F7F"
+                        : "#425F6B"
                     }
                   />
                 ))}
@@ -237,7 +237,7 @@ export default function CashFlow() {
                   .map((inv) => (
                     <tr key={inv.id}>
                       <td style={{ fontWeight: 600, color: "#fff" }}>{inv.customer}</td>
-                      <td style={{ fontWeight: 700, color: "#34d399" }}>
+                      <td style={{ fontWeight: 700, color: "#1C6758" }}>
                         {formatLakhs(inv.amount)}
                       </td>
                       <td>{inv.dueDate}</td>
@@ -282,11 +282,11 @@ export default function CashFlow() {
                   <tr key={rec.id}>
                     <td style={{ fontWeight: 600, color: "#fff" }}>{rec.category}</td>
                     <td>{rec.description}</td>
-                    <td style={{ fontWeight: 700, color: "#fb7185" }}>
+                    <td style={{ fontWeight: 700, color: "#C07F7F" }}>
                       {formatLakhs(rec.amount)}
                     </td>
                     <td>
-                      <span className="status-badge" style={{ background: "rgba(139,92,246,0.15)", color: "#c4b5fd" }}>
+                      <span className="status-badge" style={{ background: "rgba(139,92,246,0.15)", color: "#425F6B" }}>
                         Monthly (Day {rec.dayOfMonth})
                       </span>
                     </td>

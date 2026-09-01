@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   FileSpreadsheet,
   Download,
@@ -152,7 +152,7 @@ export default function Reports() {
                 <tr>
                   <td style={{ fontWeight: 700, color: "#fff" }}>Gross Invoiced Revenue</td>
                   <td>Operating Inflow</td>
-                  <td style={{ textAlign: "right", fontWeight: 800, color: "#34d399", fontSize: 15 }}>
+                  <td style={{ textAlign: "right", fontWeight: 800, color: "#1C6758", fontSize: 15 }}>
                     {formatLakhs(revenue)}
                   </td>
                   <td style={{ textAlign: "right", color: "var(--text-muted)" }}>100.0%</td>
@@ -163,7 +163,7 @@ export default function Reports() {
                     - Fixed Operating Liabilities (Payroll, Rent, SaaS)
                   </td>
                   <td>Fixed Burn</td>
-                  <td style={{ textAlign: "right", fontWeight: 600, color: "#fbbf24" }}>
+                  <td style={{ textAlign: "right", fontWeight: 600, color: "#C78150" }}>
                     - {formatLakhs(fixedBurn)}
                   </td>
                   <td style={{ textAlign: "right", color: "var(--text-muted)" }}>
@@ -176,7 +176,7 @@ export default function Reports() {
                     - Variable Direct Expenses (Raw Materials, Freight, Repairs)
                   </td>
                   <td>Variable Spend</td>
-                  <td style={{ textAlign: "right", fontWeight: 600, color: "#fbbf24" }}>
+                  <td style={{ textAlign: "right", fontWeight: 600, color: "#C78150" }}>
                     - {formatLakhs(variableBurn)}
                   </td>
                   <td style={{ textAlign: "right", color: "var(--text-muted)" }}>
@@ -193,13 +193,13 @@ export default function Reports() {
                     style={{
                       textAlign: "right",
                       fontWeight: 800,
-                      color: netMargin >= 0 ? "#34d399" : "#fb7185",
+                      color: netMargin >= 0 ? "#1C6758" : "#C07F7F",
                       fontSize: 16,
                     }}
                   >
                     {formatLakhs(netMargin)}
                   </td>
-                  <td style={{ textAlign: "right", fontWeight: 700, color: "#60a5fa" }}>
+                  <td style={{ textAlign: "right", fontWeight: 700, color: "#7A9CAE" }}>
                     {revenue > 0 ? `${((netMargin / revenue) * 100).toFixed(1)}%` : "0%"}
                   </td>
                 </tr>
@@ -234,21 +234,21 @@ export default function Reports() {
                 <tr>
                   <td style={{ fontWeight: 700, color: "#fff" }}>Opening Liquid Cash</td>
                   <td>Bank Current Account & Cash Equivalent</td>
-                  <td style={{ textAlign: "right", fontWeight: 700, color: "#60a5fa" }}>
+                  <td style={{ textAlign: "right", fontWeight: 700, color: "#7A9CAE" }}>
                     {formatLakhs(summary.currentCash)}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ color: "var(--text-secondary)" }}>+ Inflows from Customer Invoices</td>
                   <td>Operating Receivables</td>
-                  <td style={{ textAlign: "right", fontWeight: 600, color: "#34d399" }}>
+                  <td style={{ textAlign: "right", fontWeight: 600, color: "#1C6758" }}>
                     + {formatLakhs(summary.receivables)}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ color: "var(--text-secondary)" }}>- Outflows for Operational Burn</td>
                   <td>Operating Payables</td>
-                  <td style={{ textAlign: "right", fontWeight: 600, color: "#fb7185" }}>
+                  <td style={{ textAlign: "right", fontWeight: 600, color: "#C07F7F" }}>
                     - {formatLakhs(summary.totalExpenses)}
                   </td>
                 </tr>
@@ -259,7 +259,7 @@ export default function Reports() {
                     style={{
                       textAlign: "right",
                       fontWeight: 800,
-                      color: summary.projectedCash >= 0 ? "#34d399" : "#fb7185",
+                      color: summary.projectedCash >= 0 ? "#1C6758" : "#C07F7F",
                       fontSize: 16,
                     }}
                   >
@@ -295,7 +295,7 @@ export default function Reports() {
               <tbody>
                 <tr>
                   <td style={{ fontWeight: 600, color: "#fff" }}>Current (0 - 30 Days)</td>
-                  <td style={{ fontWeight: 700, color: "#60a5fa" }}>{formatLakhs(aging["0-30 Days"])}</td>
+                  <td style={{ fontWeight: 700, color: "#7A9CAE" }}>{formatLakhs(aging["0-30 Days"])}</td>
                   <td>{aging.total > 0 ? `${((aging["0-30 Days"] / aging.total) * 100).toFixed(1)}%` : "0%"}</td>
                   <td>
                     <span className="status-badge paid">Normal Collection</span>
@@ -303,7 +303,7 @@ export default function Reports() {
                 </tr>
                 <tr>
                   <td style={{ fontWeight: 600, color: "#fff" }}>31 - 60 Days</td>
-                  <td style={{ fontWeight: 700, color: "#fbbf24" }}>{formatLakhs(aging["31-60 Days"])}</td>
+                  <td style={{ fontWeight: 700, color: "#C78150" }}>{formatLakhs(aging["31-60 Days"])}</td>
                   <td>{aging.total > 0 ? `${((aging["31-60 Days"] / aging.total) * 100).toFixed(1)}%` : "0%"}</td>
                   <td>
                     <span className="status-badge pending">Moderate Followup</span>
@@ -311,7 +311,7 @@ export default function Reports() {
                 </tr>
                 <tr>
                   <td style={{ fontWeight: 600, color: "#fff" }}>61 - 90 Days</td>
-                  <td style={{ fontWeight: 700, color: "#fb7185" }}>{formatLakhs(aging["61-90 Days"])}</td>
+                  <td style={{ fontWeight: 700, color: "#C07F7F" }}>{formatLakhs(aging["61-90 Days"])}</td>
                   <td>{aging.total > 0 ? `${((aging["61-90 Days"] / aging.total) * 100).toFixed(1)}%` : "0%"}</td>
                   <td>
                     <span className="status-badge overdue">Elevated Risk</span>
@@ -319,7 +319,7 @@ export default function Reports() {
                 </tr>
                 <tr>
                   <td style={{ fontWeight: 600, color: "#fff" }}>90+ Days (Severe Overdue)</td>
-                  <td style={{ fontWeight: 700, color: "#f43f5e" }}>{formatLakhs(aging["90+ Days"])}</td>
+                  <td style={{ fontWeight: 700, color: "#C07F7F" }}>{formatLakhs(aging["90+ Days"])}</td>
                   <td>{aging.total > 0 ? `${((aging["90+ Days"] / aging.total) * 100).toFixed(1)}%` : "0%"}</td>
                   <td>
                     <span className="status-badge overdue">Default / Action Req.</span>
