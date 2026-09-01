@@ -297,6 +297,27 @@ function normalizeInvoiceRow(row) {
         150000
     ) || 150000;
 
+  const entryType =
+    row.type ||
+    row.Type ||
+    row["Entry Type"] ||
+    row["Record Type"] ||
+    row["Transaction Type"] ||
+    (row.category && String(row.category).toLowerCase().match(/payroll|salary|rent|utility|utilities|power|saas|software|materials|freight|maintenance|misc/i) ? "Expense" : "Invoice");
+
+  const nameOrDesc =
+    row.customer ||
+    row.Customer ||
+    row["Entity / Name"] ||
+    row.client ||
+    row.Client ||
+    row["Customer Name"] ||
+    row.buyer ||
+    row.description ||
+    row.Description ||
+    row.item ||
+    "Enterprise Transaction";
+
   return {
     id:
       row.id ||
@@ -304,21 +325,20 @@ function normalizeInvoiceRow(row) {
       row.ID ||
       row["Invoice ID"] ||
       row["Invoice No"] ||
+      row["Expense ID"] ||
       row.invoiceNumber ||
-      `INV-${Math.floor(1000 + Math.random() * 9000)}`,
-    customer:
-      row.customer ||
-      row.Customer ||
-      row.client ||
-      row.Client ||
-      row["Customer Name"] ||
-      row.buyer ||
-      "Enterprise Client",
+      `TXN-${Math.floor(1000 + Math.random() * 9000)}`,
+    type: entryType,
+    category: row.category || row.Category || (entryType === "Expense" ? "General Expense" : "Sales Invoice"),
+    description: row.description || row.Description || nameOrDesc,
+    customer: nameOrDesc,
     amount: amt,
     invoiceDate:
       row.invoiceDate ||
       row["Invoice Date"] ||
       row.date ||
+      row.Date ||
+      row["Cadence / Date"] ||
       new Date().toISOString().slice(0, 10),
     dueDate:
       row.dueDate ||
@@ -326,6 +346,12 @@ function normalizeInvoiceRow(row) {
       row.due ||
       new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
     status: row.status || row.Status || "Pending",
+    frequency: row.frequency || row.Frequency || (String(entryType).toLowerCase().includes("recurring") ? "Monthly" : "Once"),
+    dayOfMonth: Number(row.dayOfMonth || row["Day Of Month"] || 1),
+    previousAvgDelay: Number(row.previousAvgDelay || row["Previous Avg Delay Days"] || row["Previous Avg Delay"] || 3.0),
+    previousLatePayments: Number(row.previousLatePayments || row["Previous Late Payments"] || 0),
+    customerTenureMonths: Number(row.customerTenureMonths || row["Customer Tenure Months"] || row["Tenure Months"] || 12),
+    gstRate: row.gstRate || row["GST Rate"] || "18%",
     source: row.source || "file_import",
   };
 }

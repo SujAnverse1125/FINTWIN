@@ -233,21 +233,51 @@ export default function UniversalUploadModal({ isOpen, onClose }) {
   const handleConfirmIngestion = () => {
     if (!parsedPreview?.invoices) return;
 
-    if (activeCategory === "expenses") {
-      parsedPreview.invoices.forEach((item) => {
+    let invoiceCount = 0;
+    let expenseCount = 0;
+    const invoicesToCreate = [];
+
+    parsedPreview.invoices.forEach((item) => {
+      const isExpense =
+        activeCategory === "expenses" ||
+        String(item.type || "").toLowerCase().includes("expense") ||
+        String(item.type || "").toLowerCase().includes("recurring") ||
+        String(item.type || "").toLowerCase().includes("payroll") ||
+        String(item.type || "").toLowerCase().includes("liability") ||
+        String(item.category || "").toLowerCase().match(/payroll|salary|rent|utility|utilities|power|saas|software|materials|freight|maintenance|misc/i);
+
+      if (isExpense) {
+        const isRecurring =
+          String(item.type || "").toLowerCase().includes("recurring") ||
+          String(item.frequency || "").toLowerCase().includes("monthly") ||
+          String(item.category || "").toLowerCase().match(/payroll|salary|rent|lease|power|utility|utilities|software|saas|security|internet/i);
+
         addExpense({
-          category: "Vendor Purchase",
-          description: `${item.customer || "Vendor Bill"} (Imported)`,
+          category: item.category || "General Expense",
+          description: item.description || item.customer || "Operational Expense",
           amount: Number(item.amount) || 0,
           date: item.invoiceDate || new Date().toISOString().slice(0, 10),
-          recurring: false,
+          recurring: isRecurring,
+          dayOfMonth: Number(item.dayOfMonth || 1),
           gstRate: 18,
         });
-      });
-      setSuccessMessage(`✓ Successfully ingested ${parsedPreview.invoices.length} expense records into your Digital Twin!`);
+        expenseCount++;
+      } else {
+        invoicesToCreate.push(item);
+        invoiceCount++;
+      }
+    });
+
+    if (invoicesToCreate.length > 0) {
+      createInvoices(invoicesToCreate);
+    }
+
+    if (invoiceCount > 0 && expenseCount > 0) {
+      setSuccessMessage(`✓ Master Sync Complete! Ingested ${invoiceCount} Invoices & ${expenseCount} Expenses across all modules!`);
+    } else if (expenseCount > 0) {
+      setSuccessMessage(`✓ Successfully ingested ${expenseCount} expense records into your Digital Twin!`);
     } else {
-      createInvoices(parsedPreview.invoices);
-      setSuccessMessage(`✓ Successfully ingested ${parsedPreview.invoices.length} invoices! Cash runway and AI delay radar updated.`);
+      setSuccessMessage(`✓ Successfully ingested ${invoiceCount} invoices! Cash runway and AI delay radar updated.`);
     }
 
     setParsedPreview(null);
