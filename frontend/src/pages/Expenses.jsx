@@ -80,21 +80,27 @@ export default function Expenses() {
     { id: "EXP-003", category: "Maintenance & Repairs", description: "Machinery Calibration & Servicing", amount: 35000, date: "2026-08-18", recurring: false },
   ];
 
-  const hasLoggedExpenses = data.recurringExpenses.length > 0 || data.expenses.length > 0;
-  const effectiveRecurring = hasLoggedExpenses ? data.recurringExpenses : defaultRecurringExpenses;
-  const effectiveOneTime = hasLoggedExpenses ? data.expenses : defaultOneTimeExpenses;
+  const recurringList = data?.recurringExpenses || [];
+  const oneTimeList = data?.expenses || [];
+  const hasLoggedExpenses = recurringList.length > 0 || oneTimeList.length > 0;
+  const effectiveRecurring = hasLoggedExpenses ? recurringList : defaultRecurringExpenses;
+  const effectiveOneTime = hasLoggedExpenses ? oneTimeList : defaultOneTimeExpenses;
 
-  const totalRecurring = effectiveRecurring.reduce((sum, r) => sum + Number(r.amount || 0), 0);
-  const totalOneTime = effectiveOneTime.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  const totalRecurring = effectiveRecurring.reduce((sum, r) => sum + Number(r?.amount || 0), 0);
+  const totalOneTime = effectiveOneTime.reduce((sum, e) => sum + Number(e?.amount || 0), 0);
   const totalBurn = totalRecurring + Math.round(totalOneTime / 2);
 
   // Category breakdown data for charts
   const categoryMap = {};
   effectiveRecurring.forEach((r) => {
-    categoryMap[r.category] = (categoryMap[r.category] || 0) + Number(r.amount || 0);
+    if (r && r.category) {
+      categoryMap[r.category] = (categoryMap[r.category] || 0) + Number(r.amount || 0);
+    }
   });
   effectiveOneTime.forEach((e) => {
-    categoryMap[e.category] = (categoryMap[e.category] || 0) + Number(e.amount || 0);
+    if (e && e.category) {
+      categoryMap[e.category] = (categoryMap[e.category] || 0) + Number(e.amount || 0);
+    }
   });
 
   const chartData = Object.keys(categoryMap).map((k) => ({

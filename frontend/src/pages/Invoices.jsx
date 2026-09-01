@@ -988,7 +988,7 @@ export default function Invoices() {
                     }}
                   />
 
-                  {demoBuyers.map((buyer) => (
+                  {(demoBuyers || []).map((buyer) => (
                     <div
                       key={buyer.id}
                       style={{
@@ -1354,7 +1354,7 @@ export default function Invoices() {
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                {demoBuyers.slice(0, 4).map((b) => (
+                {(demoBuyers || []).slice(0, 4).map((b) => (
                   <div
                     key={b.id}
                     style={{
