@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AlertTriangle,
   Brain,
@@ -11,6 +11,7 @@ import {
   Layers,
   Sparkles,
   ShieldAlert,
+  ShieldCheck,
   Zap,
   Target,
   Shield,
@@ -313,6 +314,11 @@ function Simulator() {
       setLoading(false);
     }
   }
+
+  // Run initial simulation on load
+  useEffect(() => {
+    runSimulation();
+  }, []);
 
   // ==========================================
   // RESET
