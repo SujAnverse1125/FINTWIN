@@ -159,7 +159,7 @@ export default function Expenses() {
             </span>
           </div>
           <div className="kpi-trend neutral">
-            <span>{data.recurringExpenses.length} Fixed Subscriptions / Payroll</span>
+            <span>{effectiveRecurring.length} Fixed Subscriptions / Payroll</span>
           </div>
         </div>
 
@@ -176,7 +176,7 @@ export default function Expenses() {
             </span>
           </div>
           <div className="kpi-trend neutral">
-            <span>{data.expenses.length} Logged Variable Invoices</span>
+            <span>{effectiveOneTime.length} Logged Variable Invoices</span>
           </div>
         </div>
 
