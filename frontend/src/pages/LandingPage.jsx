@@ -1068,7 +1068,7 @@ export default function LandingPage() {
             style={{
               position: "relative",
               width: "100%",
-              maxWidth: "1200px",
+              maxWidth: "1100px",
               background: "rgba(255, 255, 255, 0.6)",
               backdropFilter: "blur(24px)",
               borderRadius: "36px",
@@ -1082,6 +1082,42 @@ export default function LandingPage() {
               zIndex: 10,
             }}
           >
+            {/* LEFT COLUMN: Social Proof Overlay Card (Pinned to center card) */}
+            <div
+              className="desktop-nav"
+              style={{
+                position: "absolute",
+                left: "-80px", // Exact 80px overlap, perfectly responsive
+                top: "50%",
+                transform: "translateY(-50%)",
+                width: "300px",
+                background: "#1A1E1C",
+                borderRadius: "24px",
+                padding: "20px",
+                color: "#ffffff",
+                boxShadow: "0 32px 64px rgba(0,0,0,0.2)",
+                zIndex: 20,
+              }}
+            >
+              <div style={{ width: "100%", height: "240px", borderRadius: "16px", overflow: "hidden", marginBottom: "20px" }}>
+                <img src="/stories/vendor_manufacturing.jpg" alt="Vikram S." style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              </div>
+              <div style={{ fontSize: "14px", fontWeight: 700, marginBottom: "4px" }}>Spotlight: Vikram S.,</div>
+              <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", marginBottom: "20px" }}>Sanand Industrial Estate.</div>
+              
+              <div style={{ fontSize: "42px", fontWeight: 800, letterSpacing: "-1px", lineHeight: 1 }}>₹12.8L</div>
+              <div style={{ fontSize: "12.5px", color: "rgba(255,255,255,0.7)", marginTop: "8px", lineHeight: 1.4 }}>
+                GSTR-2B ITC Reclaimed.<br/>Zero Penalties.
+              </div>
+
+              <div style={{ marginTop: "28px", display: "flex", alignItems: "center", gap: 8, background: "#ffffff", padding: "10px 16px", borderRadius: "999px", color: "#121316", width: "fit-content" }}>
+                <ShieldCheck size={16} color="#10B981" />
+                <div style={{ fontSize: "10px", fontWeight: 700, lineHeight: 1.1 }}>
+                  Verified via<br/>Account Aggregator
+                </div>
+              </div>
+            </div>
+
             {/* Center-Left: 3D Art Panel (Carousel) */}
             <div
               style={{
@@ -1496,142 +1532,105 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* LEFT COLUMN: Social Proof Overlay Card */}
-          <div
-            className="desktop-nav" // hide on small screens to maintain layout
-            style={{
-              position: "absolute",
-              left: "calc(50% - 600px - 140px)", // Overlap the left edge of the 1200px center card
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: "320px",
-              background: "#1A1E1C", // Dark Slate
-              borderRadius: "24px",
-              padding: "20px",
-              color: "#ffffff",
-              boxShadow: "0 32px 64px rgba(0,0,0,0.2)",
-              zIndex: 20,
-            }}
-          >
-            <div style={{ width: "100%", height: "240px", borderRadius: "16px", overflow: "hidden", marginBottom: "20px" }}>
-              <img src="/stories/vendor_manufacturing.jpg" alt="Vikram S." style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            </div>
-            <div style={{ fontSize: "14px", fontWeight: 700, marginBottom: "4px" }}>Spotlight: Vikram S.,</div>
-            <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", marginBottom: "20px" }}>Sanand Industrial Estate.</div>
-            
-            <div style={{ fontSize: "42px", fontWeight: 800, letterSpacing: "-1px", lineHeight: 1 }}>₹12.8L</div>
-            <div style={{ fontSize: "12.5px", color: "rgba(255,255,255,0.7)", marginTop: "8px", lineHeight: 1.4 }}>
-              GSTR-2B ITC Reclaimed.<br/>Zero Penalties.
-            </div>
-
-            <div style={{ marginTop: "28px", display: "flex", alignItems: "center", gap: 8, background: "#ffffff", padding: "10px 16px", borderRadius: "999px", color: "#121316", width: "fit-content" }}>
-              <ShieldCheck size={16} color="#10B981" />
-              <div style={{ fontSize: "10px", fontWeight: 700, lineHeight: 1.1 }}>
-                Verified via<br/>Account Aggregator
+            {/* RIGHT COLUMN: Mini Cash Flow Simulator Overlay Card (Pinned to center card) */}
+            <div
+              className="desktop-nav"
+              style={{
+                position: "absolute",
+                right: "-80px", // Exact 80px overlap, perfectly responsive
+                top: "50%",
+                transform: "translateY(-50%)",
+                width: "300px",
+                background: "#ffffff",
+                borderRadius: "24px",
+                padding: "32px 28px",
+                boxShadow: "0 32px 64px rgba(0,0,0,0.1)",
+                zIndex: 20,
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <div style={{ fontSize: "18px", fontWeight: 800, color: "var(--text-primary)", marginBottom: "24px", lineHeight: 1.1 }}>
+                Mini Cash Flow Simulator
               </div>
-            </div>
-          </div>
 
-          {/* RIGHT COLUMN: Mini Cash Flow Simulator Overlay Card */}
-          <div
-            className="desktop-nav"
-            style={{
-              position: "absolute",
-              right: "calc(50% - 600px - 120px)", // Overlap the right edge of the 1200px center card
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: "320px",
-              background: "#ffffff",
-              borderRadius: "24px",
-              padding: "32px 28px",
-              boxShadow: "0 32px 64px rgba(0,0,0,0.1)",
-              zIndex: 20,
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <div style={{ fontSize: "18px", fontWeight: 800, color: "var(--text-primary)", marginBottom: "24px", lineHeight: 1.1 }}>
-              Mini Cash Flow Simulator
-            </div>
-
-            {/* Mini Burn Slider */}
-            <div style={{ marginBottom: "24px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "10px" }}>
-                <span>Monthly Operating Burn</span>
-              </div>
-              <input
-                type="range"
-                min="3"
-                max="40"
-                value={sandboxBurn}
-                onChange={(e) => setSandboxBurn(Number(e.target.value))}
-                style={{ width: "100%", accentColor: "#EF4444", height: "6px" }}
-              />
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "var(--text-muted)", marginTop: "6px" }}>
-                <span>&lt;0</span>
-                <span>₹{sandboxBurn},000</span>
-              </div>
-            </div>
-
-            {/* Mini Delay Slider */}
-            <div style={{ marginBottom: "32px", position: "relative" }}>
-              <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "6px" }}>Average Debtor Delay</div>
-              <div style={{ fontSize: "16px", fontWeight: 800, color: "var(--text-primary)", marginBottom: "12px" }}>{sandboxDelay} Days</div>
-              
-              <div style={{ position: "relative" }}>
+              {/* Mini Burn Slider */}
+              <div style={{ marginBottom: "24px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "10px" }}>
+                  <span>Monthly Operating Burn</span>
+                </div>
                 <input
                   type="range"
-                  min="5"
-                  max="90"
-                  value={sandboxDelay}
-                  onChange={(e) => setSandboxDelay(Number(e.target.value))}
-                  style={{ width: "100%", accentColor: "#F59E0B", height: "6px", position: "relative", zIndex: 2 }}
+                  min="3"
+                  max="40"
+                  value={sandboxBurn}
+                  onChange={(e) => setSandboxBurn(Number(e.target.value))}
+                  style={{ width: "100%", accentColor: "#EF4444", height: "6px" }}
                 />
-                {/* 45 Day Marker */}
-                <div style={{ position: "absolute", left: `${((45 - 5) / (90 - 5)) * 100}%`, top: -6, bottom: -6, width: 2, borderLeft: "2px dashed #F59E0B", zIndex: 1, opacity: 0.5 }}>
-                  <span style={{ position: "absolute", bottom: -14, left: -24, fontSize: "8px", fontWeight: 700, color: "#F59E0B", whiteSpace: "nowrap" }}>
-                    45 Days (MSMED Limit)
-                  </span>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "var(--text-muted)", marginTop: "6px" }}>
+                  <span>&lt;0</span>
+                  <span>₹{sandboxBurn},000</span>
                 </div>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "var(--text-muted)", marginTop: "12px" }}>
-                <span>0</span>
-                <span>10k</span>
-              </div>
-            </div>
 
-            {/* Projected Runway Gauge */}
-            {(() => {
-              // Quick logic for mini gauge
-              const miniRunway = Math.max(0, 90 - sandboxDelay - (sandboxBurn * 1.5));
-              const healthPercent = Math.min(100, Math.max(0, (miniRunway / 60) * 100));
-              const isDanger = miniRunway < 20;
-
-              return (
-                <div style={{ background: isDanger ? "#EF4444" : "#10B981", borderRadius: "14px", padding: "20px", color: "#ffffff", textAlign: "center", transition: "background 0.3s ease" }}>
-                  <div style={{ fontSize: "12.5px", fontWeight: 700, marginBottom: "12px" }}>Projected Safe Runway</div>
-                  
-                  {/* Linear Bar Gauge instead of circle for compactness */}
-                  <div style={{ position: "relative", height: "8px", background: "rgba(255,255,255,0.3)", borderRadius: "4px", overflow: "visible", marginBottom: "12px" }}>
-                    <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${healthPercent}%`, background: "#ffffff", borderRadius: "4px", transition: "width 0.3s ease" }} />
-                    <div style={{ position: "absolute", left: `${healthPercent}%`, top: "50%", transform: "translate(-50%, -50%)", width: 16, height: 16, background: "#ffffff", borderRadius: "50%", boxShadow: "0 2px 4px rgba(0,0,0,0.2)", transition: "left 0.3s ease" }} />
-                  </div>
-                  
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", fontWeight: 600 }}>
-                    <span>0</span>
-                    <span>Gauge</span>
-                    <span>70</span>
+              {/* Mini Delay Slider */}
+              <div style={{ marginBottom: "32px", position: "relative" }}>
+                <div style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "6px" }}>Average Debtor Delay</div>
+                <div style={{ fontSize: "16px", fontWeight: 800, color: "var(--text-primary)", marginBottom: "12px" }}>{sandboxDelay} Days</div>
+                
+                <div style={{ position: "relative" }}>
+                  <input
+                    type="range"
+                    min="5"
+                    max="90"
+                    value={sandboxDelay}
+                    onChange={(e) => setSandboxDelay(Number(e.target.value))}
+                    style={{ width: "100%", accentColor: "#F59E0B", height: "6px", position: "relative", zIndex: 2 }}
+                  />
+                  {/* 45 Day Marker */}
+                  <div style={{ position: "absolute", left: `${((45 - 5) / (90 - 5)) * 100}%`, top: -6, bottom: -6, width: 2, borderLeft: "2px dashed #F59E0B", zIndex: 1, opacity: 0.5 }}>
+                    <span style={{ position: "absolute", bottom: -14, left: -24, fontSize: "8px", fontWeight: 700, color: "#F59E0B", whiteSpace: "nowrap" }}>
+                      45 Days (MSMED Limit)
+                    </span>
                   </div>
                 </div>
-              );
-            })()}
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "var(--text-muted)", marginTop: "12px" }}>
+                  <span>0</span>
+                  <span>10k</span>
+                </div>
+              </div>
 
-            <div style={{ fontSize: "11px", color: "var(--text-secondary)", textAlign: "center", marginTop: "20px", fontWeight: 500, lineHeight: 1.4 }}>
-              Avoid the 45-day<br/>MSMED default risk.
+              {/* Projected Runway Gauge */}
+              {(() => {
+                const miniRunway = Math.max(0, 90 - sandboxDelay - (sandboxBurn * 1.5));
+                const healthPercent = Math.min(100, Math.max(0, (miniRunway / 60) * 100));
+                const isDanger = miniRunway < 20;
+
+                return (
+                  <div style={{ background: isDanger ? "#EF4444" : "#10B981", borderRadius: "14px", padding: "20px", color: "#ffffff", textAlign: "center", transition: "background 0.3s ease" }}>
+                    <div style={{ fontSize: "12.5px", fontWeight: 700, marginBottom: "12px" }}>Projected Safe Runway</div>
+                    
+                    <div style={{ position: "relative", height: "8px", background: "rgba(255,255,255,0.3)", borderRadius: "4px", overflow: "visible", marginBottom: "12px" }}>
+                      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${healthPercent}%`, background: "#ffffff", borderRadius: "4px", transition: "width 0.3s ease" }} />
+                      <div style={{ position: "absolute", left: `${healthPercent}%`, top: "50%", transform: "translate(-50%, -50%)", width: 16, height: 16, background: "#ffffff", borderRadius: "50%", boxShadow: "0 2px 4px rgba(0,0,0,0.2)", transition: "left 0.3s ease" }} />
+                    </div>
+                    
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", fontWeight: 600 }}>
+                      <span>0</span>
+                      <span>Gauge</span>
+                      <span>70</span>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <div style={{ fontSize: "11px", color: "var(--text-secondary)", textAlign: "center", marginTop: "20px", fontWeight: 500, lineHeight: 1.4 }}>
+                Avoid the 45-day<br/>MSMED default risk.
+              </div>
             </div>
           </div>
+
         </div>
       </section>
 
