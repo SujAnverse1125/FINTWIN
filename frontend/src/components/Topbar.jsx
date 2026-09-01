@@ -17,6 +17,7 @@ import {
   UserCheck,
   ChevronDown,
   Menu,
+  Upload,
 } from "lucide-react";
 
 import { getInvoices } from "../data/financialStore";
@@ -82,6 +83,43 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
           <Search size={15} />
           <span>{t("quickSearch", "Quick search...")}</span>
           <kbd className="search-kbd">⌘K</kbd>
+        </button>
+
+        {/* Upload Invoices Button (Always visible on top nav bar) */}
+        <button
+          className="topbar-btn upload-action"
+          onClick={() => navigate("/invoices")}
+          title="Upload Invoices (CSV / Excel / PDF / JSON)"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 7,
+            background: "rgba(28, 103, 88, 0.12)",
+            color: "var(--accent-emerald)",
+            border: "1px solid rgba(28, 103, 88, 0.28)",
+            padding: "8px 14px",
+            borderRadius: "var(--radius-md)",
+            fontWeight: 700,
+            fontSize: "12.5px",
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = "var(--accent-emerald)";
+            e.currentTarget.style.color = "#ffffff";
+            e.currentTarget.style.borderColor = "var(--accent-emerald)";
+            e.currentTarget.style.boxShadow = "0 4px 12px rgba(28, 103, 88, 0.25)";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = "rgba(28, 103, 88, 0.12)";
+            e.currentTarget.style.color = "var(--accent-emerald)";
+            e.currentTarget.style.borderColor = "rgba(28, 103, 88, 0.28)";
+            e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.03)";
+          }}
+        >
+          <Upload size={14} strokeWidth={2.5} />
+          <span>{t("uploadInvoices", "Upload Invoices")}</span>
         </button>
 
         {/* Quick Add Button */}
