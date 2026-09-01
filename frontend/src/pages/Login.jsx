@@ -231,26 +231,90 @@ export default function Login() {
         alignItems: "center",
         justifyContent: "center",
         padding: "32px 16px",
+        position: "relative",
+        overflow: "hidden",
+        // Dribbble Modern Deep Aurora Mesh + Radial Gradients
         background:
-          "radial-gradient(circle at 12% 15%, rgba(210, 225, 205, 0.45) 0%, transparent 45%), radial-gradient(circle at 88% 85%, rgba(235, 230, 218, 0.55) 0%, transparent 50%), linear-gradient(135deg, #f5f6f1 0%, #edf0e8 50%, #f6f7f3 100%)",
-        fontFamily: "'Inter', sans-serif",
+          "radial-gradient(circle at 15% 18%, rgba(139, 92, 246, 0.35) 0%, transparent 45%), radial-gradient(circle at 85% 82%, rgba(56, 189, 248, 0.35) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.18) 0%, transparent 65%), linear-gradient(135deg, #070a13 0%, #0d1527 45%, #080d1a 100%)",
+        fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
       }}
     >
-      {/* Centered Split-Screen Card (CollectUI Architecture + First Live Animated Graph) */}
+      {/* High-Tech Fine Grid Overlay Texture */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage: "radial-gradient(rgba(255, 255, 255, 0.08) 1.2px, transparent 1.2px)",
+          backgroundSize: "32px 32px",
+          pointerEvents: "none",
+          zIndex: 1,
+        }}
+      />
+
+      {/* Floating Glowing Ambient Light Sphere 1 (Violet Aurora Top-Left) */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-120px",
+          left: "-120px",
+          width: "480px",
+          height: "480px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%)",
+          filter: "blur(60px)",
+          pointerEvents: "none",
+          zIndex: 1,
+        }}
+      />
+
+      {/* Floating Glowing Ambient Light Sphere 2 (Cyan/Sapphire Bottom-Right) */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "-140px",
+          right: "-140px",
+          width: "540px",
+          height: "540px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(56, 189, 248, 0.38) 0%, transparent 70%)",
+          filter: "blur(70px)",
+          pointerEvents: "none",
+          zIndex: 1,
+        }}
+      />
+
+      {/* Floating Glowing Ambient Light Sphere 3 (Emerald Middle-Left) */}
+      <div
+        style={{
+          position: "absolute",
+          top: "45%",
+          left: "5%",
+          width: "360px",
+          height: "360px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, transparent 70%)",
+          filter: "blur(50px)",
+          pointerEvents: "none",
+          zIndex: 1,
+        }}
+      />
+
+      {/* Centered Split-Screen Card (Dribbble Glassmorphism Frame) */}
       <div
         style={{
           width: "100%",
-          maxWidth: "1040px",
-          minHeight: "640px",
+          maxWidth: "1060px",
+          minHeight: "650px",
           background: "#ffffff",
-          borderRadius: "24px",
+          borderRadius: "28px",
           boxShadow:
-            "0 24px 64px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.02)",
-          border: "1px solid rgba(0, 0, 0, 0.06)",
+            "0 32px 100px -10px rgba(0, 0, 0, 0.6), 0 0 50px rgba(139, 92, 246, 0.2), 0 1px 3px rgba(255, 255, 255, 0.8)",
+          border: "1px solid rgba(255, 255, 255, 0.4)",
           display: "flex",
           flexWrap: "wrap",
           overflow: "hidden",
           position: "relative",
+          zIndex: 10,
         }}
       >
         {/* =========================================================================
