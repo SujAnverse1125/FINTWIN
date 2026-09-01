@@ -1952,7 +1952,7 @@ export default function LandingPage() {
                     <img src="/story/empowered_owner.jpg" alt="Anand Sharma" style={{ width: "26px", height: "26px", borderRadius: "2px", objectFit: "cover", position: "absolute", bottom: -8, left: 10, border: "2px solid #fff", boxShadow: "0 2px 4px rgba(0,0,0,0.2)", transform: "rotate(-5deg)" }} />
                     Seamlessly ingest consented GST e-invoices & bank streams.
                   </div>
-                  <div className="sticky-note sticky-green tape-top" style={{ flex: 1, transform: "rotate(-2deg)", marginTop: "15px" }}>
+                  <div className="sticky-note sticky-yellow tape-top" style={{ flex: 1, transform: "rotate(-2deg)", marginTop: "15px" }}>
                     <span style={{ position: "absolute", top: 10, right: 10, fontSize: "20px" }}>😊</span>
                     Finally, a live cash flow digital twin for my business!
                   </div>
@@ -1998,7 +1998,7 @@ export default function LandingPage() {
                     Zero Hidden Costs. Clear upfront!
                   </div>
                   <span style={{ color: "#0284c7", fontSize: 28, fontWeight: "bold", marginTop: "10px" }} className="anim-pulse">⚡</span>
-                  <div className="sticky-note sticky-blue tape-top" style={{ flex: 1.5, transform: "rotate(-2deg)" }}>
+                  <div className="sticky-note sticky-yellow tape-top" style={{ flex: 1.5, transform: "rotate(-2deg)" }}>
                     Explainable AI (Transparent Decisions).
                     User Control: Inspect & Override Ledger Data. ✍️
                   </div>
