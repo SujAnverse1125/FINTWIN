@@ -5,50 +5,68 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Color Palette - Cyber Fintech Obsidian & Accents */
-  --bg-primary: #07090e;
-  --bg-secondary: #0d121f;
-  --bg-tertiary: #131b2e;
-  --bg-card: rgba(17, 24, 39, 0.75);
-  --bg-card-hover: rgba(26, 36, 56, 0.85);
-  --bg-card-solid: #111827;
-  --bg-glass: rgba(15, 23, 42, 0.65);
+  /* Light Theme (Antique Parchment & Deep Walnut) */
+  --bg-primary: #EBE6DF;
+  --bg-secondary: #E4DED4;
+  --bg-tertiary: #DCD4C7;
+  --bg-card: #F5F2EE;
+  --bg-card-hover: #FCFAF8;
+  --bg-card-solid: #FFFFFF;
+  --bg-glass: rgba(235, 230, 223, 0.85);
 
-  /* Borders & Dividers */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.14);
-  --border-glow: rgba(59, 130, 246, 0.3);
-  --border-focus: #3b82f6;
+  /* Typography Colors (Deep Walnut) */
+  --text-primary: #302A1E;
+  --text-secondary: #4A4232;
+  --text-muted: #736955;
+  --text-dim: #998F7C;
 
-  /* Typography Colors */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-dim: #475569;
+  /* Primary Brand Accent (Juniper Green) */
+  --accent-emerald: #1C6758;
+  --accent-emerald-hover: #165246;
+  --accent-emerald-glow: rgba(28, 103, 88, 0.2);
 
-  /* Accent Colors */
-  --accent-blue: #3b82f6;
-  --accent-blue-hover: #2563eb;
-  --accent-blue-glow: rgba(59, 130, 246, 0.25);
+  /* Secondary Muted Accents */
+  --accent-desert-rose: #C07F7F;
+  --accent-burnt-ochre: #C78150;
+  --accent-tarnished-copper: #9A6A5C;
+  --accent-sage: #8BA896;
+  --accent-dusty-blue: #7A9CAE;
+  --accent-slate-teal: #425F6B;
+  
+  /* Legacy mapping just in case */
+  --accent-blue: var(--accent-dusty-blue);
+  --accent-blue-hover: #5A7E92;
+  --accent-blue-glow: rgba(122, 156, 174, 0.2);
+  --accent-amber: var(--accent-burnt-ochre);
+  --accent-amber-glow: rgba(199, 129, 80, 0.2);
+  --accent-rose: var(--accent-desert-rose);
+  --accent-rose-glow: rgba(192, 127, 127, 0.2);
+}
 
-  --accent-emerald: #10b981;
-  --accent-emerald-hover: #059669;
-  --accent-emerald-glow: rgba(16, 185, 129, 0.2);
+[data-theme='dark'] {
+  /* Dark Theme (Velvety Onyx-Umber Charcoal & Ivory Silk) */
+  --bg-primary: #1F1B19;
+  --bg-secondary: #282421;
+  --bg-tertiary: #302B28;
+  --bg-card: #2C2724;
+  --bg-card-hover: #36302D;
+  --bg-card-solid: #2C2724;
+  --bg-glass: rgba(31, 27, 25, 0.85);
 
-  --accent-cyan: #06b6d4;
-  --accent-purple: #8b5cf6;
-  --accent-purple-glow: rgba(139, 92, 246, 0.25);
-  --accent-amber: #f59e0b;
-  --accent-amber-glow: rgba(245, 158, 11, 0.2);
-  --accent-rose: #f43f5e;
-  --accent-rose-glow: rgba(244, 63, 94, 0.2);
+  /* Typography Colors (Ivory Silk) */
+  --text-primary: #EAE0D3;
+  --text-secondary: #C2BAAF;
+  --text-muted: #9E968B;
+  --text-dim: #7A7268;
+}
 
-  /* Shadows */
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
-  --shadow-glow: 0 0 25px rgba(59, 130, 246, 0.2);
-  --shadow-emerald-glow: 0 0 25px rgba(16, 185, 129, 0.2);
+:root {
+  /* Soft Organic Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(30, 40, 30, 0.06);
+  --shadow-lg: 0 20px 48px rgba(20, 30, 20, 0.09);
+  --shadow-glow: 0 0 25px rgba(5, 150, 105, 0.15);
+  --shadow-emerald-glow: 0 0 25px rgba(5, 150, 105, 0.15);
 
   /* Typography */
   --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -60,8 +78,8 @@
   --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Layout dimensions */
-  --sidebar-width: 260px;
-  --sidebar-collapsed-width: 80px;
+  --sidebar-width: 288px;
+  --sidebar-collapsed-width: 96px;
   --topbar-height: 70px;
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -132,9 +150,9 @@ a {
 .app-container {
   display: flex;
   min-height: 100vh;
-  background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.04) 0%, transparent 40%),
-              radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 40%),
-              var(--bg-primary);
+  background: radial-gradient(circle at 12% 15%, rgba(210, 225, 205, 0.45) 0%, transparent 45%),
+              radial-gradient(circle at 88% 85%, rgba(235, 230, 218, 0.55) 0%, transparent 50%),
+              linear-gradient(135deg, #f5f6f1 0%, #edf0e8 50%, #f6f7f3 100%);
 }
 
 .main-content-wrapper {
@@ -480,10 +498,10 @@ a {
 
 .app-topbar {
   height: var(--topbar-height);
-  background: rgba(10, 15, 26, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
   z-index: 90;
@@ -492,6 +510,7 @@ a {
   justify-content: space-between;
   padding: 0 28px;
   gap: 16px;
+  color: #121316;
 }
 
 .topbar-left {
@@ -2173,4 +2192,124 @@ a {
   .brand-title {
     font-size: 16px;
   }
+}
+
+/* ==========================================================================
+   ACTIVE WORKSPACE & STICKY NOTES STYLES
+   ========================================================================== */
+
+.workspace-bg {
+  position: relative;
+  background-image: url('/workspace_desk.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.workspace-bg::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.2); /* light overlay so text pops */
+  pointer-events: none;
+}
+
+.sticky-note {
+  position: relative;
+  font-family: 'Kalam', 'Caveat', cursive;
+  font-size: 16px;
+  line-height: 1.3;
+  color: #111;
+  padding: 16px 20px;
+  border-bottom-right-radius: 40px 4px;
+  box-shadow: 2px 4px 10px rgba(0,0,0,0.15), inset 0 -3px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 10;
+}
+
+.sticky-note:hover {
+  transform: scale(1.05) rotate(0deg) !important;
+  box-shadow: 4px 8px 15px rgba(0,0,0,0.2), inset 0 -3px 10px rgba(0,0,0,0.05);
+  z-index: 20;
+}
+
+/* Adding Tape */
+.sticky-note.tape-top::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 60px;
+  height: 25px;
+  background: rgba(255,255,255,0.4);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 2px;
+  z-index: 11;
+}
+
+.sticky-note.tape-corner::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  transform: rotate(-45deg);
+  width: 40px;
+  height: 20px;
+  background: rgba(255,255,255,0.4);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 2px;
+  z-index: 11;
+}
+
+/* Color variations */
+.sticky-yellow { background: #D5B487; border-left: 3px solid #C49F6B; color: #302A1E; }
+.sticky-pink { background: var(--accent-desert-rose); border-left: 3px solid #A86767; color: #FFFFFF; }
+.sticky-sand { background: #D8B790; border-left: 3px solid #C4A176; color: #302A1E; }
+.sticky-blue { background: var(--accent-dusty-blue); border-left: 3px solid #638596; color: #FFFFFF; }
+.sticky-green { background: var(--accent-sage); border-left: 3px solid #759281; color: #FFFFFF; }
+.sticky-grey { background: #E1DBD2; border-left: 3px solid #CFC7BC; color: #302A1E; }
+
+/* Printer Animation */
+.printer-chassis {
+  background: linear-gradient(180deg, #2a2d34 0%, #1a1c23 100%);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.1);
+  position: relative;
+  z-index: 30;
+}
+
+.printer-paper-slot {
+  background: #000;
+  height: 12px;
+  width: 100%;
+  border-radius: 6px;
+  box-shadow: inset 0 5px 10px rgba(0,0,0,0.8);
+  position: relative;
+  z-index: 31;
+}
+
+.printer-paper-stream {
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  transform-origin: top center;
+  z-index: 25;
+}
+
+/* Pulsing & Blinking Icons */
+.anim-pulse {
+  animation: pulse-icon 1.5s infinite alternate;
+}
+@keyframes pulse-icon {
+  0% { transform: scale(1); filter: brightness(1); }
+  100% { transform: scale(1.2); filter: brightness(1.2); }
+}
+
+.anim-blink {
+  animation: blink-icon 2s infinite;
+}
+@keyframes blink-icon {
+  0%, 96%, 98% { transform: scaleY(1); }
+  97%, 100% { transform: scaleY(0.1); } /* eye blink */
 }
