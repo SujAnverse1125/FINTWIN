@@ -21,6 +21,7 @@ import Invoices from "./pages/Invoices";
 import Expenses from "./pages/Expenses";
 import Customers from "./pages/Customers";
 import Forecast from "./pages/Forecast";
+import Risk from "./pages/Risk";
 import Simulator from "./pages/Simulator";
 import Financing from "./pages/Financing";
 import Gst from "./pages/Gst";
@@ -133,6 +134,24 @@ function App() {
             element={
               <ProtectedRoute>
                 <Forecast />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/risk"
+            element={
+              <ProtectedRoute>
+                <Risk />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/risk"
+            element={
+              <ProtectedRoute>
+                <Risk />
               </ProtectedRoute>
             }
           />

@@ -31,6 +31,8 @@ const titles = {
   "/expenses": { title: "Expenses & Monthly Burn", sub: "Recurring liabilities, categorized burn rate & cost optimization" },
   "/customers": { title: "Customer Intelligence & Risk", sub: "Credit risk scoring, payment delay tracking & concentration" },
   "/forecast": { title: "AI 90-Day Cash Forecast", sub: "Probabilistic runway simulation with confidence intervals" },
+  "/risk": { title: "Risk Analysis & Mitigation", sub: "Concentration, payment behavior, GST reserve pressure, and mitigation actions from the shared active dataset." },
+  "/dashboard/risk": { title: "Risk Analysis & Mitigation", sub: "Concentration, payment behavior, GST reserve pressure, and mitigation actions from the shared active dataset." },
   "/simulator": { title: "What-If Shock Simulator", sub: "Interactive scenario stress-testing for MSME liquidity" },
   "/financing": { title: "MSME Financing Marketplace", sub: "Working capital gap solutions & invoice discounting options" },
   "/gst": { title: "GST Intelligence & Tax Calculator", sub: "Overall GST reconciliation (GSTR-1/2B/3B), transaction calculator & GSTIN lookup" },
