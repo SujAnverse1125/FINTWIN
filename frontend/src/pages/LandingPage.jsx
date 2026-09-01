@@ -1087,7 +1087,7 @@ export default function LandingPage() {
               className="desktop-nav"
               style={{
                 position: "absolute",
-                left: "-80px", // Exact 80px overlap, perfectly responsive
+                left: "-220px", // Exact 80px overlap, perfectly responsive
                 top: "50%",
                 transform: "translateY(-50%)",
                 width: "300px",
@@ -1538,7 +1538,7 @@ export default function LandingPage() {
               className="desktop-nav"
               style={{
                 position: "absolute",
-                right: "-80px", // Exact 80px overlap, perfectly responsive
+                right: "-220px", // Exact 80px overlap, perfectly responsive
                 top: "50%",
                 transform: "translateY(-50%)",
                 width: "300px",
