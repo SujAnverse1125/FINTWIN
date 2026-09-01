@@ -62,7 +62,7 @@ export default function Forecast() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#60a5fa" }}>
+            <span className="kpi-value" style={{ color: "#7A9CAE" }}>
               {horizonDays} Days
             </span>
           </div>
@@ -79,7 +79,7 @@ export default function Forecast() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#fbbf24" }}>
+            <span className="kpi-value" style={{ color: "#C78150" }}>
               {forecast.breachDay}
             </span>
           </div>
@@ -96,7 +96,7 @@ export default function Forecast() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: forecast.lowestProjectedCash >= 0 ? "#34d399" : "#fb7185" }}>
+            <span className="kpi-value" style={{ color: forecast.lowestProjectedCash >= 0 ? "#1C6758" : "#C07F7F" }}>
               {formatLakhs(forecast.lowestProjectedCash)}
             </span>
           </div>
@@ -113,7 +113,7 @@ export default function Forecast() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#34d399" }}>
+            <span className="kpi-value" style={{ color: "#1C6758" }}>
               94.8%
             </span>
           </div>
@@ -165,38 +165,39 @@ export default function Forecast() {
             <AreaChart data={forecast.timeline} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <defs>
                 <linearGradient id="colorBest" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
+                  <stop offset="5%" stopColor="#8BA896" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#8BA896" stopOpacity={0.0} />
                 </linearGradient>
                 <linearGradient id="colorExpected" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.0} />
+                  <stop offset="5%" stopColor="#1C6758" stopOpacity={0.35} />
+                  <stop offset="95%" stopColor="#1C6758" stopOpacity={0.0} />
                 </linearGradient>
                 <linearGradient id="colorWorst" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0.0} />
+                  <stop offset="5%" stopColor="#C07F7F" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#C07F7F" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="day" stroke="#64748b" fontSize={11} tickLine={false} />
+              <XAxis dataKey="day" stroke="#998F7C" fontSize={11} tickLine={false} interval={9} />
               <YAxis
-                stroke="#64748b"
+                stroke="#998F7C"
                 fontSize={11}
                 tickLine={false}
                 tickFormatter={(val) => `₹${(val / 100000).toFixed(1)}L`}
               />
               <Tooltip
                 contentStyle={{
-                  background: "rgba(13, 18, 31, 0.95)",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  borderRadius: 8,
+                  background: "rgba(245, 242, 238, 0.97)",
+                  border: "1px solid rgba(28, 103, 88, 0.2)",
+                  borderRadius: 12,
                   fontSize: 12,
+                  color: "#2D2620",
                 }}
                 formatter={(val) => [`₹${(Number(val) / 100000).toFixed(2)}L`, ""]}
               />
               <Area
                 type="monotone"
                 dataKey="bestCase"
-                stroke="#10b981"
+                stroke="#8BA896"
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#colorBest)"
@@ -205,7 +206,7 @@ export default function Forecast() {
               <Area
                 type="monotone"
                 dataKey="expected"
-                stroke="#3b82f6"
+                stroke="#1C6758"
                 strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#colorExpected)"
@@ -214,7 +215,7 @@ export default function Forecast() {
               <Area
                 type="monotone"
                 dataKey="worstCase"
-                stroke="#f43f5e"
+                stroke="#C07F7F"
                 strokeWidth={1.5}
                 strokeDasharray="4 4"
                 fillOpacity={1}
@@ -230,8 +231,8 @@ export default function Forecast() {
       <div
         className="glass-card"
         style={{
-          background: "linear-gradient(135deg, rgba(139,92,246,0.12) 0%, rgba(59,130,246,0.08) 100%)",
-          border: "1px solid rgba(139,92,246,0.35)",
+          background: "linear-gradient(135deg, rgba(28,103,88,0.12) 0%, rgba(122,156,174,0.08) 100%)",
+          border: "1px solid rgba(28,103,88,0.25)",
         }}
       >
         <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
@@ -239,7 +240,7 @@ export default function Forecast() {
             <Sparkles size={20} />
           </div>
           <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>
               Digital Twin AI Runway Advisory
             </div>
             <p style={{ color: "var(--text-secondary)", fontSize: 13.5, marginTop: 6, lineHeight: 1.6 }}>

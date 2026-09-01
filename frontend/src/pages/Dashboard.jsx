@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Wallet,
@@ -28,11 +28,9 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
+  ReferenceLine,
+  Legend,
+  CartesianGrid,
 } from "recharts";
 
 import {
@@ -51,7 +49,29 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 
-const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
+// ==========================================
+// PARCHMENT PALETTE (Matching Landing Page)
+// ==========================================
+const PALETTE = {
+  juniper: "#1C6758",      // Primary accent (cash, positive)
+  juniperLight: "rgba(28, 103, 88, 0.12)",
+  dustyBlue: "#7A9CAE",    // Receivables
+  dustyBlueLight: "rgba(122, 156, 174, 0.12)",
+  burntOchre: "#C78150",   // Burn / expenses
+  burntOchreLight: "rgba(199, 129, 80, 0.12)",
+  slateTeal: "#425F6B",    // Runway / net
+  slateTealLight: "rgba(66, 95, 107, 0.12)",
+  desertRose: "#C07F7F",   // Negative / risk
+  desertRoseLight: "rgba(192, 127, 127, 0.12)",
+  walnut: "#2D2620",       // Upper bound line
+  sage: "#8BA896",         // Sage green accent
+  sageFill: "rgba(139, 168, 150, 0.18)",
+  amber: "#D4A843",        // GST markers
+  parchment: "#F5F2EE",    // Card bg
+  ivory: "#EBE6DF",        // Page bg
+};
+
+const AGING_COLORS = [PALETTE.juniper, PALETTE.dustyBlue, PALETTE.burntOchre, PALETTE.desertRose];
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -61,7 +81,7 @@ export default function Dashboard() {
   const [data, setData] = useState(getFinancialData());
   const [summary, setSummary] = useState(getCashFlowSummary());
   const [aging, setAging] = useState(calculateAgingBreakdown());
-  const [forecast, setForecast] = useState(generateLocalForecast(30));
+  const [forecast, setForecast] = useState(generateLocalForecast(90));
 
   // Quick Onboarding Inputs
   const [quickCash, setQuickCash] = useState("");
@@ -73,7 +93,7 @@ export default function Dashboard() {
       setData(getFinancialData());
       setSummary(getCashFlowSummary());
       setAging(calculateAgingBreakdown());
-      setForecast(generateLocalForecast(30));
+      setForecast(generateLocalForecast(90));
     });
     return unsub;
   }, []);
@@ -94,6 +114,9 @@ export default function Dashboard() {
     setTimeout(() => setSetupSaved(false), 3000);
   };
 
+  // Chart data - sample every 5th point for performance while keeping daily granularity in the engine
+  const chartData = forecast.timeline.filter((_, i) => i % 3 === 0 || i === forecast.timeline.length - 1);
+
   // Chart data for Aging Breakdown
   const agingData = [
     { name: "0-30 Days", value: aging["0-30 Days"] || 0 },
@@ -101,6 +124,59 @@ export default function Dashboard() {
     { name: "61-90 Days", value: aging["61-90 Days"] || 0 },
     { name: "90+ Days", value: aging["90+ Days"] || 0 },
   ];
+
+  // Custom chart tooltip
+  const ChartTooltip = ({ active, payload, label }) => {
+    if (!active || !payload || !payload.length) return null;
+    return (
+      <div
+        style={{
+          background: "rgba(245, 242, 238, 0.97)",
+          border: `1px solid ${PALETTE.juniper}30`,
+          borderRadius: 12,
+          padding: "12px 16px",
+          fontSize: 12,
+          fontWeight: 600,
+          color: PALETTE.walnut,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        <div style={{ fontWeight: 700, marginBottom: 6, fontSize: 13 }}>{label}</div>
+        {payload.map((entry, idx) => (
+          entry.value != null && (
+            <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: entry.color, display: "inline-block" }} />
+              <span style={{ color: "#736955" }}>{entry.name}:</span>
+              <span style={{ fontWeight: 800 }}>₹{(Number(entry.value) / 100000).toFixed(2)}L</span>
+            </div>
+          )
+        ))}
+      </div>
+    );
+  };
+
+  // Custom legend
+  const renderLegend = () => (
+    <div style={{ display: "flex", alignItems: "center", gap: 20, justifyContent: "center", marginTop: 8, fontSize: 11, fontWeight: 600, color: "#736955", flexWrap: "wrap" }}>
+      <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+        <span style={{ width: 24, height: 10, background: PALETTE.sageFill, border: `1px solid ${PALETTE.sage}`, borderRadius: 2, display: "inline-block" }} />
+        Projected Cash
+      </span>
+      <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+        <span style={{ width: 18, height: 2, background: PALETTE.walnut, display: "inline-block" }} />
+        Upper Bound
+      </span>
+      <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+        <span style={{ width: 18, height: 0, borderBottom: `2px dashed ${PALETTE.desertRose}`, display: "inline-block" }} />
+        Lower Bound
+      </span>
+      <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+        <span style={{ width: 18, height: 0, borderBottom: `2px dashed ${PALETTE.slateTeal}`, display: "inline-block" }} />
+        Future projection
+      </span>
+    </div>
+  );
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -111,8 +187,8 @@ export default function Dashboard() {
         <div
           className="glass-card"
           style={{
-            background: "linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(16,185,129,0.08) 100%)",
-            border: "1px solid rgba(59,130,246,0.35)",
+            background: `linear-gradient(135deg, ${PALETTE.juniperLight} 0%, ${PALETTE.dustyBlueLight} 100%)`,
+            border: `1px solid ${PALETTE.juniper}40`,
             padding: "28px",
           }}
         >
@@ -122,7 +198,7 @@ export default function Dashboard() {
                 <div className="card-icon-wrap emerald" style={{ width: 32, height: 32 }}>
                   <Sparkles size={16} />
                 </div>
-                <h2 style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>
+                <h2 style={{ fontSize: 18, fontWeight: 800, color: "var(--text-primary)" }}>
                   Welcome {user?.name || "Partner"} — Initialize Your Digital Twin
                 </h2>
               </div>
@@ -180,7 +256,7 @@ export default function Dashboard() {
               </form>
 
               {setupSaved && (
-                <div style={{ marginTop: 8, fontSize: 12, color: "#34d399", display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ marginTop: 8, fontSize: 12, color: PALETTE.juniper, display: "flex", alignItems: "center", gap: 6 }}>
                   <CheckCircle2 size={13} />
                   <span>Opening balance saved to your account!</span>
                 </div>
@@ -210,7 +286,7 @@ export default function Dashboard() {
       )}
 
       {/* =================================================================
-          TOP KPI ROW
+          TOP KPI ROW (Parchment Palette)
           ================================================================= */}
       <div className="grid-4">
         {/* Current Cash */}
@@ -222,7 +298,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#34d399" }}>
+            <span className="kpi-value" style={{ color: PALETTE.juniper }}>
               {formatLakhs(summary.currentCash)}
             </span>
           </div>
@@ -239,12 +315,12 @@ export default function Dashboard() {
         <div className="kpi-card">
           <div className="kpi-top">
             <span className="kpi-label">{t("receivables", "Outstanding Receivables")}</span>
-            <div className="card-icon-wrap">
+            <div className="card-icon-wrap" style={{ background: PALETTE.dustyBlueLight, color: PALETTE.dustyBlue }}>
               <FileText size={18} />
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#60a5fa" }}>
+            <span className="kpi-value" style={{ color: PALETTE.dustyBlue }}>
               {formatLakhs(summary.receivables)}
             </span>
           </div>
@@ -261,12 +337,12 @@ export default function Dashboard() {
         <div className="kpi-card">
           <div className="kpi-top">
             <span className="kpi-label">{t("burnRate", "Monthly Burn Velocity")}</span>
-            <div className="card-icon-wrap amber">
+            <div className="card-icon-wrap" style={{ background: PALETTE.burntOchreLight, color: PALETTE.burntOchre }}>
               <CreditCard size={18} />
             </div>
           </div>
           <div className="kpi-value-row">
-            <span className="kpi-value" style={{ color: "#fbbf24" }}>
+            <span className="kpi-value" style={{ color: PALETTE.burntOchre }}>
               {formatLakhs(summary.totalExpenses)}
             </span>
           </div>
@@ -283,7 +359,7 @@ export default function Dashboard() {
         <div className="kpi-card">
           <div className="kpi-top">
             <span className="kpi-label">{t("netRunway", "30-Day Net Runway")}</span>
-            <div className="card-icon-wrap purple">
+            <div className="card-icon-wrap" style={{ background: PALETTE.slateTealLight, color: PALETTE.slateTeal }}>
               <TrendingUp size={18} />
             </div>
           </div>
@@ -291,7 +367,7 @@ export default function Dashboard() {
             <span
               className="kpi-value"
               style={{
-                color: summary.projectedCash >= 0 ? "#c4b5fd" : "#fb7185",
+                color: summary.projectedCash >= 0 ? PALETTE.slateTeal : PALETTE.desertRose,
               }}
             >
               {formatLakhs(summary.projectedCash)}
@@ -303,7 +379,7 @@ export default function Dashboard() {
             <span
               style={{
                 marginLeft: "auto",
-                color: summary.status === "Healthy" ? "#34d399" : summary.status === "Moderate" ? "#fbbf24" : "var(--text-muted)",
+                color: summary.status === "Healthy" ? PALETTE.juniper : summary.status === "Moderate" ? PALETTE.burntOchre : "var(--text-muted)",
                 fontWeight: 700,
               }}
             >
@@ -314,14 +390,14 @@ export default function Dashboard() {
       </div>
 
       {/* =================================================================
-          PRIMARY CHARTS & DIGITAL TWIN TELEMETRY
+          MONTE CARLO CONFIDENCE BAND CHART & AGING
           ================================================================= */}
       <div className="grid-12">
         {/* Cash Flow Forecast Trajectory */}
         <div className="col-span-8 glass-card">
           <div className="card-header">
             <div className="card-title-group">
-              <div className="card-icon-wrap">
+              <div className="card-icon-wrap" style={{ background: PALETTE.juniperLight, color: PALETTE.juniper }}>
                 <TrendingUp size={18} />
               </div>
               <div>
@@ -337,64 +413,157 @@ export default function Dashboard() {
             </Link>
           </div>
 
-          <div style={{ height: 260, width: "100%", marginTop: 10 }}>
+          <div style={{ height: 300, width: "100%", marginTop: 10 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={forecast.timeline}>
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="colorExpected" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.0} />
-                  </linearGradient>
-                  <linearGradient id="colorWorst" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0.0} />
+                  {/* Confidence band fill (sage green translucent) */}
+                  <linearGradient id="monteCarloFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={PALETTE.sage} stopOpacity={0.25} />
+                    <stop offset="95%" stopColor={PALETTE.sage} stopOpacity={0.05} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="day" stroke="#64748b" fontSize={11} tickLine={false} />
-                <YAxis
-                  stroke="#64748b"
-                  fontSize={11}
+
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(45, 38, 32, 0.06)" vertical={false} />
+
+                <XAxis
+                  dataKey="day"
+                  stroke="#998F7C"
+                  fontSize={10}
                   tickLine={false}
+                  axisLine={{ stroke: "rgba(45, 38, 32, 0.1)" }}
+                  interval={9}
+                />
+                <YAxis
+                  stroke="#998F7C"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={{ stroke: "rgba(45, 38, 32, 0.1)" }}
                   tickFormatter={(val) => `₹${(val / 100000).toFixed(1)}L`}
                 />
-                <Tooltip
-                  contentStyle={{
-                    background: "rgba(13, 18, 31, 0.95)",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    borderRadius: 8,
-                    fontSize: 12,
+
+                <Tooltip content={<ChartTooltip />} />
+
+                {/* GST Risk marker (Day 15) */}
+                <ReferenceLine
+                  x={`Day ${forecast.gstRiskDay}`}
+                  stroke={PALETTE.amber}
+                  strokeDasharray="4 4"
+                  strokeWidth={1.5}
+                  label={{
+                    value: "△ GST risk",
+                    position: "top",
+                    fill: PALETTE.desertRose,
+                    fontSize: 9,
+                    fontWeight: 700,
                   }}
-                  formatter={(val) => [`₹${(Number(val) / 100000).toFixed(2)}L`, ""]}
                 />
+
+                {/* GST Due marker (Day 45) */}
+                <ReferenceLine
+                  x={`Day ${forecast.gstDueDay}`}
+                  stroke={PALETTE.amber}
+                  strokeDasharray="4 4"
+                  strokeWidth={1.5}
+                  label={{
+                    value: "🏛 GST due",
+                    position: "top",
+                    fill: PALETTE.burntOchre,
+                    fontSize: 9,
+                    fontWeight: 700,
+                  }}
+                />
+
+                {/* Uncertainty marker (Day 75) */}
+                <ReferenceLine
+                  x={`Day ${forecast.uncertaintyDay}`}
+                  stroke={PALETTE.amber}
+                  strokeDasharray="4 4"
+                  strokeWidth={1.5}
+                  label={{
+                    value: "◆ Uncertainty",
+                    position: "top",
+                    fill: PALETTE.amber,
+                    fontSize: 9,
+                    fontWeight: 700,
+                  }}
+                />
+
+                {/* Confidence band: filled area between upper and lower bounds */}
+                <Area
+                  type="monotone"
+                  dataKey="upperBound"
+                  stroke="none"
+                  fillOpacity={1}
+                  fill="url(#monteCarloFill)"
+                  name="Upper Bound"
+                  stackId="band"
+                  isAnimationActive={false}
+                />
+
+                {/* Upper Bound line (solid dark walnut) */}
+                <Area
+                  type="monotone"
+                  dataKey="upperBound"
+                  stroke={PALETTE.walnut}
+                  strokeWidth={1.5}
+                  fillOpacity={0}
+                  fill="transparent"
+                  name="Upper Bound"
+                  dot={false}
+                />
+
+                {/* Main Projected Cash line */}
                 <Area
                   type="monotone"
                   dataKey="expected"
-                  stroke="#3b82f6"
+                  stroke={PALETTE.juniper}
                   strokeWidth={2.5}
-                  fillOpacity={1}
-                  fill="url(#colorExpected)"
-                  name="Expected Cash"
+                  fillOpacity={0}
+                  fill="transparent"
+                  name="Projected Cash"
+                  dot={false}
                 />
+
+                {/* Lower Bound (dashed red) */}
                 <Area
                   type="monotone"
-                  dataKey="worstCase"
-                  stroke="#f43f5e"
+                  dataKey="lowerBound"
+                  stroke={PALETTE.desertRose}
                   strokeWidth={1.5}
-                  strokeDasharray="4 4"
-                  fillOpacity={1}
-                  fill="url(#colorWorst)"
-                  name="Worst-Case Stress"
+                  strokeDasharray="5 5"
+                  fillOpacity={0}
+                  fill="transparent"
+                  name="Lower Bound"
+                  dot={false}
+                />
+
+                {/* Future Projection (dashed olive beyond Day 75) */}
+                <Area
+                  type="monotone"
+                  dataKey="futureProjection"
+                  stroke={PALETTE.slateTeal}
+                  strokeWidth={2}
+                  strokeDasharray="6 4"
+                  fillOpacity={0}
+                  fill="transparent"
+                  name="Future Projection"
+                  dot={false}
+                  connectNulls={false}
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
+
+          {/* Custom Legend */}
+          {renderLegend()}
         </div>
 
         {/* Receivables Aging Breakdown */}
         <div className="col-span-4 glass-card">
           <div className="card-header">
             <div className="card-title-group">
-              <div className="card-icon-wrap amber">
+              <div className="card-icon-wrap" style={{ background: PALETTE.burntOchreLight, color: PALETTE.burntOchre }}>
                 <Clock size={18} />
               </div>
               <div>
@@ -412,14 +581,14 @@ export default function Dashboard() {
                 <div key={item.name}>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, marginBottom: 5 }}>
                     <span style={{ color: "var(--text-secondary)" }}>{item.name}</span>
-                    <span style={{ fontWeight: 700, color: "#fff" }}>
+                    <span style={{ fontWeight: 700, color: "var(--text-primary)" }}>
                       {formatLakhs(item.value)} ({pct}%)
                     </span>
                   </div>
                   <div
                     style={{
                       height: 6,
-                      background: "rgba(255,255,255,0.06)",
+                      background: "rgba(0,0,0,0.04)",
                       borderRadius: 3,
                       overflow: "hidden",
                     }}
@@ -428,8 +597,9 @@ export default function Dashboard() {
                       style={{
                         height: "100%",
                         width: `${pct}%`,
-                        background: COLORS[idx % COLORS.length],
+                        background: AGING_COLORS[idx % AGING_COLORS.length],
                         borderRadius: 3,
+                        transition: "width 0.4s ease",
                       }}
                     />
                   </div>
@@ -473,7 +643,7 @@ export default function Dashboard() {
           {data.invoices.length === 0 ? (
             <div style={{ textAlign: "center", padding: "36px 20px" }}>
               <FileText size={32} style={{ color: "var(--text-dim)", margin: "0 auto 10px" }} />
-              <div style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>No Invoices Yet</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>No Invoices Yet</div>
               <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4, marginBottom: 16 }}>
                 Upload your first invoice file (CSV, Excel, PDF, or JSON) to activate AI delay predictions.
               </div>
@@ -498,11 +668,11 @@ export default function Dashboard() {
                 <tbody>
                   {data.invoices.slice(0, 5).map((inv) => (
                     <tr key={inv.id}>
-                      <td style={{ fontWeight: 600, color: "#fff", fontFamily: "var(--font-mono)" }}>
+                      <td style={{ fontWeight: 600, color: "var(--text-primary)", fontFamily: "var(--font-mono)" }}>
                         {inv.id}
                       </td>
                       <td>{inv.customer}</td>
-                      <td style={{ fontWeight: 700, color: "#60a5fa" }}>
+                      <td style={{ fontWeight: 700, color: PALETTE.juniper }}>
                         {formatLakhs(inv.amount)}
                       </td>
                       <td>{inv.dueDate}</td>
@@ -513,10 +683,10 @@ export default function Dashboard() {
                             fontWeight: 600,
                             color:
                               inv.predictedDelayDays > 15
-                                ? "#fb7185"
+                                ? PALETTE.desertRose
                                 : inv.predictedDelayDays > 5
-                                ? "#fbbf24"
-                                : "#34d399",
+                                ? PALETTE.burntOchre
+                                : PALETTE.juniper,
                           }}
                         >
                           +{inv.predictedDelayDays || 3} Days Delay
@@ -547,7 +717,7 @@ export default function Dashboard() {
         <div className="col-span-4 glass-card">
           <div className="card-header">
             <div className="card-title-group">
-              <div className="card-icon-wrap purple">
+              <div className="card-icon-wrap" style={{ background: PALETTE.slateTealLight, color: PALETTE.slateTeal }}>
                 <FlaskConical size={18} />
               </div>
               <div>
@@ -564,10 +734,10 @@ export default function Dashboard() {
               onClick={() => navigate("/simulator")}
             >
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div style={{ fontWeight: 600, fontSize: 13, color: "#fff" }}>
+                <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text-primary)" }}>
                   🧪 What-If Shock Simulator
                 </div>
-                <ArrowRight size={14} style={{ color: "#60a5fa" }} />
+                <ArrowRight size={14} style={{ color: PALETTE.dustyBlue }} />
               </div>
               <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 4 }}>
                 Stress test revenue drops and client payment stalls.
@@ -580,10 +750,10 @@ export default function Dashboard() {
               onClick={() => navigate("/financing")}
             >
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div style={{ fontWeight: 600, fontSize: 13, color: "#fff" }}>
+                <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text-primary)" }}>
                   🏦 Invoice Discounting
                 </div>
-                <ArrowRight size={14} style={{ color: "#34d399" }} />
+                <ArrowRight size={14} style={{ color: PALETTE.juniper }} />
               </div>
               <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 4 }}>
                 Unlock working capital from your uploaded invoices.
@@ -596,10 +766,10 @@ export default function Dashboard() {
               onClick={() => navigate("/reports")}
             >
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div style={{ fontWeight: 600, fontSize: 13, color: "#fff" }}>
+                <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text-primary)" }}>
                   📑 P&L & Cash Statements
                 </div>
-                <ArrowRight size={14} style={{ color: "#a78bfa" }} />
+                <ArrowRight size={14} style={{ color: PALETTE.slateTeal }} />
               </div>
               <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 4 }}>
                 Export monthly financial statements and aging CSVs.
