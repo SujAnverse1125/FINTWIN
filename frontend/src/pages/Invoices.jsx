@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   FileText,
   Plus,
@@ -47,6 +47,7 @@ import {
   subscribeFinancialData,
 } from "../data/financialStore";
 import { parseInvoiceFile } from "../utils/invoiceParser";
+import UniversalUploadModal from "../components/UniversalUploadModal";
 
 // Default Indian Corporate Buyers with real payment track records
 const INITIAL_DEMO_BUYERS = [
@@ -1991,116 +1992,11 @@ export default function Invoices() {
         </div>
       )}
 
-      {/* =========================================================================
-          MODAL: INGEST GST / OCR FILE UPLOAD
-          ========================================================================= */}
-      {showUploadModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 10000,
-            background: "rgba(0,0,0,0.45)",
-            backdropFilter: "blur(8px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-          }}
-          onClick={() => setShowUploadModal(false)}
-        >
-          <div
-            style={{
-              background: "#ffffff",
-              borderRadius: "16px",
-              padding: "24px",
-              maxWidth: "500px",
-              width: "100%",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 12px 0" }}>
-              Universal Invoicing OCR & File Ingestion
-            </h3>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 16px 0" }}>
-              Upload PDF Tax Invoices, e-Way bills, Tally / Zoho CSV exports, or scanned receipts.
-            </p>
-
-            <div
-              style={{
-                border: "2px dashed #cbd5e1",
-                borderRadius: "12px",
-                padding: "28px",
-                textAlign: "center",
-                background: "#f8fafc",
-                cursor: "pointer",
-                marginBottom: 16,
-              }}
-              onClick={() => document.getElementById("file-upload-input").click()}
-            >
-              <Upload size={24} color="#64748b" style={{ margin: "0 auto 8px" }} />
-              <div style={{ fontSize: "13px", fontWeight: 600 }}>Click to upload or drag & drop</div>
-              <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: 4 }}>
-                Supports PDF, Excel (.xlsx), CSV, JSON, PNG, JPG
-              </div>
-              <input
-                id="file-upload-input"
-                type="file"
-                accept=".pdf,.csv,.xlsx,.xls,.json,.png,.jpg,.jpeg"
-                style={{ display: "none" }}
-                onChange={handleFileUpload}
-              />
-            </div>
-
-            {isProcessingFile && (
-              <div style={{ fontSize: "12px", color: "#0284c7", fontWeight: 600, textAlign: "center", marginBottom: 12 }}>
-                ⚡ Processing OCR & Extracting GST Line Items...
-              </div>
-            )}
-
-            {parsedPreview && (
-              <div style={{ background: "#f1f5f9", padding: "12px", borderRadius: "8px", marginBottom: 16 }}>
-                <div style={{ fontSize: "12px", fontWeight: 700, color: "#059669" }}>
-                  ✓ Found {parsedPreview.invoices.length} valid invoice records!
-                </div>
-                <button
-                  onClick={handleConfirmImport}
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    borderRadius: "6px",
-                    background: "#059669",
-                    color: "#ffffff",
-                    fontWeight: 600,
-                    fontSize: "12px",
-                    border: "none",
-                    marginTop: 8,
-                    cursor: "pointer",
-                  }}
-                >
-                  Confirm & Sync into Radar
-                </button>
-              </div>
-            )}
-
-            <button
-              onClick={() => setShowUploadModal(false)}
-              style={{
-                width: "100%",
-                padding: "8px",
-                borderRadius: "7px",
-                background: "#f1f5f9",
-                border: "none",
-                fontWeight: 600,
-                fontSize: "12px",
-                cursor: "pointer",
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Universal Upload & File Ingestion Modal */}
+      <UniversalUploadModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+      />
     </div>
   );
 }

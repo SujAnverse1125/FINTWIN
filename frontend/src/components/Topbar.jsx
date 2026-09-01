@@ -40,7 +40,13 @@ const titles = {
   "/settings": { title: "Business Settings & Profiles", sub: "Company parameters, GSTIN setup, targets & scenario presets" },
 };
 
-export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearch, onToggleMobileMenu }) {
+export default function Topbar({
+  onOpenAiCopilot,
+  onOpenQuickAction,
+  onOpenSearch,
+  onOpenUpload,
+  onToggleMobileMenu,
+}) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
@@ -88,15 +94,15 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
         {/* Upload Invoices Button (Always visible on top nav bar) */}
         <button
           className="topbar-btn upload-action"
-          onClick={() => navigate("/invoices")}
+          onClick={onOpenUpload || (() => navigate("/invoices"))}
           title="Upload Invoices (CSV / Excel / PDF / JSON)"
           style={{
             display: "inline-flex",
             alignItems: "center",
             gap: 7,
-            background: "rgba(28, 103, 88, 0.12)",
+            background: "rgba(16, 185, 129, 0.12)",
             color: "var(--accent-emerald)",
-            border: "1px solid rgba(28, 103, 88, 0.28)",
+            border: "1px solid rgba(16, 185, 129, 0.28)",
             padding: "8px 14px",
             borderRadius: "var(--radius-md)",
             fontWeight: 700,
@@ -109,12 +115,12 @@ export default function Topbar({ onOpenAiCopilot, onOpenQuickAction, onOpenSearc
             e.currentTarget.style.background = "var(--accent-emerald)";
             e.currentTarget.style.color = "#ffffff";
             e.currentTarget.style.borderColor = "var(--accent-emerald)";
-            e.currentTarget.style.boxShadow = "0 4px 12px rgba(28, 103, 88, 0.25)";
+            e.currentTarget.style.boxShadow = "0 4px 12px rgba(16, 185, 129, 0.25)";
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.background = "rgba(28, 103, 88, 0.12)";
+            e.currentTarget.style.background = "rgba(16, 185, 129, 0.12)";
             e.currentTarget.style.color = "var(--accent-emerald)";
-            e.currentTarget.style.borderColor = "rgba(28, 103, 88, 0.28)";
+            e.currentTarget.style.borderColor = "rgba(16, 185, 129, 0.28)";
             e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.03)";
           }}
         >

@@ -117,20 +117,20 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onCloseMo
         left: "12px",
         bottom: "12px",
         borderRadius: "22px",
-        // Warm Alabaster & Raw Silk Frosted Translucent Glassmorphism
-        background: "rgba(245, 246, 241, 0.82)",
-        backdropFilter: "blur(30px) saturate(180%)",
-        WebkitBackdropFilter: "blur(30px) saturate(180%)",
-        border: "1px solid rgba(255, 255, 255, 0.85)",
-        boxShadow: "0 20px 48px rgba(30, 40, 30, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95)",
+        // Modern Clean Executive Frosted Translucent Glassmorphism
+        background: "rgba(255, 255, 255, 0.94)",
+        backdropFilter: "blur(24px) saturate(180%)",
+        WebkitBackdropFilter: "blur(24px) saturate(180%)",
+        border: "1px solid rgba(226, 232, 240, 0.9)",
+        boxShadow: "0 10px 30px -5px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04)",
         display: "flex",
         flexDirection: "column",
         zIndex: 100,
         transition: "width 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
         userSelect: "none",
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
         overflow: "hidden",
-        color: "#121316",
+        color: "#0F172A",
       }}
     >
       {/* =========================================================================

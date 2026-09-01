@@ -5,6 +5,7 @@ import Topbar from "./Topbar";
 import AiCopilotModal from "./AiCopilotModal";
 import QuickActionModal from "./QuickActionModal";
 import CommandSearchModal from "./CommandSearchModal";
+import UniversalUploadModal from "./UniversalUploadModal";
 import {
   LayoutDashboard,
   Wallet,
@@ -23,6 +24,7 @@ export default function AppLayout({ children }) {
   const [isAiCopilotOpen, setIsAiCopilotOpen] = useState(false);
   const [isQuickActionOpen, setIsQuickActionOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
@@ -54,6 +56,7 @@ export default function AppLayout({ children }) {
           onOpenAiCopilot={() => setIsAiCopilotOpen(true)}
           onOpenQuickAction={() => setIsQuickActionOpen(true)}
           onOpenSearch={() => setIsSearchOpen(true)}
+          onOpenUpload={() => setIsUploadOpen(true)}
           onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
         />
 
@@ -144,6 +147,12 @@ export default function AppLayout({ children }) {
       <CommandSearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
+      />
+
+      {/* Universal Financial Upload Ingestion Modal */}
+      <UniversalUploadModal
+        isOpen={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
       />
     </div>
   );
