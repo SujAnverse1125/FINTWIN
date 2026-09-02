@@ -48,6 +48,11 @@ const COLORS = [
   "#64748b",
 ];
 
+const formatLakhs = (value) => {
+  if (value === undefined || value === null || isNaN(value)) return "₹0.00L";
+  return `₹${(Number(value) / 100000).toFixed(2)}L`;
+};
+
 export default function Expenses() {
   const [data, setData] = useState(getFinancialData());
   const [showAddModal, setShowAddModal] = useState(false);
