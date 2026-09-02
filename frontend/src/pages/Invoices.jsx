@@ -1519,7 +1519,7 @@ export default function Invoices() {
                   onChange={(e) => setAiPrompt(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && aiPrompt) {
-                      showNotice(`FinTwin AI: Analyzing "${aiPrompt}" against GSTR-2B ledger.`);
+                      showNotice(`NexFin AI: Analyzing "${aiPrompt}" against GSTR-2B ledger.`);
                       setAiPrompt("");
                     }
                   }}
@@ -1558,7 +1558,7 @@ export default function Invoices() {
                   <button
                     onClick={() => {
                       if (aiPrompt) {
-                        showNotice(`FinTwin AI: Analyzing "${aiPrompt}".`);
+                        showNotice(`NexFin AI: Analyzing "${aiPrompt}".`);
                         setAiPrompt("");
                       }
                     }}

@@ -304,7 +304,7 @@ export default function Dashboard() {
                   letterSpacing: "-0.4px",
                 }}
               >
-                {data.business.name || "FinTwin"} Executive Dashboard
+                {data.business.name || "NexFin"} Executive Dashboard
               </h1>
               <span className="live-twin-badge">
                 <span className="live-twin-dot" />
@@ -390,7 +390,7 @@ export default function Dashboard() {
                   lineHeight: 1.6,
                 }}
               >
-                FinTwin starts with a clean slate. Input your current bank liquid cash and minimum safety threshold below to immediately project your daily cash runway, GST obligations, and AI delay radars.
+                NexFin starts with a clean slate. Input your current bank liquid cash and minimum safety threshold below to immediately project your daily cash runway, GST obligations, and AI delay radars.
               </p>
 
               <form

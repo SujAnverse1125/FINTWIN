@@ -57,11 +57,11 @@ const CARD_VIDEOS = [
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_115655_b4d9cd77-feed-43cd-a198-af78ebdf1f7a.mp4"
 ];
 
-// FinTwin Digital Twin Smart Card Editions
+// NexFin Digital Twin Smart Card Editions
 const CARD_DETAILS = [
   {
     number: "4892 8820 9104 7712",
-    name: "FINTWIN • CORE TWIN",
+    name: "NEXFIN • CORE TWIN",
     tier: "AUTONOMOUS LIQUIDITY",
     cvv: "891",
     subtitle: "AI Cash Flow & Runway Twin",
@@ -132,47 +132,48 @@ const INDIAN_VENDOR_STORIES = [
     metricLabel: "Working Capital Unlocked via TReDS",
     runwayGain: "+24 Days Runway",
     quote:
-      "Before FinTwin, our cash was tied up in 60-day OEM payment cycles. The Digital Twin predicted our liquidity dip 3 weeks ahead and routed verified invoices into TReDS discounting at 8.1%.",
+      "Before NexFin, our cash was tied up in 60-day OEM payment cycles. The Digital Twin predicted our liquidity dip 3 weeks ahead and routed verified invoices into TReDS discounting at 8.1%.",
     badges: ["TReDS (RXIL) Active", "MSME Udyam Verified", "ISO 9001:2015"],
     gstin: "27AADCO1234E1Z5 • Verified via Account Aggregator",
     stepper: ["e-Invoice Ingested", "TReDS Discounting", "Working Capital Credited"],
     hudDay: 18,
     hudTotalDays: 90,
-    hudText: "Liquidity Dip Predicted: Route to TReDS",
+    progressPercent: 62,
+    unlockedCash: "₹42,50,000",
   },
   {
-    id: "textile",
-    tabTitle: "Textile Weaving",
-    tabStat: "₹28.4L Recovered",
-    name: "Ananya Mehra",
-    role: "Director of Finance",
-    company: "Vardhman TexFab Exports",
-    location: "Surat Textile Hub, Gujarat",
-    industry: "Textile Export & Weaving",
-    image: "/stories/vendor_textile.jpg",
-    metricValue: "₹28.4L",
-    metricLabel: "Recovered via MSMED Section 15",
-    runwayGain: "Zero Default Risk",
+    id: "textiles",
+    tabTitle: "Garment Export",
+    tabStat: "Zero Bad Debts",
+    name: "Meenakshi Sundaram",
+    role: "Finance Director",
+    company: "Tirupur Knits & Weaves",
+    location: "Tirupur Apparel Park, Tamil Nadu",
+    industry: "Textiles & Garment Manufacturing",
+    image: "/stories/vendor_textiles.jpg",
+    metricValue: "₹68.0L",
+    metricLabel: "MSMED Act 45-Day Recovery Protected",
+    runwayGain: "+38 Days Runway",
     quote:
-      "FinTwin automatically alerts corporate buyers 10 days before the statutory 45-day deadline, eliminating bad debts.",
-    badges: ["MSME Samadhaan Ready", "e-Way Bill Reconciled", "100% GSTR-2B"],
-    gstin: "24AAACV8912 • Verified via Account Aggregator",
-    stepper: ["e-Way Ingested", "10-Day Statutory Alert", "Settlement Cleared"],
-    hudDay: 35,
+      "NexFin automatically alerts corporate buyers 10 days before the statutory 45-day deadline, eliminating bad debts.",
+    badges: ["MSMED 45-Day Compliance", "Samadhaan Auto-Draft", "GSTN Linked"],
+    gstin: "33AABCT5678F1Z9 • Reconciled Live",
+    stepper: ["Export Order Dispatched", "GST e-Way Bill Active", "MSMED 45-Day Clock"],
+    hudDay: 32,
     hudTotalDays: 45,
-    hudText: "Day 35 Alert: Corporate Buyer Notified",
+    progressPercent: 71,
+    unlockedCash: "₹68,00,000",
   },
   {
     id: "electronics",
-    tabTitle: "IoT Devices",
-    tabStat: "100% GSTR-2B",
-    name: "Karthik Sundaram",
-    role: "Founder & CTO",
-    company: "Deccan Microtronics Ltd",
-    location: "Peenya Industrial Area, Bengaluru",
-    industry: "Consumer Electronics & IoT",
+    tabTitle: "Electronics EMS",
+    tabStat: "+45d Runway",
+    name: "Vikram Singhania",
+    role: "Founder & CEO",
+    company: "NexGen EMS Circuits",
+    location: "Electronic City, Bengaluru, Karnataka",
+    industry: "Electronics & IoT Hardware Manufacturing",
     image: "/stories/vendor_electronics.jpg",
-    metricValue: "94.8%",
     metricLabel: "Runway Forecasting Accuracy",
     runwayGain: "74-Day Safe Horizon",
     quote:
@@ -1449,7 +1450,7 @@ export default function LandingPage() {
                   maxWidth: "92%",
                 }}
               >
-                Whether you're managing cash runway, enforcing 45-day statutory MSMED settlements, or seeking collateral-free TReDS discounting, FinTwin is here to help.
+                Whether you're managing cash runway, enforcing 45-day statutory MSMED settlements, or seeking collateral-free TReDS discounting, NexFin is here to help.
               </p>
 
               {/* Action CTAs */}
@@ -1669,7 +1670,7 @@ export default function LandingPage() {
               Active Flow: Consented GST Tax Invoice Stream
             </h2>
             <p style={{ color: "#4b5563", fontSize: "14.5px", maxWidth: "780px", margin: "8px auto 0", lineHeight: 1.5, fontWeight: 500 }}>
-              FinTwin ingests consented line items, verifies MSMED-45-day statutory deadlines, forecasts liquidity gaps, and simulates cash flow shocks in real-time.
+              NexFin ingests consented line items, verifies MSMED-45-day statutory deadlines, forecasts liquidity gaps, and simulates cash flow shocks in real-time.
             </p>
           </div>
 
@@ -1901,7 +1902,7 @@ export default function LandingPage() {
                   <div style={{ textAlign: "center", marginTop: 4 }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, fontSize: "9.5px", fontWeight: 800, letterSpacing: "0.5px", color: "#059669", marginBottom: 6 }}>
                       <span style={{ fontSize: "13px" }}>✓</span>
-                      <span>FINTWIN TWIN SYNC: VERIFIED & TReDS ELIGIBLE</span>
+                      <span>NEXFIN TWIN SYNC: VERIFIED & TReDS ELIGIBLE</span>
                     </div>
                     <div
                       style={{
@@ -1931,14 +1932,14 @@ export default function LandingPage() {
             </div>
 
             {/* =========================================================================
-                RIGHT COLUMN: THE FINTWIN DIGITAL TWIN SOLUTION
+                RIGHT COLUMN: THE NEXFIN DIGITAL TWIN SOLUTION
                 ========================================================================= */}
             <div style={{ display: "flex", flexDirection: "column", gap: "20px", width: "100%", paddingLeft: "10px" }}>
               {/* Header with Green Dot */}
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
                 <span className="anim-pulse" style={{ width: 10, height: 10, borderRadius: "50%", background: "#10b981", boxShadow: "0 0 10px #10b981" }} />
                 <span style={{ fontSize: "14px", fontWeight: 800, color: "#047857", letterSpacing: "0.8px", textTransform: "uppercase", textShadow: "0 1px 3px rgba(255,255,255,0.9)" }}>
-                  THE FINTWIN DIGITAL TWIN SOLUTION
+                  THE NEXFIN DIGITAL TWIN SOLUTION
                 </span>
               </div>
 
@@ -2039,7 +2040,7 @@ export default function LandingPage() {
               Real MSME Impact
             </span>
             <h2 style={{ fontSize: "clamp(2rem, 3.5vw, 2.8rem)", fontWeight: 800, letterSpacing: "-0.8px", marginTop: 8, color: "var(--text-primary)" }}>
-              How Indian Enterprise Leaders Use FinTwin
+              How Indian Enterprise Leaders Use NexFin
             </h2>
             <p style={{ color: "var(--text-secondary)", fontSize: "15px", maxWidth: "620px", margin: "8px auto 0", lineHeight: 1.6 }}>
               From automotive manufacturing to export textiles, discover how MSME CFOs and founders maintain positive liquidity.
@@ -2597,7 +2598,7 @@ export default function LandingPage() {
               gap: 12,
             }}
           >
-            <div>© 2026 FinTwin Technologies India Pvt Ltd. All rights reserved.</div>
+            <div>© 2026 NexFin Technologies India Pvt Ltd. All rights reserved.</div>
             <div style={{ display: "flex", gap: 18 }}>
               <span>Privacy Policy</span>
               <span>Terms of Service</span>

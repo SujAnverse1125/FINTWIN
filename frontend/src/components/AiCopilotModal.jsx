@@ -70,7 +70,7 @@ export default function AiCopilotModal({ isOpen, onClose }) {
     {
       id: "m1",
       role: "assistant",
-      text: "Hello! I am your **FinTwin AI Financial Copilot**. I continuously simulate your cash runway, customer payment delays, and working capital risk with root-cause diagnostics.\n\nSelect a suggested inquiry below or ask any question about your cash flow:",
+      text: "Hello! I am your **NexFin AI Financial Copilot**. I continuously simulate your cash runway, customer payment delays, and working capital risk with root-cause diagnostics.\n\nSelect a suggested inquiry below or ask any question about your cash flow:",
       actions: [],
     },
   ]);
@@ -275,7 +275,7 @@ Your current runway stands at **${summary.runwayDays} Days** with a net monthly 
 
       // 7. DEFAULT / GENERIC RESPONSE
       else {
-        responseText = `### 🤖 FinTwin AI Diagnostic Summary
+        responseText = `### 🤖 NexFin AI Diagnostic Summary
 I've analyzed your financial twin data for **${biz.name}**:
 • **Opening Cash**: ₹${(summary.currentCash / 100000).toFixed(2)}L
 • **Total Receivables**: ₹${(summary.receivables / 100000).toFixed(2)}L across ${invoices.length} invoices
@@ -328,7 +328,7 @@ Select one of the suggested inquiry chips above for a structured **Why & How to 
             </div>
             <div>
               <div style={{ fontSize: "14px", fontWeight: 700, color: "#ffffff" }}>
-                FinTwin Copilot 2.0
+                NexFin Copilot 2.0
               </div>
               <div style={{ fontSize: "11px", color: "#a78bfa" }}>
                 AI Diagnostic & "Why & How" Engine

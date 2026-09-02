@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Users,
   Plus,
@@ -180,7 +180,7 @@ export default function Payroll() {
     const csvContent =
       "data:text/csv;charset=utf-8," +
       [
-        "FinTwin Payroll & Salary Disbursal Statement",
+        "NexFin Payroll & Salary Disbursal Statement",
         `Business Name,${business.name || "My Enterprise"}`,
         `Export Date,${new Date().toISOString().slice(0, 10)}`,
         "",

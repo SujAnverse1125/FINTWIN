@@ -217,7 +217,7 @@ export default function Login() {
   const handleQuickDemo = (role = "CFO") => {
     setIsSubmitting(true);
     setTimeout(() => {
-      login("demo@fintwin.ai", "demo123", role);
+      login("demo@nexfin.ai", "demo123", role);
       setIsSubmitting(false);
       navigate("/dashboard");
     }, 200);

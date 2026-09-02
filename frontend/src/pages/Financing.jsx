@@ -264,7 +264,7 @@ function Financing() {
             Decision-Support Financing Analysis
           </strong>
           <p style={{ margin: "4px 0 0", color: "#64748b", fontSize: "12.5px" }}>
-            FinTwin compares illustrative non-debt, invoice-financing and working-capital options.
+            NexFin compares illustrative non-debt, invoice-financing and working-capital options.
           </p>
         </div>
       </div>
@@ -433,7 +433,7 @@ function Financing() {
               <div>
 
                 <h2>
-                  FinTwin's Analysis
+                  NexFin's Analysis
                 </h2>
 
                 <p>
@@ -764,7 +764,7 @@ function Financing() {
             Financing rates, fees, eligibility,
             collateral requirements and repayment
             terms shown here are illustrative.
-            FinTwin does not approve, reject or
+            NexFin does not approve, reject or
             originate loans.
 
           </div>

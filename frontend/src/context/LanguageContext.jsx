@@ -635,8 +635,8 @@ const PHRASES_MAP = {
     sd: "+ فوري شامل ڪريو",
     ne: "+ तुरुन्त थप्नुहोस्",
   }),
-  "Ask FinTwin AI": ALL_18({
-    en: "Ask FinTwin AI",
+  "Ask NexFin AI": ALL_18({
+    en: "Ask NexFin AI",
     hi: "एआई ट्विन से पूछें",
     mr: "एआय ला विचारा",
     gu: "AI ને પૂછો",

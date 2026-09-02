@@ -68,10 +68,10 @@ export default function AppLayout({ children }) {
         <button
           className="floating-copilot-btn desktop-only"
           onClick={() => setIsAiCopilotOpen(true)}
-          title={t("askAi", "Ask FinTwin AI")}
+          title={t("askAi", "Ask NexFin AI")}
         >
           <Sparkles size={17} />
-          <span className="copilot-btn-text">{t("askAi", "Ask FinTwin AI")}</span>
+          <span className="copilot-btn-text">{t("askAi", "Ask NexFin AI")}</span>
         </button>
       )}
 
