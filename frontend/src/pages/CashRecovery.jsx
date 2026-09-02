@@ -17,16 +17,17 @@ import {
   SlidersHorizontal,
   ChevronRight,
   Info,
-  CalendarClock,
-  Layers,
-  ArrowRight,
-  Banknote,
   UserCheck,
+  Upload,
+  Download,
+  Check,
 } from "lucide-react";
 
 import ModulePage from "../components/ModulePage";
-import { getFinancialData, subscribeFinancialData } from "../data/financialStore";
+import { getFinancialData, subscribeFinancialData, createInvoices } from "../data/financialStore";
 import CashRecoveryNoticeModal from "../components/CashRecoveryNoticeModal";
+import UniversalUploadModal from "../components/UniversalUploadModal";
+import { parseInvoiceFile } from "../utils/invoiceParser";
 
 function formatMoney(amount) {
   const value = Number(amount || 0);
@@ -58,6 +59,8 @@ export default function CashRecovery() {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [modalMode, setModalMode] = useState("legal_recovery");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [demoLoadedNotice, setDemoLoadedNotice] = useState(false);
 
   useEffect(() => {
     const unsubscribe = subscribeFinancialData((newData) => {
@@ -65,6 +68,172 @@ export default function CashRecovery() {
     });
     return () => unsubscribe();
   }, []);
+
+  const handleLoadDemoRecoveryData = () => {
+    const demoInvoices = [
+      {
+        id: "INV-2026-088",
+        customer: "Mehta Heavy Tooling Pvt Ltd",
+        amount: 1250000,
+        invoiceDate: "2026-05-15",
+        dueDate: "2026-06-30",
+        status: "Overdue",
+        overdueDays: 58,
+        gstRate: 18,
+        gstin: "27AADCM9921E1Z3",
+        customerEmail: "accounts@mehtatooling.com",
+      },
+      {
+        id: "INV-2026-092",
+        customer: "Shree Balaji Infrastructure",
+        amount: 840000,
+        invoiceDate: "2026-05-10",
+        dueDate: "2026-06-25",
+        status: "Overdue",
+        overdueDays: 64,
+        gstRate: 18,
+        gstin: "24AAACS4120F1Z8",
+        customerEmail: "finance@balaji-infra.in",
+      },
+      {
+        id: "INV-2026-075",
+        customer: "Apex Global Logistics Corp",
+        amount: 520000,
+        invoiceDate: "2026-05-25",
+        dueDate: "2026-07-10",
+        status: "Overdue",
+        overdueDays: 49,
+        gstRate: 18,
+        gstin: "29AAACA5512G1Z9",
+        customerEmail: "payables@apexlogistics.com",
+      },
+      {
+        id: "INV-2026-104",
+        customer: "Sona Exports & Textiles Ltd",
+        amount: 468000,
+        invoiceDate: "2026-06-12",
+        dueDate: "2026-07-26",
+        status: "Overdue",
+        overdueDays: 34,
+        gstRate: 12,
+        gstin: "33AABCS7712H1Z5",
+        customerEmail: "accounts@sonaexports.com",
+      },
+      {
+        id: "INV-2026-112",
+        customer: "Deccan Precision Fasteners",
+        amount: 385000,
+        invoiceDate: "2026-06-20",
+        dueDate: "2026-08-04",
+        status: "Overdue",
+        overdueDays: 26,
+        gstRate: 18,
+        gstin: "36AABCD8821J1Z2",
+        customerEmail: "billing@deccanfasteners.com",
+      },
+      {
+        id: "INV-2026-118",
+        customer: "Zaveri Pharma Packaging",
+        amount: 240000,
+        invoiceDate: "2026-06-28",
+        dueDate: "2026-08-11",
+        status: "Overdue",
+        overdueDays: 19,
+        gstRate: 12,
+        gstin: "24AABCZ1234K1Z0",
+        customerEmail: "finance@zaveripack.com",
+      },
+      {
+        id: "INV-2026-125",
+        customer: "Krishna Furnishings & Fabrics",
+        amount: 304000,
+        invoiceDate: "2026-07-08",
+        dueDate: "2026-08-21",
+        status: "Overdue",
+        overdueDays: 9,
+        gstRate: 18,
+        gstin: "27AABCK4412L1Z4",
+        customerEmail: "accounts@krishnafurnishings.in",
+      },
+      {
+        id: "INV-2026-130",
+        customer: "Anand Agencies Distribution",
+        amount: 156000,
+        invoiceDate: "2026-07-12",
+        dueDate: "2026-08-24",
+        status: "Overdue",
+        overdueDays: 6,
+        gstRate: 18,
+        gstin: "29AABCA8891M1Z7",
+        customerEmail: "info@anandagencies.com",
+      },
+      {
+        id: "INV-2026-201",
+        customer: "Tata Motors Ancillary Vendor Unit",
+        amount: 1450000,
+        invoiceDate: "2026-08-05",
+        dueDate: "2026-09-25",
+        status: "Pending",
+        overdueDays: 0,
+        gstRate: 18,
+        gstin: "27AAACT2210N1Z6",
+        customerEmail: "vendor.desk@tatamotors-vendor.com",
+        discountEligible: true,
+      },
+      {
+        id: "INV-2026-205",
+        customer: "Godrej Appliances Supply Division",
+        amount: 920000,
+        invoiceDate: "2026-08-12",
+        dueDate: "2026-09-20",
+        status: "Pending",
+        overdueDays: 0,
+        gstRate: 18,
+        gstin: "27AAACG1120P1Z8",
+        customerEmail: "ap.team@godrejappliances.in",
+        discountEligible: true,
+      },
+      {
+        id: "INV-2026-210",
+        customer: "Mahindra & Mahindra Tier-2 Subcontractor",
+        amount: 680000,
+        invoiceDate: "2026-08-15",
+        dueDate: "2026-09-18",
+        status: "Pending",
+        overdueDays: 0,
+        gstRate: 18,
+        gstin: "27AAACM3340Q1Z9",
+        customerEmail: "treasury@mahindra-tier2.in",
+        discountEligible: true,
+      },
+      {
+        id: "INV-2026-215",
+        customer: "Schneider Electric India OEM",
+        amount: 450000,
+        invoiceDate: "2026-08-20",
+        dueDate: "2026-10-05",
+        status: "Pending",
+        overdueDays: 0,
+        gstRate: 18,
+        gstin: "29AAACS6650R1Z1",
+        customerEmail: "vendor.invoices@se-india.com",
+        discountEligible: true,
+      },
+    ];
+
+    createInvoices(demoInvoices);
+    setDemoLoadedNotice(true);
+    setTimeout(() => setDemoLoadedNotice(false), 4000);
+  };
+
+  const handleDownloadTemplate = () => {
+    const link = document.createElement("a");
+    link.href = "/nexfin_cash_recovery_master_dataset.csv";
+    link.setAttribute("download", "nexfin_cash_recovery_master_dataset.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const business = storeData.business || {
     name: "My Enterprise",
@@ -166,6 +335,133 @@ export default function CashRecovery() {
       title="MSME Cash Recovery & Legal Settlement Hub"
       description="Enforce MSMED Act statutory 45-day recovery, claim penal interest under Section 16, and offer dynamic early payment cash discounts."
     >
+      {/* =========================================================================
+          0. DATASET INGESTION & QUICK ACTIONS BAR
+          ========================================================================= */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 12,
+          background: "#FFFFFF",
+          padding: "14px 20px",
+          borderRadius: "14px",
+          border: "1px solid #E2E8F0",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+          marginBottom: "20px",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: "8px",
+              background: "rgba(225, 29, 72, 0.12)",
+              color: "#E11D48",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Scale size={18} />
+          </div>
+          <div>
+            <div style={{ fontSize: "13.5px", fontWeight: 800, color: "#0F172A" }}>
+              Cash Recovery & MSMED Legal Datasets
+            </div>
+            <div style={{ fontSize: "11.5px", color: "#64748B" }}>
+              Upload your debtor invoices or load pre-configured MSMED Section 15/16 test scenarios
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          {demoLoadedNotice && (
+            <span
+              style={{
+                fontSize: "11.5px",
+                fontWeight: 700,
+                color: "#059669",
+                background: "rgba(16, 185, 129, 0.1)",
+                padding: "6px 12px",
+                borderRadius: "6px",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+              }}
+            >
+              <Check size={13} />
+              <span>12 Invoices Loaded!</span>
+            </span>
+          )}
+
+          <button
+            onClick={handleLoadDemoRecoveryData}
+            style={{
+              padding: "8px 14px",
+              borderRadius: "8px",
+              background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
+              color: "#FFFFFF",
+              border: "none",
+              fontSize: "12px",
+              fontWeight: 800,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              cursor: "pointer",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+            }}
+          >
+            <Sparkles size={13} style={{ color: "#38BDF8" }} />
+            <span>Load Demo Recovery Dataset</span>
+          </button>
+
+          <button
+            onClick={() => setIsUploadModalOpen(true)}
+            style={{
+              padding: "8px 14px",
+              borderRadius: "8px",
+              background: "#F8FAFC",
+              color: "#334155",
+              border: "1px solid #CBD5E1",
+              fontSize: "12px",
+              fontWeight: 700,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              cursor: "pointer",
+            }}
+          >
+            <Upload size={13} style={{ color: "#0284C7" }} />
+            <span>Upload Invoices / CSV</span>
+          </button>
+
+          <button
+            onClick={handleDownloadTemplate}
+            style={{
+              padding: "8px 12px",
+              borderRadius: "8px",
+              background: "#FFFFFF",
+              color: "#64748B",
+              border: "1px solid #E2E8F0",
+              fontSize: "12px",
+              fontWeight: 600,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 5,
+              cursor: "pointer",
+            }}
+            title="Download nexfin_cash_recovery_master_dataset.csv"
+          >
+            <Download size={13} />
+            <span>CSV Template</span>
+          </button>
+        </div>
+      </div>
+
       {/* =========================================================================
           1. TOP METRIC CARDS (4 CARDS)
           ========================================================================= */}
@@ -787,6 +1083,14 @@ export default function CashRecovery() {
         business={business}
         discountPercentage={globalDiscountRate}
         settlementDays={globalSettlementWindow}
+      />
+
+      {/* =========================================================================
+          7. UNIVERSAL UPLOAD MODAL (CSV / EXCEL / PDF / JSON)
+          ========================================================================= */}
+      <UniversalUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
       />
     </ModulePage>
   );
