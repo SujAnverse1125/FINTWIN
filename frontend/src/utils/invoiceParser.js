@@ -351,7 +351,7 @@ function normalizeInvoiceRow(row) {
     previousAvgDelay: Number(row.previousAvgDelay || row["Previous Avg Delay Days"] || row["Previous Avg Delay"] || 3.0),
     previousLatePayments: Number(row.previousLatePayments || row["Previous Late Payments"] || 0),
     customerTenureMonths: Number(row.customerTenureMonths || row["Customer Tenure Months"] || row["Tenure Months"] || 12),
-    gstRate: row.gstRate || row["GST Rate"] || "18%",
+    gstRate: parseFloat(String(row.gstRate || row["GST Rate"] || "18").replace("%", "").trim()) || 18,
     source: row.source || "file_import",
   };
 }

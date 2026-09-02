@@ -259,11 +259,14 @@ export default function UniversalUploadModal({ isOpen, onClose }) {
           date: item.invoiceDate || new Date().toISOString().slice(0, 10),
           recurring: isRecurring,
           dayOfMonth: Number(item.dayOfMonth || 1),
-          gstRate: 18,
+          gstRate: parseFloat(String(item.gstRate || "18").replace("%", "").trim()) || 18,
         });
         expenseCount++;
       } else {
-        invoicesToCreate.push(item);
+        invoicesToCreate.push({
+          ...item,
+          gstRate: parseFloat(String(item.gstRate || "18").replace("%", "").trim()) || 18,
+        });
         invoiceCount++;
       }
     });

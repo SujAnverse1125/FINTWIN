@@ -346,9 +346,12 @@ export function calculateOverallGst(defaultRate = 18) {
   let totalOutputGst = 0;
   invoices.forEach((inv) => {
     const amt = Number(inv.amount || 0);
-    const rate = Number(inv.gstRate || defaultRate);
+    const rawRate = inv?.gstRate !== undefined && inv?.gstRate !== null ? inv.gstRate : defaultRate;
+    const rate = parseFloat(String(rawRate).replace("%", "").trim()) || defaultRate;
     const tax = (amt * rate) / (100 + rate);
-    totalOutputGst += tax;
+    if (!isNaN(tax)) {
+      totalOutputGst += tax;
+    }
   });
   totalOutputGst = Math.round(totalOutputGst);
 
@@ -356,9 +359,12 @@ export function calculateOverallGst(defaultRate = 18) {
   let totalInputTaxCredit = 0;
   allExpenses.forEach((exp) => {
     const amt = Number(exp.amount || 0);
-    const rate = Number(exp.gstRate || defaultRate);
+    const rawRate = exp?.gstRate !== undefined && exp?.gstRate !== null ? exp.gstRate : defaultRate;
+    const rate = parseFloat(String(rawRate).replace("%", "").trim()) || defaultRate;
     const itc = (amt * rate) / (100 + rate);
-    totalInputTaxCredit += itc;
+    if (!isNaN(itc)) {
+      totalInputTaxCredit += itc;
+    }
   });
   totalInputTaxCredit = Math.round(totalInputTaxCredit);
 
