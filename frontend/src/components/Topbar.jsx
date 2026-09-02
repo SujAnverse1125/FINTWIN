@@ -35,6 +35,7 @@ const titles = {
   "/dashboard/risk": { title: "Risk Analysis & Mitigation", sub: "Concentration, payment behavior, GST reserve pressure, and mitigation actions from the shared active dataset." },
   "/simulator": { title: "What-If Shock Simulator", sub: "Interactive scenario stress-testing for MSME liquidity" },
   "/financing": { title: "MSME Financing Marketplace", sub: "Working capital gap solutions & invoice discounting options" },
+  "/cash-recovery": { title: "Cash Recovery & Legal Settlement", sub: "MSMED Act statutory payment recovery, legal demand notices & dynamic early settlement discounts" },
   "/gst": { title: "GST Intelligence & Tax Calculator", sub: "Overall GST reconciliation (GSTR-1/2B/3B), transaction calculator & GSTIN lookup" },
   "/payroll": { title: "Workers & Salary Payroll Hub", sub: "Employee directory, 1-click salary disbursements, and payroll burn ledger" },
   "/reports": { title: "Financial Reports & P&L", sub: "Exportable statements, monthly burn & liquidity reconciliation" },

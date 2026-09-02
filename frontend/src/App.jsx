@@ -24,6 +24,7 @@ import Forecast from "./pages/Forecast";
 import Risk from "./pages/Risk";
 import Simulator from "./pages/Simulator";
 import Financing from "./pages/Financing";
+import CashRecovery from "./pages/CashRecovery";
 import Gst from "./pages/Gst";
 import Payroll from "./pages/Payroll";
 import Reports from "./pages/Reports";
@@ -170,6 +171,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <Financing />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/cash-recovery"
+            element={
+              <ProtectedRoute>
+                <CashRecovery />
               </ProtectedRoute>
             }
           />

@@ -26,9 +26,9 @@ import {
   Building2,
   SlidersHorizontal,
   Bell,
-  Cpu,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Scale,
 } from "lucide-react";
 
 import {
@@ -57,6 +57,7 @@ const NAV_GROUPS = [
   {
     groupTitle: "MSME OPERATIONS",
     items: [
+      { key: "cashRecovery", name: "Cash Recovery", path: "/cash-recovery", icon: Scale, badge: "Legal", badgeType: "live", iconColor: "#e11d48" },
       { key: "expenses", name: "Expenses & Burn", path: "/expenses", icon: CreditCard, iconColor: "#dc2626" },
       { key: "customers", name: "Customers & Risk", path: "/customers", icon: Users, iconColor: "#0891b2" },
       { key: "financing", name: "MSME Financing", path: "/financing", icon: Landmark, badge: "TReDS", badgeType: "treds", iconColor: "#2563eb" },
