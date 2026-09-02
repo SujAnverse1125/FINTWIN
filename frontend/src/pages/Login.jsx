@@ -300,204 +300,185 @@ export default function Login() {
       />
 
       {/* =========================================================================
-          AMBIENT WIDESCREEN FINTECH INTELLIGENCE CARDS (LEFT & RIGHT FLANKS)
+          CUSTOM VECTOR FINANCIAL GRAPHS (EXACT USER SKETCH DESIGN)
           ========================================================================= */}
       
-      {/* 1. TOP-LEFT: LIVE LIQUIDITY & RUNWAY PULSE */}
+      {/* 1. LEFT BACKGROUND: Stepped Financial Bar / Candlestick Skyline Wireframe */}
       <div
-        className="login-ambient-card login-ambient-card-top-left"
         style={{
           position: "absolute",
-          top: "14%",
-          left: "max(24px, calc(50% - 730px))",
-          width: "250px",
-          padding: "16px",
-          borderRadius: "18px",
-          background: "rgba(15, 23, 42, 0.82)",
-          backdropFilter: "blur(20px)",
-          border: "1px solid rgba(139, 92, 246, 0.35)",
-          boxShadow: "0 12px 36px rgba(0,0,0,0.5), 0 0 24px rgba(139, 92, 246, 0.15)",
-          zIndex: 5,
+          left: "max(12px, calc(50% - 760px))",
+          bottom: "8%",
+          width: "280px",
+          height: "380px",
+          pointerEvents: "none",
+          zIndex: 2,
+          opacity: 0.85,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: "10px",
-              background: "rgba(16, 185, 129, 0.15)",
-              border: "1px solid rgba(16, 185, 129, 0.3)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#10b981",
-            }}
-          >
-            <TrendingUp size={18} />
-          </div>
-          <div>
-            <div style={{ fontSize: "10.5px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.5px" }}>
-              CASH RUNWAY PULSE
-            </div>
-            <div style={{ fontSize: "15px", fontWeight: 800, color: "#ffffff" }}>
-              78 Days Baseline
-            </div>
-          </div>
-        </div>
-        <div style={{ marginTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "11px" }}>
-          <span style={{ color: "#34d399", fontWeight: 700 }}>● 98.4% Confidence</span>
-          <span style={{ color: "#cbd5e1" }}>₹18.40L Liquid</span>
-        </div>
+        <svg width="100%" height="100%" viewBox="0 0 280 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="barGradCyan" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.05" />
+            </linearGradient>
+            <linearGradient id="barGradPurple" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.05" />
+            </linearGradient>
+            <linearGradient id="barGradEmerald" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#10B981" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#10B981" stopOpacity="0.05" />
+            </linearGradient>
+            <filter id="glowLeft" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+
+          {/* Horizontal grid lines */}
+          <line x1="0" y1="100" x2="280" y2="100" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
+          <line x1="0" y1="180" x2="280" y2="180" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
+          <line x1="0" y1="260" x2="280" y2="260" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
+          <line x1="0" y1="340" x2="280" y2="340" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+
+          {/* Stepped Financial Skyline Bars */}
+          {/* Bar 1 */}
+          <rect x="15" y="160" width="34" height="180" rx="4" fill="url(#barGradCyan)" stroke="#38BDF8" strokeWidth="1.5" filter="url(#glowLeft)" />
+          <line x1="32" y1="130" x2="32" y2="160" stroke="#38BDF8" strokeWidth="1.5" strokeDasharray="2 2" />
+          <circle cx="32" cy="130" r="3" fill="#38BDF8" />
+
+          {/* Bar 2 (Tallest) */}
+          <rect x="58" y="70" width="38" height="270" rx="4" fill="url(#barGradPurple)" stroke="#8B5CF6" strokeWidth="1.8" filter="url(#glowLeft)" />
+          <line x1="77" y1="40" x2="77" y2="70" stroke="#8B5CF6" strokeWidth="1.5" />
+          <circle cx="77" cy="40" r="3.5" fill="#C084FC" />
+
+          {/* Bar 3 */}
+          <rect x="105" y="210" width="32" height="130" rx="4" fill="url(#barGradCyan)" stroke="#0284C7" strokeWidth="1.5" />
+          
+          {/* Bar 4 */}
+          <rect x="146" y="120" width="36" height="220" rx="4" fill="url(#barGradEmerald)" stroke="#10B981" strokeWidth="1.5" filter="url(#glowLeft)" />
+          <line x1="164" y1="95" x2="164" y2="120" stroke="#10B981" strokeWidth="1.5" />
+          <circle cx="164" cy="95" r="3" fill="#34D399" />
+
+          {/* Bar 5 */}
+          <rect x="191" y="180" width="34" height="160" rx="4" fill="url(#barGradPurple)" stroke="#A855F7" strokeWidth="1.5" />
+          
+          {/* Bar 6 */}
+          <rect x="234" y="90" width="36" height="250" rx="4" fill="url(#barGradCyan)" stroke="#38BDF8" strokeWidth="1.8" filter="url(#glowLeft)" />
+          <line x1="252" y1="60" x2="252" y2="90" stroke="#38BDF8" strokeWidth="1.5" />
+          <circle cx="252" cy="60" r="3" fill="#67E8F9" />
+
+          {/* Connecting Trend Polyline across bar peaks */}
+          <path d="M 32 130 L 77 40 L 121 210 L 164 95 L 208 180 L 252 60" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeDasharray="3 3" />
+        </svg>
       </div>
 
-      {/* 2. BOTTOM-LEFT: DUAL ML DELAY PREDICTOR RADAR */}
+      {/* TOP LEFT ACCENT: Radar / Coordinate Cross Accent */}
       <div
-        className="login-ambient-card login-ambient-card-bottom-left"
         style={{
           position: "absolute",
-          bottom: "12%",
-          left: "max(24px, calc(50% - 730px))",
-          width: "250px",
-          padding: "16px",
-          borderRadius: "18px",
-          background: "rgba(15, 23, 42, 0.82)",
-          backdropFilter: "blur(20px)",
-          border: "1px solid rgba(56, 189, 248, 0.35)",
-          boxShadow: "0 12px 36px rgba(0,0,0,0.5), 0 0 24px rgba(56, 189, 248, 0.15)",
-          zIndex: 5,
+          left: "max(30px, calc(50% - 720px))",
+          top: "10%",
+          width: "120px",
+          height: "120px",
+          pointerEvents: "none",
+          zIndex: 2,
+          opacity: 0.75,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: "10px",
-              background: "rgba(56, 189, 248, 0.15)",
-              border: "1px solid rgba(56, 189, 248, 0.3)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#38bdf8",
-            }}
-          >
-            <Zap size={18} />
-          </div>
-          <div>
-            <div style={{ fontSize: "10.5px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.5px" }}>
-              DUAL ML PREDICTOR
-            </div>
-            <div style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>
-              RF + LightGBM Engine
-            </div>
-          </div>
-        </div>
-        <div style={{ marginTop: 10, background: "rgba(255,255,255,0.06)", borderRadius: "8px", padding: "7px 10px", fontSize: "11px", color: "#e2e8f0" }}>
-          ⚡ 42 Invoices Tracked in Real-Time
-        </div>
+        <svg width="100%" height="100%" viewBox="0 0 120 120" fill="none">
+          <circle cx="60" cy="60" r="45" stroke="rgba(139, 92, 246, 0.4)" strokeWidth="1.5" strokeDasharray="6 4" />
+          <circle cx="60" cy="60" r="28" stroke="rgba(56, 189, 248, 0.5)" strokeWidth="1.2" />
+          <circle cx="60" cy="60" r="6" fill="#8B5CF6" />
+          <line x1="60" y1="5" x2="60" y2="115" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="2 2" />
+          <line x1="5" y1="60" x2="115" y2="60" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="2 2" />
+          <circle cx="60" cy="15" r="3" fill="#38BDF8" />
+          <circle cx="105" cy="60" r="3" fill="#10B981" />
+        </svg>
       </div>
 
-      {/* 3. TOP-RIGHT: MSMED SECTION 15 STATUTORY RADAR */}
+      {/* 2. RIGHT BACKGROUND: X/Y Axis Multi-Curve Trajectory Graph */}
       <div
-        className="login-ambient-card login-ambient-card-top-right"
         style={{
           position: "absolute",
-          top: "14%",
-          right: "max(24px, calc(50% - 730px))",
-          width: "250px",
-          padding: "16px",
-          borderRadius: "18px",
-          background: "rgba(15, 23, 42, 0.82)",
-          backdropFilter: "blur(20px)",
-          border: "1px solid rgba(245, 158, 11, 0.35)",
-          boxShadow: "0 12px 36px rgba(0,0,0,0.5), 0 0 24px rgba(245, 158, 11, 0.15)",
-          zIndex: 5,
+          right: "max(12px, calc(50% - 760px))",
+          bottom: "8%",
+          width: "300px",
+          height: "380px",
+          pointerEvents: "none",
+          zIndex: 2,
+          opacity: 0.85,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: "10px",
-              background: "rgba(245, 158, 11, 0.15)",
-              border: "1px solid rgba(245, 158, 11, 0.3)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#f59e0b",
-            }}
-          >
-            <ShieldCheck size={18} />
-          </div>
-          <div>
-            <div style={{ fontSize: "10.5px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.5px" }}>
-              STATUTORY RADAR
-            </div>
-            <div style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>
-              MSMED Sec 15 (45-Day)
-            </div>
-          </div>
-        </div>
-        <div style={{ marginTop: 10, fontSize: "11.5px", color: "#fbbf24", fontWeight: 600 }}>
-          ✓ 3x Bank Rate Auto-Interest Trigger
-        </div>
+        <svg width="100%" height="100%" viewBox="0 0 300 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="areaCyan" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.0" />
+            </linearGradient>
+            <linearGradient id="areaEmerald" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#10B981" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+            </linearGradient>
+            <filter id="glowRight" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+
+          {/* X and Y Coordinate Axes */}
+          <path d="M 25 30 L 25 340 L 290 340" stroke="rgba(255,255,255,0.35)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Y-Axis Arrow */}
+          <path d="M 20 38 L 25 26 L 30 38" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          {/* X-Axis Arrow */}
+          <path d="M 282 335 L 294 340 L 282 345" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+
+          {/* Axis Grid Ticks */}
+          <line x1="20" y1="100" x2="280" y2="100" stroke="rgba(255,255,255,0.06)" strokeDasharray="3 3" />
+          <line x1="20" y1="180" x2="280" y2="180" stroke="rgba(255,255,255,0.06)" strokeDasharray="3 3" />
+          <line x1="20" y1="260" x2="280" y2="260" stroke="rgba(255,255,255,0.06)" strokeDasharray="3 3" />
+
+          {/* Curve 1: Area Fill + Glowing Line (Cyan Inflow Wave) */}
+          <path d="M 25 240 C 80 220, 120 120, 180 160 C 230 190, 260 90, 285 60 L 285 340 L 25 340 Z" fill="url(#areaCyan)" />
+          <path d="M 25 240 C 80 220, 120 120, 180 160 C 230 190, 260 90, 285 60" fill="none" stroke="#38BDF8" strokeWidth="2.5" filter="url(#glowRight)" strokeLinecap="round" />
+
+          {/* Curve 2: Rising Exponential Forecast (Emerald Green) */}
+          <path d="M 25 290 C 90 270, 150 230, 200 140 C 240 70, 265 40, 288 35 L 288 340 L 25 340 Z" fill="url(#areaEmerald)" />
+          <path d="M 25 290 C 90 270, 150 230, 200 140 C 240 70, 265 40, 288 35" fill="none" stroke="#10B981" strokeWidth="2.2" filter="url(#glowRight)" strokeLinecap="round" />
+
+          {/* Curve 3: Stressed Shock Trajectory (Amber / Rose Dashed Line) */}
+          <path d="M 25 150 C 80 180, 130 280, 190 250 C 240 220, 265 290, 285 310" fill="none" stroke="#F59E0B" strokeWidth="2" strokeDasharray="5 4" strokeLinecap="round" />
+
+          {/* Glowing Peak Nodes */}
+          <circle cx="285" cy="60" r="5" fill="#38BDF8" filter="url(#glowRight)" />
+          <circle cx="288" cy="35" r="5.5" fill="#10B981" filter="url(#glowRight)" />
+          <circle cx="180" cy="160" r="4" fill="#67E8F9" />
+          <circle cx="200" cy="140" r="4" fill="#34D399" />
+          <circle cx="285" cy="310" r="4" fill="#F59E0B" />
+        </svg>
       </div>
 
-      {/* 4. BOTTOM-RIGHT: TReDS 24HR LIQUIDITY MARKETPLACE */}
+      {/* TOP RIGHT ACCENT: Glowing Orbit Circle Ring (Matching user's drawn circle 'O') */}
       <div
-        className="login-ambient-card login-ambient-card-bottom-right"
         style={{
           position: "absolute",
-          bottom: "12%",
-          right: "max(24px, calc(50% - 730px))",
-          width: "250px",
-          padding: "16px",
-          borderRadius: "18px",
-          background: "rgba(15, 23, 42, 0.82)",
-          backdropFilter: "blur(20px)",
-          border: "1px solid rgba(139, 92, 246, 0.35)",
-          boxShadow: "0 12px 36px rgba(0,0,0,0.5), 0 0 24px rgba(139, 92, 246, 0.15)",
-          zIndex: 5,
+          right: "max(35px, calc(50% - 710px))",
+          top: "10%",
+          width: "110px",
+          height: "110px",
+          pointerEvents: "none",
+          zIndex: 2,
+          opacity: 0.8,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: "10px",
-              background: "rgba(139, 92, 246, 0.15)",
-              border: "1px solid rgba(139, 92, 246, 0.3)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#a78bfa",
-            }}
-          >
-            <Sparkles size={18} />
-          </div>
-          <div>
-            <div style={{ fontSize: "10.5px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.5px" }}>
-              TReDS 24HR SETTLEMENT
-            </div>
-            <div style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>
-              8.1% APR Instant Credit
-            </div>
-          </div>
-        </div>
-        <div style={{ marginTop: 10, display: "flex", gap: 5 }}>
-          <span style={{ fontSize: "10px", background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "5px", color: "#cbd5e1", fontWeight: 600 }}>
-            M1xchange
-          </span>
-          <span style={{ fontSize: "10px", background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "5px", color: "#cbd5e1", fontWeight: 600 }}>
-            RXIL
-          </span>
-          <span style={{ fontSize: "10px", background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "5px", color: "#cbd5e1", fontWeight: 600 }}>
-            Invoicemart
-          </span>
-        </div>
+        <svg width="100%" height="100%" viewBox="0 0 110 110" fill="none">
+          <circle cx="55" cy="55" r="42" stroke="rgba(56, 189, 248, 0.45)" strokeWidth="1.8" />
+          <circle cx="55" cy="55" r="30" stroke="rgba(245, 158, 11, 0.4)" strokeWidth="1.2" strokeDasharray="5 3" />
+          <ellipse cx="55" cy="55" rx="50" ry="18" stroke="rgba(139, 92, 246, 0.5)" strokeWidth="1.5" transform="rotate(-25 55 55)" />
+          <circle cx="55" cy="55" r="6" fill="#F59E0B" />
+          <circle cx="85" cy="32" r="3.5" fill="#38BDF8" />
+        </svg>
       </div>
 
       {/* Centered Split-Screen Card (Dribbble Glassmorphism Frame) */}
