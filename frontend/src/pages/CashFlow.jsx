@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Wallet,
   TrendingUp,
@@ -236,11 +236,11 @@ export default function CashFlow() {
                   .filter((i) => i.status !== "Paid")
                   .map((inv) => (
                     <tr key={inv.id}>
-                      <td style={{ fontWeight: 600, color: "#fff" }}>{inv.customer}</td>
-                      <td style={{ fontWeight: 700, color: "#1C6758" }}>
+                      <td style={{ fontWeight: 600, color: "#0F172A" }}>{inv.customer}</td>
+                      <td style={{ fontWeight: 700, color: "#059669" }}>
                         {formatLakhs(inv.amount)}
                       </td>
-                      <td>{inv.dueDate}</td>
+                      <td style={{ color: "#475569" }}>{inv.dueDate}</td>
                       <td>
                         <span className={`status-badge ${inv.status === "Overdue" ? "overdue" : "pending"}`}>
                           {inv.status}
@@ -280,13 +280,13 @@ export default function CashFlow() {
               <tbody>
                 {data.recurringExpenses.map((rec) => (
                   <tr key={rec.id}>
-                    <td style={{ fontWeight: 600, color: "#fff" }}>{rec.category}</td>
-                    <td>{rec.description}</td>
-                    <td style={{ fontWeight: 700, color: "#C07F7F" }}>
+                    <td style={{ fontWeight: 600, color: "#0F172A" }}>{rec.category}</td>
+                    <td style={{ color: "#475569" }}>{rec.description}</td>
+                    <td style={{ fontWeight: 700, color: "#DC2626" }}>
                       {formatLakhs(rec.amount)}
                     </td>
                     <td>
-                      <span className="status-badge" style={{ background: "rgba(139,92,246,0.15)", color: "#425F6B" }}>
+                      <span className="status-badge" style={{ background: "rgba(124, 58, 237, 0.1)", color: "#7C3AED" }}>
                         Monthly (Day {rec.dayOfMonth})
                       </span>
                     </td>

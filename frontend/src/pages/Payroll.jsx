@@ -461,7 +461,7 @@ export default function Payroll() {
                           {w.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <div style={{ fontWeight: 600, color: "#fff" }}>{w.name}</div>
+                          <div style={{ fontWeight: 700, color: "#0F172A" }}>{w.name}</div>
                           <div style={{ fontSize: 11, color: "var(--text-muted)" }}>{w.designation}</div>
                         </div>
                       </div>
@@ -581,7 +581,7 @@ export default function Payroll() {
                       </span>
                     </td>
                     <td>
-                      <div style={{ fontWeight: 600, color: "#fff" }}>{p.workerName}</div>
+                      <div style={{ fontWeight: 700, color: "#0F172A" }}>{p.workerName}</div>
                       <div style={{ fontSize: 11, color: "var(--text-muted)" }}>{p.designation}</div>
                     </td>
                     <td>

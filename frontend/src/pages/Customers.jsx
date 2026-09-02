@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Users,
   Plus,
@@ -283,7 +283,7 @@ export default function Customers() {
               {customerMetrics.map((cust) => (
                 <tr key={cust.id}>
                   <td>
-                    <div style={{ fontWeight: 600, color: "#fff" }}>{cust.name}</div>
+                    <div style={{ fontWeight: 700, color: "#0F172A" }}>{cust.name}</div>
                     <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
                       {cust.contactEmail || "billing@client.com"}
                     </div>
