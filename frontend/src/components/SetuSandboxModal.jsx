@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   X,
   Zap,
@@ -24,23 +25,31 @@ import {
   Layers,
   ChevronRight,
   TrendingUp,
+  RotateCcw,
+  Sliders,
+  DollarSign,
+  Wallet,
 } from "lucide-react";
 
 import {
   getFinancialData,
   updateInvoiceStatus,
   updateBusinessProfile,
+  createInvoices,
 } from "../data/financialStore";
 
 export default function SetuSandboxModal({ isOpen, onClose }) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("aa_consent"); // "aa_consent" | "upi_qr" | "penny_drop" | "api_console"
   const [copiedKey, setCopiedKey] = useState(null);
 
   // Playground 1: Account Aggregator (AA) State
   const [aaStep, setAaStep] = useState(1); // 1: Config, 2: Mobile OTP, 3: Decrypted Data & Sync
+  const [customerName, setCustomerName] = useState("Mehta Heavy Tooling Pvt Ltd");
   const [mobileNumber, setMobileNumber] = useState("9820123456");
   const [aaHandle, setAaHandle] = useState("9820123456@setu-aa");
-  const [selectedFips, setSelectedFips] = useState(["HDFC Bank", "State Bank of India"]);
+  const [selectedFips, setSelectedFips] = useState(["HDFC Bank Ltd", "State Bank of India"]);
+  const [customBalanceLakhs, setCustomBalanceLakhs] = useState(38.5); // ₹38.5L
   const [otpInput, setOtpInput] = useState("7492");
   const [isConsentLoading, setIsConsentLoading] = useState(false);
   const [isSyncSuccess, setIsSyncSuccess] = useState(false);
@@ -61,13 +70,12 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
 
   // Playground 4: API Console State
   const [apiEndpoint, setApiEndpoint] = useState("aa_initiate");
-  const [apiResponseStatus, setApiResponseStatus] = useState("200 OK");
 
   const storeData = getFinancialData();
   const invoices = (storeData.invoices || []).filter((i) => i.status !== "Paid");
 
   useEffect(() => {
-    if (invoices.length > 0 && !selectedInvoiceId) {
+    if (invoices.length > 0 && (!selectedInvoiceId || !invoices.some(i => (i.id || i.invoiceNumber) === selectedInvoiceId))) {
       setSelectedInvoiceId(invoices[0].id || invoices[0].invoiceNumber);
     }
   }, [invoices, selectedInvoiceId]);
@@ -81,12 +89,13 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
   };
 
   // AA Consent Handlers
-  const handleInitiateConsent = () => {
+  const handleInitiateConsent = (e) => {
+    if (e) e.preventDefault();
     setIsConsentLoading(true);
     setTimeout(() => {
       setIsConsentLoading(false);
       setAaStep(2);
-    }, 900);
+    }, 700);
   };
 
   const handleApproveConsent = () => {
@@ -94,15 +103,22 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
     setTimeout(() => {
       setIsConsentLoading(false);
       setAaStep(3);
-    }, 1100);
+    }, 850);
   };
 
   const handleSyncToDigitalTwin = () => {
-    // Ingests verified bank statement balance (₹38.5 Lakhs) into live store
-    const verifiedBalance = 3850000;
-    updateBusinessProfile({ openingCash: verifiedBalance });
+    const verifiedBalance = Math.round(Number(customBalanceLakhs || 38.5) * 100000);
+    updateBusinessProfile({
+      openingCash: verifiedBalance,
+    });
     setIsSyncSuccess(true);
-    setTimeout(() => setIsSyncSuccess(false), 4000);
+    setTimeout(() => setIsSyncSuccess(false), 4500);
+  };
+
+  const handleResetAaFlow = () => {
+    setAaStep(1);
+    setIsSyncSuccess(false);
+    setOtpInput("7492");
   };
 
   // UPI Simulation Handlers
@@ -117,10 +133,15 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
       setLastUtr(utr);
       setIsUpiSimulating(false);
       setUpiPaymentDone(true);
-      if (selectedInvoice?.id) {
-        updateInvoiceStatus(selectedInvoice.id, "Paid");
+      if (selectedInvoice?.id || selectedInvoice?.invoiceNumber) {
+        updateInvoiceStatus(selectedInvoice.id || selectedInvoice.invoiceNumber, "Paid");
       }
-    }, 1400);
+    }, 1200);
+  };
+
+  const handleResetUpi = () => {
+    setUpiPaymentDone(false);
+    setLastUtr("");
   };
 
   // KYC Verification Handler
@@ -133,27 +154,45 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
           status: "SUCCESS",
           accountNumber: bankAcc,
           ifsc: ifscCode,
-          bankName: "HDFC Bank Ltd",
-          accountHolderName: "MEHTA HEAVY TOOLING PRIVATE LIMITED",
-          nameMatchScore: 98.5,
+          bankName: ifscCode.startsWith("HDFC") ? "HDFC Bank Ltd" : ifscCode.startsWith("SBIN") ? "State Bank of India" : ifscCode.startsWith("ICIC") ? "ICICI Bank Ltd" : "Axis Bank Ltd",
+          accountHolderName: customerName.toUpperCase(),
+          nameMatchScore: 99.2,
           accountExists: true,
           verificationId: `SETU-VRF-${Math.floor(100000 + Math.random() * 900000)}`,
           pennyAmountDeposited: "₹1.00 (IMPS Active)",
+          utr: `524810${Math.floor(100000 + Math.random() * 900000)}`,
         });
       } else {
         setVerifyResult({
           status: "ACTIVE",
           gstin: gstinInput,
-          legalName: "MEHTA HEAVY TOOLING PRIVATE LIMITED",
-          tradeName: "MEHTA TOOLING CORP",
+          legalName: customerName.toUpperCase(),
+          tradeName: customerName.replace("Pvt Ltd", "Corp").replace("Ltd", "Enterprises").toUpperCase(),
           registrationDate: "2018-07-01",
           constitutionOfBusiness: "Private Limited Company",
-          filingStatusGstr3b: "Compliant (Up to date)",
-          taxpayerType: "Regular",
-          stateJurisdiction: "Maharashtra (Range IV)",
+          filingStatusGstr3b: "Compliant (GSTR-3B Filed on time)",
+          taxpayerType: "Regular Taxpayer",
+          stateJurisdiction: "Maharashtra (Ward 4 / Range II)",
+          eInvoiceApplicable: true,
         });
       }
-    }, 1000);
+    }, 900);
+  };
+
+  // Navigation action handlers
+  const handleNavigateToCashFlow = () => {
+    onClose();
+    navigate("/cash-flow");
+  };
+
+  const handleNavigateToDashboard = () => {
+    onClose();
+    navigate("/dashboard");
+  };
+
+  const handleNavigateToInvoices = () => {
+    onClose();
+    navigate("/invoices");
   };
 
   // API Console Snippets
@@ -175,6 +214,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
             fetchType: "PERIODIC",
             consentTypes: ["TRANSACTIONS", "PROFILE", "SUMMARY"],
             fipTypes: ["DEPOSIT", "SAVINGS"],
+            fips: selectedFips,
             dataRange: { from: "2025-09-01", to: "2026-09-01" },
             callbackUrl: "https://nexfin.app/api/webhooks/setu/aa",
           },
@@ -197,17 +237,16 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
             "Content-Type": "application/json",
           },
           body: {
-            amount: { value: Number(selectedInvoice.amount || 1250000) * 100, currency: "INR" },
-            billerBillID: selectedInvoice.id || "INV-2026-088",
-            transactionNote: `Settlement for Invoice #${selectedInvoice.id || "INV-2026-088"}`,
+            amount: { value: Number(selectedInvoice?.amount || 1250000) * 100, currency: "INR" },
+            billerBillID: selectedInvoice?.id || selectedInvoice?.invoiceNumber || "INV-2026-088",
+            transactionNote: `Settlement for Invoice #${selectedInvoice?.id || selectedInvoice?.invoiceNumber || "INV-2026-088"}`,
             expiryDate: new Date(Date.now() + 86400000).toISOString(),
             settlementOption: "DIRECT_TO_ACCOUNT",
           },
           response: {
             id: "plink_setu_88491290",
             status: "ACTIVE",
-            upiLink: `upi://pay?pa=nexfin@icici&pn=NexFin+MSME&am=${selectedInvoice.amount || 1250000}&tr=${selectedInvoice.id}`,
-            qrSvg: "<svg>...</svg>",
+            upiLink: `upi://pay?pa=nexfin@icici&pn=NexFin+MSME&am=${selectedInvoice?.amount || 1250000}&tr=${selectedInvoice?.id || selectedInvoice?.invoiceNumber}`,
             shortUrl: "https://setu.to/pl/88491290",
           },
         };
@@ -225,13 +264,13 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
           body: {
             accountNumber: bankAcc,
             ifsc: ifscCode,
-            name: "Mehta Heavy Tooling Pvt Ltd",
+            name: customerName,
           },
           response: {
             status: "SUCCESS",
             verificationId: "vrf_setu_99214810",
-            accountHolderName: "MEHTA HEAVY TOOLING PRIVATE LIMITED",
-            nameMatchScore: 98.5,
+            accountHolderName: customerName.toUpperCase(),
+            nameMatchScore: 99.2,
             utr: "524810992812",
           },
         };
@@ -264,7 +303,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
           background: "#FFFFFF",
           borderRadius: "22px",
           width: "100%",
-          maxWidth: "960px",
+          maxWidth: "980px",
           maxHeight: "92vh",
           overflowY: "auto",
           boxShadow: "0 25px 60px -15px rgba(15, 23, 42, 0.35)",
@@ -353,7 +392,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Sandbox Navigation Tabs */}
+        {/* Sandbox Navigation Tabs (Clean Wrapped / No Clipping) */}
         <div
           style={{
             padding: "12px 28px 0",
@@ -361,7 +400,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
             background: "#F8FAFC",
             display: "flex",
             gap: 8,
-            overflowX: "auto",
+            flexWrap: "wrap",
           }}
         >
           {[
@@ -417,22 +456,29 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
             ========================================================================= */}
         {activeTab === "aa_consent" && (
           <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: 20 }}>
-            {/* Step Progression Bar */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#F1F5F9", padding: "10px 16px", borderRadius: "12px" }}>
+            {/* Clickable Step Progression Bar */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#F1F5F9", padding: "10px 16px", borderRadius: "12px", flexWrap: "wrap", gap: 8 }}>
               {[
                 { step: 1, label: "1. Configure Consent Request" },
                 { step: 2, label: "2. Mobile App OTP Approval" },
                 { step: 3, label: "3. Verified Ingestion & Twin Sync" },
               ].map((s) => (
-                <div
+                <button
                   key={s.step}
+                  type="button"
+                  onClick={() => setAaStep(s.step)}
                   style={{
+                    background: "transparent",
+                    border: "none",
                     display: "flex",
                     alignItems: "center",
                     gap: 6,
                     fontSize: "12px",
-                    fontWeight: 700,
+                    fontWeight: aaStep === s.step ? 800 : 700,
                     color: aaStep >= s.step ? "#0F172A" : "#94A3B8",
+                    cursor: "pointer",
+                    padding: "4px 8px",
+                    borderRadius: "6px",
                   }}
                 >
                   <div
@@ -452,43 +498,85 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                     {aaStep > s.step ? <Check size={12} /> : s.step}
                   </div>
                   <span>{s.label}</span>
-                </div>
+                </button>
               ))}
             </div>
 
             {/* Step 1: Config */}
             {aaStep === 1 && (
               <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 24 }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <form onSubmit={handleInitiateConsent} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                   <div>
                     <h3 style={{ fontSize: "16px", fontWeight: 800, color: "#0F172A", margin: 0 }}>
-                      Initiate Setu AA Consent Request
+                      Step 1: Enter Customer / Debtor Details for AA Consent
                     </h3>
                     <p style={{ fontSize: "12px", color: "#64748B", margin: "4px 0 0" }}>
                       Sends a consent artifact to the customer's RBI-licensed Account Aggregator handle.
                     </p>
                   </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: "12px", fontWeight: 700, color: "#334155" }}>Customer Mobile Number:</label>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                    <label style={{ fontSize: "12px", fontWeight: 700, color: "#334155" }}>Company / Debtor Name:</label>
                     <input
                       type="text"
-                      value={mobileNumber}
-                      onChange={(e) => {
-                        setMobileNumber(e.target.value);
-                        setAaHandle(`${e.target.value}@setu-aa`);
-                      }}
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="e.g. Mehta Heavy Tooling Pvt Ltd"
                       style={{
                         padding: "8px 12px",
                         borderRadius: "8px",
                         border: "1px solid #CBD5E1",
-                        fontSize: "13px",
+                        fontSize: "12.5px",
                         fontWeight: 600,
+                        color: "#0F172A",
+                        background: "#FFFFFF",
                       }}
                     />
                   </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                      <label style={{ fontSize: "12px", fontWeight: 700, color: "#334155" }}>Mobile Number:</label>
+                      <input
+                        type="text"
+                        value={mobileNumber}
+                        onChange={(e) => {
+                          setMobileNumber(e.target.value);
+                          setAaHandle(`${e.target.value}@setu-aa`);
+                        }}
+                        style={{
+                          padding: "8px 12px",
+                          borderRadius: "8px",
+                          border: "1px solid #CBD5E1",
+                          fontSize: "12.5px",
+                          fontWeight: 600,
+                          color: "#0F172A",
+                          background: "#FFFFFF",
+                        }}
+                      />
+                    </div>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                      <label style={{ fontSize: "12px", fontWeight: 700, color: "#334155" }}>Verified Bank Balance (₹ Lakhs):</label>
+                      <input
+                        type="number"
+                        step="0.5"
+                        value={customBalanceLakhs}
+                        onChange={(e) => setCustomBalanceLakhs(Number(e.target.value))}
+                        style={{
+                          padding: "8px 12px",
+                          borderRadius: "8px",
+                          border: "1px solid #CBD5E1",
+                          fontSize: "12.5px",
+                          fontWeight: 700,
+                          color: "#059669",
+                          background: "#FFFFFF",
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                     <label style={{ fontSize: "12px", fontWeight: 700, color: "#334155" }}>AA VPA Handle:</label>
                     <input
                       type="text"
@@ -498,17 +586,18 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                         padding: "8px 12px",
                         borderRadius: "8px",
                         border: "1px solid #E2E8F0",
-                        fontSize: "13px",
+                        fontSize: "12.5px",
                         background: "#F8FAFC",
                         color: "#64748B",
+                        fontFamily: "monospace",
                       }}
                     />
                   </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <label style={{ fontSize: "12px", fontWeight: 700, color: "#334155" }}>Target Bank Accounts (FIPs):</label>
-                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                      {["HDFC Bank", "State Bank of India", "ICICI Bank", "Axis Bank"].map((bank) => {
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                    <label style={{ fontSize: "12px", fontWeight: 700, color: "#334155" }}>Select FIP Banks to Query:</label>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      {["HDFC Bank Ltd", "State Bank of India", "ICICI Bank Ltd", "Axis Bank Ltd"].map((bank) => {
                         const checked = selectedFips.includes(bank);
                         return (
                           <button
@@ -520,7 +609,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                               );
                             }}
                             style={{
-                              padding: "6px 12px",
+                              padding: "6px 10px",
                               borderRadius: "6px",
                               fontSize: "11.5px",
                               fontWeight: 700,
@@ -539,10 +628,10 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                   </div>
 
                   <button
-                    onClick={handleInitiateConsent}
+                    type="submit"
                     disabled={isConsentLoading}
                     style={{
-                      padding: "10px 18px",
+                      padding: "11px 18px",
                       borderRadius: "8px",
                       border: "none",
                       background: "linear-gradient(135deg, #0284C7 0%, #0369A1 100%)",
@@ -555,23 +644,30 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                       gap: 8,
                       cursor: "pointer",
                       boxShadow: "0 4px 12px rgba(2, 132, 199, 0.25)",
-                      marginTop: 6,
+                      marginTop: 4,
                     }}
                   >
                     {isConsentLoading ? <RefreshCw size={14} className="spin" /> : <Send size={14} />}
-                    <span>Trigger Setu AA Consent Request →</span>
+                    <span>Trigger Setu AA Consent Request (Proceed to Step 2) →</span>
                   </button>
-                </div>
+                </form>
 
                 {/* Info Card */}
-                <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "14px", padding: "18px" }}>
-                  <div style={{ fontSize: "13px", fontWeight: 800, color: "#0F172A", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
-                    <ShieldCheck size={16} style={{ color: "#0284C7" }} />
-                    <span>Sahamati / RBI Regulated</span>
+                <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "14px", padding: "18px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <div>
+                    <div style={{ fontSize: "13px", fontWeight: 800, color: "#0F172A", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                      <ShieldCheck size={16} style={{ color: "#0284C7" }} />
+                      <span>How Setu Retrieves Financial Data:</span>
+                    </div>
+                    <p style={{ fontSize: "12px", color: "#64748B", lineHeight: 1.6, margin: 0 }}>
+                      1. <strong>Consent Initiation</strong>: NexFin sends a digitally signed request via Setu's FIU client.
+                      <br />
+                      2. <strong>Citizen Approval</strong>: The buyer receives a secure OTP via their Account Aggregator app (Sahamati/OneMoney).
+                      <br />
+                      3. <strong>Encrypted Fetch</strong>: Bank statements are fetched and decrypted into verified cash velocity & balance data.
+                    </p>
                   </div>
-                  <p style={{ fontSize: "11.5px", color: "#64748B", lineHeight: 1.6, margin: 0 }}>
-                    Setu operates as an FIU bridging 25+ FIP banks. Once consent is approved via OTP, 12 months of structured financial telemetry (transactions, cash balances, bounce rates) are piped directly into NexFin’s Digital Twin.
-                  </p>
+
                   <div style={{ marginTop: 14, background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "10px", fontSize: "11.5px" }}>
                     <div style={{ color: "#64748B" }}>Consent Mode: <strong>VIEW ONLY</strong></div>
                     <div style={{ color: "#64748B", marginTop: 3 }}>Fetch Type: <strong>PERIODIC_12M</strong></div>
@@ -582,7 +678,11 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
 
             {/* Step 2: Mobile Phone Consent Mockup */}
             {aaStep === 2 && (
-              <div style={{ display: "flex", justifyContent: "center", padding: "10px 0" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "6px 0", gap: 14 }}>
+                <div style={{ fontSize: "13.5px", fontWeight: 700, color: "#0F172A", textAlign: "center" }}>
+                  Step 2: Simulate User Receiving Mobile Consent & OTP Notification
+                </div>
+
                 <div
                   style={{
                     width: "360px",
@@ -604,22 +704,22 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                   {/* Phone Body */}
                   <div style={{ padding: "18px", display: "flex", flexDirection: "column", gap: 12 }}>
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: "13px", fontWeight: 800, color: "#0F172A" }}>
-                        Consent Request from NexFin
+                      <div style={{ fontSize: "13.5px", fontWeight: 800, color: "#0F172A" }}>
+                        Consent Request for {customerName}
                       </div>
                       <div style={{ fontSize: "11px", color: "#64748B", marginTop: 2 }}>
-                        Share bank telemetry for cash flow forecasting
+                        NexFin FIU is requesting read-only bank statement telemetry
                       </div>
                     </div>
 
                     <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "10px", padding: "10px", fontSize: "11px" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", color: "#475569" }}>
-                        <span>Target FIP:</span>
+                        <span>Target Banks:</span>
                         <strong>{selectedFips.join(", ")}</strong>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", color: "#475569", marginTop: 4 }}>
                         <span>Data Period:</span>
-                        <strong>12 Months</strong>
+                        <strong>12 Months Statement</strong>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", color: "#475569", marginTop: 4 }}>
                         <span>Consent Handle:</span>
@@ -642,6 +742,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                           borderRadius: "8px",
                           border: "1px solid #0284C7",
                           background: "#F0F9FF",
+                          color: "#0F172A",
                         }}
                       />
                       <span style={{ fontSize: "10px", color: "#059669", textAlign: "center", fontWeight: 600 }}>
@@ -653,12 +754,12 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                       onClick={handleApproveConsent}
                       disabled={isConsentLoading}
                       style={{
-                        padding: "10px",
+                        padding: "11px",
                         borderRadius: "8px",
                         border: "none",
                         background: "#10B981",
                         color: "#FFFFFF",
-                        fontSize: "12.5px",
+                        fontSize: "13px",
                         fontWeight: 800,
                         cursor: "pointer",
                         display: "flex",
@@ -669,7 +770,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                       }}
                     >
                       {isConsentLoading ? <RefreshCw size={14} className="spin" /> : <CheckCircle2 size={14} />}
-                      <span>Approve & Fetch Statements</span>
+                      <span>Approve & Fetch Statements (Proceed to Step 3)</span>
                     </button>
                   </div>
                 </div>
@@ -686,7 +787,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                     </div>
                     <div>
                       <h4 style={{ fontSize: "15px", fontWeight: 800, color: "#0F172A", margin: 0 }}>
-                        Bank Telemetry Decrypted Successfully
+                        Bank Telemetry Retrieved & Decrypted Successfully
                       </h4>
                       <p style={{ fontSize: "11.5px", color: "#64748B", margin: 0 }}>
                         Fetched via Setu FIU encrypted session <code>ses_fiu_99120412</code>
@@ -696,12 +797,12 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
 
                   <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "12px", padding: "14px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                     <div>
-                      <span style={{ fontSize: "11px", color: "#64748B" }}>Verified Liquid Balance:</span>
-                      <div style={{ fontSize: "18px", fontWeight: 800, color: "#059669" }}>₹38.50 Lakhs</div>
+                      <span style={{ fontSize: "11px", color: "#64748B" }}>Account Holder:</span>
+                      <div style={{ fontSize: "13px", fontWeight: 800, color: "#0F172A" }}>{customerName}</div>
                     </div>
                     <div>
-                      <span style={{ fontSize: "11px", color: "#64748B" }}>Statement Period:</span>
-                      <div style={{ fontSize: "13px", fontWeight: 700, color: "#0F172A" }}>Last 12 Months</div>
+                      <span style={{ fontSize: "11px", color: "#64748B" }}>Verified Liquid Balance:</span>
+                      <div style={{ fontSize: "18px", fontWeight: 900, color: "#059669" }}>₹{Number(customBalanceLakhs || 38.5).toFixed(2)} Lakhs</div>
                     </div>
                     <div>
                       <span style={{ fontSize: "11px", color: "#64748B" }}>Avg Monthly Inflow:</span>
@@ -713,10 +814,11 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                     </div>
                   </div>
 
+                  {/* Sync Trigger Button */}
                   <button
                     onClick={handleSyncToDigitalTwin}
                     style={{
-                      padding: "10px 18px",
+                      padding: "11px 18px",
                       borderRadius: "8px",
                       border: "none",
                       background: "linear-gradient(135deg, #059669 0%, #10B981 100%)",
@@ -735,10 +837,70 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                     <span>Sync Live Data to NexFin Digital Twin</span>
                   </button>
 
+                  {/* Post-Sync Next Steps Action Hub */}
                   {isSyncSuccess && (
-                    <div style={{ padding: "8px 12px", borderRadius: "8px", background: "#ECFDF5", border: "1px solid #A7F3D0", color: "#065F46", fontSize: "12px", fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}>
-                      <CheckCircle2 size={15} style={{ color: "#059669" }} />
-                      <span>Digital Twin Synchronized! Cash runway updated with ₹38.5L verified bank balance.</span>
+                    <div style={{ padding: "12px 14px", borderRadius: "10px", background: "#ECFDF5", border: "1px solid #A7F3D0", display: "flex", flexDirection: "column", gap: 10 }}>
+                      <div style={{ color: "#065F46", fontSize: "12.5px", fontWeight: 800, display: "flex", alignItems: "center", gap: 6 }}>
+                        <CheckCircle2 size={16} style={{ color: "#059669" }} />
+                        <span>Digital Twin Synchronized! Cash balance updated to ₹{Number(customBalanceLakhs || 38.5).toFixed(2)}L.</span>
+                      </div>
+
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        <button
+                          onClick={handleNavigateToCashFlow}
+                          style={{
+                            padding: "6px 12px",
+                            borderRadius: "6px",
+                            border: "none",
+                            background: "#059669",
+                            color: "#FFFFFF",
+                            fontSize: "11.5px",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 4,
+                          }}
+                        >
+                          <span>View Cash Flow Twin →</span>
+                        </button>
+
+                        <button
+                          onClick={handleNavigateToDashboard}
+                          style={{
+                            padding: "6px 12px",
+                            borderRadius: "6px",
+                            border: "1px solid #CBD5E1",
+                            background: "#FFFFFF",
+                            color: "#0F172A",
+                            fontSize: "11.5px",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                          }}
+                        >
+                          <span>Go to Dashboard →</span>
+                        </button>
+
+                        <button
+                          onClick={handleResetAaFlow}
+                          style={{
+                            padding: "6px 10px",
+                            borderRadius: "6px",
+                            border: "1px solid #CBD5E1",
+                            background: "#FFFFFF",
+                            color: "#475569",
+                            fontSize: "11.5px",
+                            fontWeight: 600,
+                            cursor: "pointer",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 4,
+                          }}
+                        >
+                          <RotateCcw size={12} />
+                          <span>Test Another Account</span>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -749,10 +911,10 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                   <pre style={{ margin: 0, whiteSpace: "pre-wrap", color: "#E2E8F0" }}>
 {`{
   "fiu_session_id": "ses_fiu_99120412",
-  "account_holder": "MEHTA HEAVY TOOLING PVT LTD",
-  "fip_name": "HDFC_BANK_LTD",
+  "account_holder": "${customerName.toUpperCase()}",
+  "fip_name": "${selectedFips[0]?.toUpperCase().replace(/ /g, "_") || "HDFC_BANK_LTD"}",
   "account_type": "CURRENT",
-  "current_balance": 3850000.00,
+  "current_balance": ${Math.round(Number(customBalanceLakhs || 38.5) * 100000)}.00,
   "currency": "INR",
   "transaction_count": 342,
   "credit_turnover_12m": 17040000.00,
@@ -782,37 +944,43 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                 </p>
               </div>
 
+              {/* Clean High-Contrast Dropdown */}
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: "12px", fontWeight: 700, color: "#334155" }}>Select Unpaid Invoice:</label>
+                <label style={{ fontSize: "12px", fontWeight: 700, color: "#334155" }}>Select Unpaid Invoice to Collect:</label>
                 <select
                   value={selectedInvoiceId}
-                  onChange={(e) => setSelectedInvoiceId(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedInvoiceId(e.target.value);
+                    handleResetUpi();
+                  }}
                   style={{
-                    padding: "8px 12px",
+                    padding: "10px 12px",
                     borderRadius: "8px",
                     border: "1px solid #CBD5E1",
-                    fontSize: "12.5px",
+                    fontSize: "13px",
                     fontWeight: 700,
                     color: "#0F172A",
                     background: "#FFFFFF",
+                    outline: "none",
+                    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
                   }}
                 >
                   {invoices.map((inv) => (
                     <option key={inv.id || inv.invoiceNumber} value={inv.id || inv.invoiceNumber}>
-                      #{inv.id || inv.invoiceNumber} • {inv.customer} (₹{(Number(inv.amount || 0) / 100000).toFixed(2)}L)
+                      #{inv.id || inv.invoiceNumber} • {inv.customer} (₹{(Number(inv.amount || 0) / 100000).toFixed(2)} Lakhs)
                     </option>
                   ))}
                 </select>
               </div>
 
               <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "12px", padding: "14px", display: "flex", flexDirection: "column", gap: 6 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12.5px" }}>
                   <span style={{ color: "#64748B" }}>Invoice Amount:</span>
-                  <strong style={{ color: "#0F172A" }}>₹{Number(selectedInvoice.amount || 1250000).toLocaleString("en-IN")}</strong>
+                  <strong style={{ color: "#0F172A" }}>₹{Number(selectedInvoice?.amount || 1250000).toLocaleString("en-IN")}</strong>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px" }}>
                   <span style={{ color: "#64748B" }}>Setu UPI Intent:</span>
-                  <code style={{ fontSize: "11px", color: "#0284C7" }}>upi://pay?pa=nexfin@icici&pn=NexFin</code>
+                  <code style={{ fontSize: "11px", color: "#0284C7" }}>upi://pay?pa=nexfin@icici&pn=NexFin&am={selectedInvoice?.amount || 1250000}</code>
                 </div>
               </div>
 
@@ -836,27 +1004,121 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                 }}
               >
                 {isUpiSimulating ? <RefreshCw size={15} className="spin" /> : upiPaymentDone ? <Check size={15} /> : <Zap size={15} />}
-                <span>{upiPaymentDone ? "Simulated Payment Settled (UTR Verified)" : "Simulate Customer UPI Payment (PhonePe/GPay) →"}</span>
+                <span>{upiPaymentDone ? "✓ Payment Settled & Reconciled (UTR Verified)" : "Simulate Customer UPI Payment (PhonePe/GPay) →"}</span>
               </button>
 
               {upiPaymentDone && (
-                <div style={{ padding: "10px 14px", borderRadius: "8px", background: "#ECFDF5", border: "1px solid #A7F3D0", fontSize: "12px", color: "#065F46" }}>
-                  <strong>✓ Webhook Fired (200 OK):</strong> Invoice #{selectedInvoice.id || selectedInvoice.invoiceNumber} marked as <strong>Paid</strong> with verified settlement reference <code>{lastUtr}</code>.
+                <div style={{ padding: "12px 14px", borderRadius: "10px", background: "#ECFDF5", border: "1px solid #A7F3D0", display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ color: "#065F46", fontSize: "12px", fontWeight: 700 }}>
+                    <strong>✓ Webhook Dispatched (200 OK):</strong> Invoice #{selectedInvoice.id || selectedInvoice.invoiceNumber} marked as <strong>Paid</strong> in real-time database with verified reference <code>{lastUtr}</code>.
+                  </div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      onClick={handleNavigateToInvoices}
+                      style={{
+                        padding: "6px 12px",
+                        borderRadius: "6px",
+                        border: "none",
+                        background: "#059669",
+                        color: "#FFFFFF",
+                        fontSize: "11.5px",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <span>View Invoices Ledger →</span>
+                    </button>
+                    <button
+                      onClick={handleResetUpi}
+                      style={{
+                        padding: "6px 10px",
+                        borderRadius: "6px",
+                        border: "1px solid #CBD5E1",
+                        background: "#FFFFFF",
+                        color: "#475569",
+                        fontSize: "11.5px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Reset & Try Another
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* Dynamic QR Mockup */}
+            {/* Dynamic QR Mockup with High Quality SVG Graphic */}
             <div style={{ background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: "16px", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-              <div style={{ background: "#FFFFFF", padding: "14px", borderRadius: "12px", border: "1px solid #CBD5E1", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
-                {/* SVG QR Code Mock */}
-                <div style={{ width: 140, height: 140, background: "linear-gradient(45deg, #0F172A 25%, transparent 25%), linear-gradient(-45deg, #0F172A 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #0F172A 75%), linear-gradient(-45deg, transparent 75%, #0F172A 75%)", backgroundSize: "14px 14px", backgroundPosition: "0 0, 0 7px, 7px -7px, -7px 0px", opacity: 0.85 }} />
+              <div style={{ background: "#FFFFFF", padding: "16px", borderRadius: "14px", border: "1px solid #CBD5E1", boxShadow: "0 4px 14px rgba(0,0,0,0.06)", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                {/* Authentic Setu Styled QR Code SVG */}
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                  {/* Outer corner markers */}
+                  <rect x="10" y="10" width="36" height="36" rx="6" fill="#0F172A" />
+                  <rect x="16" y="16" width="24" height="24" rx="4" fill="#FFFFFF" />
+                  <rect x="22" y="22" width="12" height="12" rx="2" fill="#0284C7" />
+
+                  <rect x="104" y="10" width="36" height="36" rx="6" fill="#0F172A" />
+                  <rect x="110" y="16" width="24" height="24" rx="4" fill="#FFFFFF" />
+                  <rect x="116" y="22" width="12" height="12" rx="2" fill="#0284C7" />
+
+                  <rect x="10" y="104" width="36" height="36" rx="6" fill="#0F172A" />
+                  <rect x="16" y="110" width="24" height="24" rx="4" fill="#FFFFFF" />
+                  <rect x="22" y="116" width="12" height="12" rx="2" fill="#0284C7" />
+
+                  {/* Center Data Grid Nodes */}
+                  <rect x="54" y="14" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="70" y="14" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="86" y="14" width="8" height="8" rx="2" fill="#334155" />
+
+                  <rect x="54" y="30" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="70" y="30" width="8" height="8" rx="2" fill="#0284C7" />
+                  <rect x="86" y="30" width="8" height="8" rx="2" fill="#334155" />
+
+                  <rect x="14" y="54" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="30" y="54" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="46" y="54" width="8" height="8" rx="2" fill="#0284C7" />
+                  <rect x="62" y="54" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="78" y="54" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="94" y="54" width="8" height="8" rx="2" fill="#0284C7" />
+                  <rect x="110" y="54" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="126" y="54" width="8" height="8" rx="2" fill="#334155" />
+
+                  {/* Center UPI Shield Badge */}
+                  <rect x="55" y="65" width="40" height="24" rx="6" fill="#0F172A" />
+                  <text x="75" y="81" fill="#38BDF8" fontSize="11" fontWeight="800" textAnchor="middle" fontFamily="sans-serif">UPI</text>
+
+                  <rect x="14" y="86" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="30" y="86" width="8" height="8" rx="2" fill="#0284C7" />
+                  <rect x="110" y="86" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="126" y="86" width="8" height="8" rx="2" fill="#334155" />
+
+                  <rect x="54" y="104" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="70" y="104" width="8" height="8" rx="2" fill="#0284C7" />
+                  <rect x="86" y="104" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="102" y="104" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="118" y="104" width="8" height="8" rx="2" fill="#0284C7" />
+
+                  <rect x="54" y="126" width="8" height="8" rx="2" fill="#0284C7" />
+                  <rect x="70" y="126" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="86" y="126" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="102" y="126" width="8" height="8" rx="2" fill="#334155" />
+                  <rect x="126" y="126" width="8" height="8" rx="2" fill="#0284C7" />
+                </svg>
+
+                <div style={{ fontSize: "11px", fontWeight: 700, color: "#0F172A", marginTop: 8 }}>
+                  Invoice #{selectedInvoice?.id || selectedInvoice?.invoiceNumber || "INV-2026-088"}
+                </div>
+                <div style={{ fontSize: "13px", fontWeight: 900, color: "#059669" }}>
+                  ₹{Number(selectedInvoice?.amount || 1250000).toLocaleString("en-IN")}
+                </div>
               </div>
-              <div style={{ fontSize: "13px", fontWeight: 800, color: "#0F172A", marginTop: 12 }}>
-                Scan with any UPI App (GPay / PhonePe / Paytm)
+
+              <div style={{ fontSize: "12.5px", fontWeight: 800, color: "#0F172A", marginTop: 10 }}>
+                Scan with GPay / PhonePe / Paytm
               </div>
               <div style={{ fontSize: "11px", color: "#64748B", marginTop: 2 }}>
-                Powered by Setu Instant DeepLink Gateway
+                Instant settlement via Setu DeepLink Gateway
               </div>
             </div>
           </div>
@@ -922,7 +1184,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                       type="text"
                       value={bankAcc}
                       onChange={(e) => setBankAcc(e.target.value)}
-                      style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
+                      style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12.5px", color: "#0F172A", background: "#FFFFFF" }}
                     />
                   </div>
                   <div>
@@ -931,7 +1193,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                       type="text"
                       value={ifscCode}
                       onChange={(e) => setIfscCode(e.target.value)}
-                      style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
+                      style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12.5px", color: "#0F172A", background: "#FFFFFF" }}
                     />
                   </div>
                 </div>
@@ -942,7 +1204,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                     type="text"
                     value={gstinInput}
                     onChange={(e) => setGstinInput(e.target.value)}
-                    style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12.5px" }}
+                    style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #CBD5E1", fontSize: "12.5px", color: "#0F172A", background: "#FFFFFF" }}
                   />
                 </div>
               )}
@@ -992,6 +1254,10 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                         <span>{verifyResult.bankName}</span>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span style={{ color: "#64748B" }}>Penny Deposited:</span>
+                        <strong style={{ color: "#059669" }}>{verifyResult.pennyAmountDeposited}</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <span style={{ color: "#64748B" }}>Name Match Score:</span>
                         <strong style={{ color: "#0284C7" }}>{verifyResult.nameMatchScore}% Match</strong>
                       </div>
@@ -1027,8 +1293,8 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
             ========================================================================= */}
         {activeTab === "api_console" && (
           <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {[
                   { id: "aa_initiate", label: "POST /v2/consents (AA)" },
                   { id: "upi_create", label: "POST /v2/payment-links (UPI)" },
