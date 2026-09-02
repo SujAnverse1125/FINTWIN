@@ -23,7 +23,10 @@ from app.ml.ai_suggestions import generate_ai_suggestions
 from app.services.forecast_service import generate_cash_forecast
 from app.services.risk_service import generate_risk_analysis
 from app.services.simulator_service import run_simulation
-from app.services.financing_service import generate_financing_analysis
+from app.services.financing_service import (
+    generate_financing_analysis,
+    get_live_financing_news,
+)
 from app.services.gst_service import (
     calculate_transaction_gst,
     reconcile_overall_gst,
@@ -557,6 +560,15 @@ def create_financing_analysis(
     return {
         "success": True,
         "financing": result,
+    }
+
+
+@app.get("/api/financing/news")
+def get_msme_financing_news():
+    news = get_live_financing_news()
+    return {
+        "success": True,
+        "news": news,
     }
 
 
