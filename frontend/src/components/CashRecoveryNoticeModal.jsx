@@ -167,7 +167,12 @@ GSTIN: ${bizGstin} | Udyam Reg: ${udyamNumber}`;
     setTimeout(() => setCopied(false), 3000);
   };
 
-  const handleSendEmail = () => {
+  const handleSendViaGmail = () => {
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(editableEmail)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+    window.open(gmailUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleSendViaMailto = () => {
     const mailtoUrl = `mailto:${encodeURIComponent(editableEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
     window.open(mailtoUrl, "_blank");
   };
@@ -489,7 +494,7 @@ GSTIN: ${bizGstin} | Udyam Reg: ${udyamNumber}`;
             )}
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             <button
               onClick={handleCopy}
               style={{
@@ -507,28 +512,49 @@ GSTIN: ${bizGstin} | Udyam Reg: ${udyamNumber}`;
               }}
             >
               {copied ? <Check size={14} style={{ color: "#059669" }} /> : <Copy size={14} />}
-              <span>{copied ? "Copied to Clipboard!" : "Copy Text"}</span>
+              <span>{copied ? "Copied!" : "Copy Text"}</span>
             </button>
 
             <button
-              onClick={handleSendEmail}
+              onClick={handleSendViaMailto}
               style={{
-                padding: "9px 18px",
+                padding: "9px 12px",
+                borderRadius: "8px",
+                border: "1px solid #CBD5E1",
+                background: "#F8FAFC",
+                fontSize: "12px",
+                fontWeight: 600,
+                color: "#475569",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                cursor: "pointer",
+              }}
+              title="Open default desktop mail app (Outlook, Apple Mail)"
+            >
+              <Mail size={13} />
+              <span>Other Mail App</span>
+            </button>
+
+            <button
+              onClick={handleSendViaGmail}
+              style={{
+                padding: "9px 20px",
                 borderRadius: "8px",
                 border: "none",
-                background: mode === "legal_recovery" ? "linear-gradient(135deg, #E11D48 0%, #BE123C 100%)" : "linear-gradient(135deg, #059669 0%, #10B981 100%)",
+                background: mode === "legal_recovery" ? "linear-gradient(135deg, #EA4335 0%, #D93025 100%)" : "linear-gradient(135deg, #059669 0%, #10B981 100%)",
                 fontSize: "12.5px",
                 fontWeight: 800,
                 color: "#FFFFFF",
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 6,
+                gap: 7,
                 cursor: "pointer",
-                boxShadow: mode === "legal_recovery" ? "0 4px 12px rgba(225, 29, 72, 0.25)" : "0 4px 12px rgba(16, 185, 129, 0.25)",
+                boxShadow: mode === "legal_recovery" ? "0 4px 14px rgba(234, 67, 53, 0.3)" : "0 4px 14px rgba(16, 185, 129, 0.3)",
               }}
             >
               <Send size={14} />
-              <span>Send via Email Client</span>
+              <span>Send via Gmail ↗</span>
             </button>
           </div>
         </div>
