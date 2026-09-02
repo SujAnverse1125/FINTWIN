@@ -205,42 +205,45 @@ export default function QuickActionModal({ isOpen, onClose }) {
         )}
 
         {/* Tab Selector (Touch & Scroll friendly) */}
-        <div className="tabs-container" style={{ marginBottom: 20, overflowX: "auto" }}>
-          <button
-            className={`tab-btn ${activeTab === "cash" ? "active" : ""}`}
-            onClick={() => setActiveTab("cash")}
-            style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, minWidth: 110 }}
-          >
-            <Wallet size={14} /> Liquid Cash
-          </button>
-          <button
-            className={`tab-btn ${activeTab === "burn" ? "active" : ""}`}
-            onClick={() => setActiveTab("burn")}
-            style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, minWidth: 110 }}
-          >
-            <Flame size={14} /> Monthly Burn
-          </button>
-          <button
-            className={`tab-btn ${activeTab === "invoice" ? "active" : ""}`}
-            onClick={() => setActiveTab("invoice")}
-            style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, minWidth: 110 }}
-          >
-            <FileText size={14} /> + Invoice
-          </button>
-          <button
-            className={`tab-btn ${activeTab === "expense" ? "active" : ""}`}
-            onClick={() => setActiveTab("expense")}
-            style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, minWidth: 110 }}
-          >
-            <CreditCard size={14} /> + Expense
-          </button>
-          <button
-            className={`tab-btn ${activeTab === "customer" ? "active" : ""}`}
-            onClick={() => setActiveTab("customer")}
-            style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, minWidth: 110 }}
-          >
-            <Users size={14} /> + Client
-          </button>
+        <div className="tabs-container" style={{ marginBottom: 20, overflowX: "auto", background: "#F1F5F9", padding: "4px", borderRadius: "10px", border: "1px solid #CBD5E1" }}>
+          {[
+            { id: "cash", label: "Liquid Cash", icon: Wallet },
+            { id: "burn", label: "Monthly Burn", icon: Flame },
+            { id: "invoice", label: "+ Invoice", icon: FileText },
+            { id: "expense", label: "+ Expense", icon: CreditCard },
+            { id: "customer", label: "+ Client", icon: Users },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const active = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                className={`tab-btn ${active ? "active" : ""}`}
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  flex: 1,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                  minWidth: 110,
+                  padding: "8px 12px",
+                  borderRadius: "8px",
+                  background: active ? "#FFFFFF" : "transparent",
+                  color: active ? "#0F172A" : "#64748B",
+                  fontWeight: active ? 800 : 600,
+                  fontSize: "12.5px",
+                  border: active ? "1px solid #CBD5E1" : "1px solid transparent",
+                  boxShadow: active ? "0 2px 6px rgba(15, 23, 42, 0.08)" : "none",
+                  cursor: "pointer",
+                }}
+              >
+                <Icon size={14} style={{ color: active ? "#0284C7" : "#94A3B8" }} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* =================================================================
@@ -248,9 +251,9 @@ export default function QuickActionModal({ isOpen, onClose }) {
             ================================================================= */}
         {activeTab === "cash" && (
           <form onSubmit={handleSaveCash}>
-            <div style={{ padding: "12px 14px", borderRadius: "var(--radius-md)", background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.2)", marginBottom: 16 }}>
-              <div style={{ fontSize: 12.5, color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                <strong style={{ color: "#60a5fa" }}>Why this matters: </strong>
+            <div style={{ padding: "12px 14px", borderRadius: "var(--radius-md)", background: "rgba(2,132,199,0.06)", border: "1px solid rgba(2,132,199,0.2)", marginBottom: 16 }}>
+              <div style={{ fontSize: 12.5, color: "#334155", lineHeight: 1.5 }}>
+                <strong style={{ color: "#0284C7" }}>Why this matters: </strong>
                 Your current liquid bank cash is the starting anchor for the 90-day probabilistic runway calculation and insolvency early-warning radar.
               </div>
             </div>
@@ -311,9 +314,9 @@ export default function QuickActionModal({ isOpen, onClose }) {
             ================================================================= */}
         {activeTab === "burn" && (
           <form onSubmit={handleSaveBurnAndRev}>
-            <div style={{ padding: "12px 14px", borderRadius: "var(--radius-md)", background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.2)", marginBottom: 16 }}>
-              <div style={{ fontSize: 12.5, color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                <strong style={{ color: "#fbbf24" }}>AI Burn Calibration: </strong>
+            <div style={{ padding: "12px 14px", borderRadius: "var(--radius-md)", background: "rgba(217,119,6,0.08)", border: "1px solid rgba(217,119,6,0.25)", marginBottom: 16 }}>
+              <div style={{ fontSize: 12.5, color: "#334155", lineHeight: 1.5 }}>
+                <strong style={{ color: "#D97706" }}>AI Burn Calibration: </strong>
                 If you haven't uploaded detailed expense bills yet, entering your estimated monthly burn rate allows the ML engine to forecast your cash burn velocity immediately.
               </div>
             </div>
