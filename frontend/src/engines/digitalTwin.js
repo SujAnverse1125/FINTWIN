@@ -388,3 +388,154 @@ export function calculateOverallGst(defaultRate = 18) {
     },
   };
 }
+
+// ==========================================
+// COMPREHENSIVE BUSINESS HEALTH ENGINE
+// ==========================================
+
+export function calculateBusinessHealth() {
+  const business = getBusiness();
+  const invoices = getInvoices() || [];
+  const expenses = getExpenses() || [];
+  const recurring = getRecurringExpenses() || [];
+  const currentCash = Number(business?.openingCash || 0);
+  const minReserve = Number(business?.minCashReserve || 0);
+  const runwayDays = calculateRunwayDays();
+  const gst = calculateOverallGst();
+  const totalBurn = calculateTotalMonthlyBurn();
+
+  const pendingInvoices = invoices.filter((i) => i.status !== "Paid");
+  const totalReceivables = pendingInvoices.reduce((s, i) => s + Number(i.amount || 0), 0);
+  const overdueInvoices = pendingInvoices.filter((i) => {
+    if (i.status === "Overdue") return true;
+    if (!i.dueDate) return false;
+    return new Date(i.dueDate) < new Date();
+  });
+  const overdueAmount = overdueInvoices.reduce((s, i) => s + Number(i.amount || 0), 0);
+  const overdueRatio = totalReceivables > 0 ? overdueAmount / totalReceivables : 0;
+
+  // Debtor concentration
+  const custMap = {};
+  pendingInvoices.forEach((inv) => {
+    const name = inv.customer || "General Debtor";
+    custMap[name] = (custMap[name] || 0) + Number(inv.amount || 0);
+  });
+  const sortedDebtors = Object.entries(custMap).sort((a, b) => b[1] - a[1]);
+  const topCustAmount = sortedDebtors[0]?.[1] || 0;
+  const topCustName = sortedDebtors[0]?.[0] || "";
+  const topCustShare = totalReceivables > 0 ? topCustAmount / totalReceivables : 0;
+
+  // Clean slate / uninitialized state
+  const isCleanSlate =
+    invoices.length === 0 &&
+    currentCash === 0 &&
+    expenses.length === 0 &&
+    recurring.length === 0;
+
+  if (isCleanSlate) {
+    return {
+      score: 0,
+      status: "Calibrating",
+      tag: "GST & FINANCIAL HEALTH",
+      headline: "Awaiting Financial Calibration",
+      description: "Set your opening liquid cash and upload receivables to generate real-time health telemetry.",
+      color: "#0284C7",
+      bgColor: "rgba(2, 132, 199, 0.06)",
+      borderColor: "rgba(2, 132, 199, 0.25)",
+      runwayDays: 0,
+      overdueCount: 0,
+      overdueAmount: 0,
+      topCustomerSharePercent: 0,
+      topCustomerName: "",
+      gstPayable: 0,
+      healthGrade: "N/A",
+    };
+  }
+
+  // Pillar 1: Runway Solvency (Max 35 pts)
+  let runwayScore = 10;
+  if (runwayDays >= 90) runwayScore = 35;
+  else if (runwayDays >= 60) runwayScore = 30;
+  else if (runwayDays >= 30) runwayScore = 24;
+  else if (runwayDays >= 15) runwayScore = 14;
+  else if (runwayDays > 0) runwayScore = 8;
+  else runwayScore = 2;
+
+  // Pillar 2: Overdue & DSO Risk (Max 25 pts)
+  let receivablesScore = 25;
+  if (overdueRatio > 0.4) receivablesScore = 6;
+  else if (overdueRatio > 0.25) receivablesScore = 12;
+  else if (overdueRatio > 0.1) receivablesScore = 18;
+  else if (overdueRatio > 0) receivablesScore = 22;
+
+  // Pillar 3: Single-Buyer Concentration (Max 20 pts)
+  let concentrationScore = 20;
+  if (topCustShare > 0.55) concentrationScore = 7;
+  else if (topCustShare > 0.35) concentrationScore = 13;
+  else if (topCustShare > 0.2) concentrationScore = 17;
+
+  // Pillar 4: Liquidity vs Minimum Safety Reserve & GST (Max 20 pts)
+  let bufferScore = 12;
+  const cashVsReserve = minReserve > 0 ? currentCash / minReserve : currentCash > 200000 ? 1.5 : 0.8;
+  if (cashVsReserve >= 1.5) bufferScore = 20;
+  else if (cashVsReserve >= 1.0) bufferScore = 17;
+  else if (cashVsReserve >= 0.5) bufferScore = 11;
+  else bufferScore = 5;
+
+  let totalScore = Math.min(
+    100,
+    Math.max(10, Math.round(runwayScore + receivablesScore + concentrationScore + bufferScore))
+  );
+
+  let status = "Healthy";
+  let color = "#10B981";
+  let bgColor = "rgba(16, 185, 129, 0.06)";
+  let borderColor = "rgba(16, 185, 129, 0.22)";
+  let headline = "Your business is in a healthy position";
+  let description = "Cash flow stable. Receivables concentration needs monitoring.";
+
+  if (totalScore >= 78) {
+    status = "Healthy";
+    color = "#10B981";
+    bgColor = "rgba(16, 185, 129, 0.05)";
+    borderColor = "rgba(16, 185, 129, 0.22)";
+    headline = "Your business is in a healthy position";
+    if (topCustShare > 0.35 || overdueRatio > 0.1) {
+      description = "Cash flow stable. Receivables concentration needs monitoring.";
+    } else {
+      description = "Cash flow stable. Working capital reserves and GST provisions are optimal.";
+    }
+  } else if (totalScore >= 50) {
+    status = "Moderate";
+    color = "#F59E0B";
+    bgColor = "rgba(245, 158, 11, 0.05)";
+    borderColor = "rgba(245, 158, 11, 0.22)";
+    headline = "Moderate Working Capital Pressure";
+    description = `Runway is at ${runwayDays} days. ₹${(overdueAmount / 100000).toFixed(2)}L in overdue receivables require active collection.`;
+  } else {
+    status = "Critical";
+    color = "#F43F5E";
+    bgColor = "rgba(244, 63, 94, 0.05)";
+    borderColor = "rgba(244, 63, 94, 0.22)";
+    headline = "Immediate Liquidity Deficit Alert";
+    description = `Runway compressed to ${runwayDays} days. Immediate cash injection or invoice discounting recommended.`;
+  }
+
+  return {
+    score: totalScore,
+    status,
+    tag: "GST HEALTH",
+    headline,
+    description,
+    color,
+    bgColor,
+    borderColor,
+    runwayDays,
+    overdueCount: overdueInvoices.length,
+    overdueAmount,
+    topCustomerSharePercent: Math.round(topCustShare * 100),
+    topCustomerName: topCustName,
+    gstPayable: gst.netGstPayable,
+    healthGrade: totalScore >= 90 ? "A+" : totalScore >= 78 ? "A" : totalScore >= 65 ? "B" : totalScore >= 50 ? "C" : "D",
+  };
+}

@@ -54,10 +54,12 @@ import {
   getCashFlowSummary,
   calculateAgingBreakdown,
   generateLocalForecast,
+  calculateBusinessHealth,
 } from "../engines/digitalTwin";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import UniversalUploadModal from "../components/UniversalUploadModal";
+import HealthMonitorCard from "../components/HealthMonitorCard";
 
 // ==========================================
 // MODERN EXECUTIVE FINTECH PALETTE
@@ -94,6 +96,7 @@ export default function Dashboard() {
   const [aging, setAging] = useState(calculateAgingBreakdown());
   const [forecastPeriod, setForecastPeriod] = useState(30);
   const [forecast, setForecast] = useState(generateLocalForecast(90));
+  const [health, setHealth] = useState(calculateBusinessHealth());
 
   // Quick Onboarding & Upload Modal State
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -108,6 +111,7 @@ export default function Dashboard() {
       setSummary(getCashFlowSummary());
       setAging(calculateAgingBreakdown());
       setForecast(generateLocalForecast(90));
+      setHealth(calculateBusinessHealth());
     });
     return unsub;
   }, []);
@@ -485,7 +489,15 @@ export default function Dashboard() {
       )}
 
       {/* =================================================================
-          3. HERO RUNWAY HEALTH & BUFFER PULSE BAR
+          3. REAL-TIME FINANCIAL HEALTH & GST MONITOR BANNER
+          ================================================================= */}
+      <HealthMonitorCard
+        health={health}
+        onForecastClick={() => navigate("/cash-flow")}
+      />
+
+      {/* =================================================================
+          4. HERO RUNWAY HEALTH & BUFFER PULSE BAR
           ================================================================= */}
       <div className="runway-health-banner">
         <div style={{ flex: 1, minWidth: 260 }}>
