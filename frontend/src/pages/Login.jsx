@@ -299,6 +299,207 @@ export default function Login() {
         }}
       />
 
+      {/* =========================================================================
+          AMBIENT WIDESCREEN FINTECH INTELLIGENCE CARDS (LEFT & RIGHT FLANKS)
+          ========================================================================= */}
+      
+      {/* 1. TOP-LEFT: LIVE LIQUIDITY & RUNWAY PULSE */}
+      <div
+        className="login-ambient-card login-ambient-card-top-left"
+        style={{
+          position: "absolute",
+          top: "14%",
+          left: "max(24px, calc(50% - 730px))",
+          width: "250px",
+          padding: "16px",
+          borderRadius: "18px",
+          background: "rgba(15, 23, 42, 0.82)",
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(139, 92, 246, 0.35)",
+          boxShadow: "0 12px 36px rgba(0,0,0,0.5), 0 0 24px rgba(139, 92, 246, 0.15)",
+          zIndex: 5,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: "10px",
+              background: "rgba(16, 185, 129, 0.15)",
+              border: "1px solid rgba(16, 185, 129, 0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#10b981",
+            }}
+          >
+            <TrendingUp size={18} />
+          </div>
+          <div>
+            <div style={{ fontSize: "10.5px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.5px" }}>
+              CASH RUNWAY PULSE
+            </div>
+            <div style={{ fontSize: "15px", fontWeight: 800, color: "#ffffff" }}>
+              78 Days Baseline
+            </div>
+          </div>
+        </div>
+        <div style={{ marginTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "11px" }}>
+          <span style={{ color: "#34d399", fontWeight: 700 }}>● 98.4% Confidence</span>
+          <span style={{ color: "#cbd5e1" }}>₹18.40L Liquid</span>
+        </div>
+      </div>
+
+      {/* 2. BOTTOM-LEFT: DUAL ML DELAY PREDICTOR RADAR */}
+      <div
+        className="login-ambient-card login-ambient-card-bottom-left"
+        style={{
+          position: "absolute",
+          bottom: "12%",
+          left: "max(24px, calc(50% - 730px))",
+          width: "250px",
+          padding: "16px",
+          borderRadius: "18px",
+          background: "rgba(15, 23, 42, 0.82)",
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(56, 189, 248, 0.35)",
+          boxShadow: "0 12px 36px rgba(0,0,0,0.5), 0 0 24px rgba(56, 189, 248, 0.15)",
+          zIndex: 5,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: "10px",
+              background: "rgba(56, 189, 248, 0.15)",
+              border: "1px solid rgba(56, 189, 248, 0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#38bdf8",
+            }}
+          >
+            <Zap size={18} />
+          </div>
+          <div>
+            <div style={{ fontSize: "10.5px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.5px" }}>
+              DUAL ML PREDICTOR
+            </div>
+            <div style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>
+              RF + LightGBM Engine
+            </div>
+          </div>
+        </div>
+        <div style={{ marginTop: 10, background: "rgba(255,255,255,0.06)", borderRadius: "8px", padding: "7px 10px", fontSize: "11px", color: "#e2e8f0" }}>
+          ⚡ 42 Invoices Tracked in Real-Time
+        </div>
+      </div>
+
+      {/* 3. TOP-RIGHT: MSMED SECTION 15 STATUTORY RADAR */}
+      <div
+        className="login-ambient-card login-ambient-card-top-right"
+        style={{
+          position: "absolute",
+          top: "14%",
+          right: "max(24px, calc(50% - 730px))",
+          width: "250px",
+          padding: "16px",
+          borderRadius: "18px",
+          background: "rgba(15, 23, 42, 0.82)",
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(245, 158, 11, 0.35)",
+          boxShadow: "0 12px 36px rgba(0,0,0,0.5), 0 0 24px rgba(245, 158, 11, 0.15)",
+          zIndex: 5,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: "10px",
+              background: "rgba(245, 158, 11, 0.15)",
+              border: "1px solid rgba(245, 158, 11, 0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#f59e0b",
+            }}
+          >
+            <ShieldCheck size={18} />
+          </div>
+          <div>
+            <div style={{ fontSize: "10.5px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.5px" }}>
+              STATUTORY RADAR
+            </div>
+            <div style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>
+              MSMED Sec 15 (45-Day)
+            </div>
+          </div>
+        </div>
+        <div style={{ marginTop: 10, fontSize: "11.5px", color: "#fbbf24", fontWeight: 600 }}>
+          ✓ 3x Bank Rate Auto-Interest Trigger
+        </div>
+      </div>
+
+      {/* 4. BOTTOM-RIGHT: TReDS 24HR LIQUIDITY MARKETPLACE */}
+      <div
+        className="login-ambient-card login-ambient-card-bottom-right"
+        style={{
+          position: "absolute",
+          bottom: "12%",
+          right: "max(24px, calc(50% - 730px))",
+          width: "250px",
+          padding: "16px",
+          borderRadius: "18px",
+          background: "rgba(15, 23, 42, 0.82)",
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(139, 92, 246, 0.35)",
+          boxShadow: "0 12px 36px rgba(0,0,0,0.5), 0 0 24px rgba(139, 92, 246, 0.15)",
+          zIndex: 5,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: "10px",
+              background: "rgba(139, 92, 246, 0.15)",
+              border: "1px solid rgba(139, 92, 246, 0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#a78bfa",
+            }}
+          >
+            <Sparkles size={18} />
+          </div>
+          <div>
+            <div style={{ fontSize: "10.5px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.5px" }}>
+              TReDS 24HR SETTLEMENT
+            </div>
+            <div style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>
+              8.1% APR Instant Credit
+            </div>
+          </div>
+        </div>
+        <div style={{ marginTop: 10, display: "flex", gap: 5 }}>
+          <span style={{ fontSize: "10px", background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "5px", color: "#cbd5e1", fontWeight: 600 }}>
+            M1xchange
+          </span>
+          <span style={{ fontSize: "10px", background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "5px", color: "#cbd5e1", fontWeight: 600 }}>
+            RXIL
+          </span>
+          <span style={{ fontSize: "10px", background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "5px", color: "#cbd5e1", fontWeight: 600 }}>
+            Invoicemart
+          </span>
+        </div>
+      </div>
+
       {/* Centered Split-Screen Card (Dribbble Glassmorphism Frame) */}
       <div
         style={{

@@ -2860,3 +2860,44 @@ a {
   border-color: var(--accent-amber);
   box-shadow: 0 6px 18px rgba(245, 158, 11, 0.12);
 }
+
+/* ==========================================================================
+   LOGIN / SIGNUP AMBIENT WIDESCREEN WIDGETS
+   ========================================================================== */
+.login-ambient-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: floatAmbient 6s ease-in-out infinite alternate;
+}
+
+.login-ambient-card-top-left {
+  animation-delay: 0s;
+}
+
+.login-ambient-card-bottom-left {
+  animation-delay: 2s;
+}
+
+.login-ambient-card-top-right {
+  animation-delay: 1s;
+}
+
+.login-ambient-card-bottom-right {
+  animation-delay: 3s;
+}
+
+.login-ambient-card:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6), 0 0 32px rgba(139, 92, 246, 0.3) !important;
+}
+
+@keyframes floatAmbient {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+@media (max-width: 1420px) {
+  .login-ambient-card {
+    display: none !important;
+  }
+}
