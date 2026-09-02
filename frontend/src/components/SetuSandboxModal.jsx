@@ -905,10 +905,91 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                   )}
                 </div>
 
-                {/* Raw JSON Payload Viewer */}
-                <div style={{ background: "#0F172A", borderRadius: "12px", padding: "14px", color: "#38BDF8", fontFamily: "monospace", fontSize: "11px", maxHeight: "280px", overflowY: "auto" }}>
-                  <div style={{ color: "#94A3B8", marginBottom: 6 }}>// Setu FIU Decrypted Telemetry:</div>
-                  <pre style={{ margin: 0, whiteSpace: "pre-wrap", color: "#E2E8F0" }}>
+                {/* Raw JSON Payload Viewer with Copy & Download */}
+                <div style={{ background: "#0F172A", borderRadius: "14px", padding: "16px", color: "#38BDF8", fontFamily: "monospace", fontSize: "11px", display: "flex", flexDirection: "column", gap: 10, boxShadow: "0 4px 14px rgba(0,0,0,0.15)" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <FileCode size={14} style={{ color: "#38BDF8" }} />
+                      <span style={{ color: "#F8FAFC", fontWeight: 700 }}>Setu FIU Telemetry Payload</span>
+                    </div>
+
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button
+                        onClick={() => {
+                          const payloadText = JSON.stringify({
+                            fiu_session_id: "ses_fiu_99120412",
+                            account_holder: customerName.toUpperCase(),
+                            fip_name: selectedFips[0]?.toUpperCase().replace(/ /g, "_") || "HDFC_BANK_LTD",
+                            account_type: "CURRENT",
+                            current_balance: Math.round(Number(customBalanceLakhs || 38.5) * 100000),
+                            currency: "INR",
+                            transaction_count: 342,
+                            credit_turnover_12m: 17040000.00,
+                            debit_turnover_12m: 13190000.00,
+                            nach_mandate_active: true,
+                            risk_rating: "AAA_PRIME",
+                          }, null, 2);
+                          handleCopy(payloadText, "telemetry_json");
+                        }}
+                        style={{
+                          background: "rgba(255, 255, 255, 0.1)",
+                          border: "1px solid rgba(255, 255, 255, 0.2)",
+                          color: "#FFFFFF",
+                          padding: "3px 8px",
+                          borderRadius: "4px",
+                          fontSize: "10.5px",
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 4,
+                        }}
+                      >
+                        {copiedKey === "telemetry_json" ? <Check size={11} style={{ color: "#10B981" }} /> : <Copy size={11} />}
+                        <span>{copiedKey === "telemetry_json" ? "Copied!" : "Copy JSON"}</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          const payloadData = {
+                            fiu_session_id: "ses_fiu_99120412",
+                            account_holder: customerName.toUpperCase(),
+                            fip_name: selectedFips[0]?.toUpperCase().replace(/ /g, "_") || "HDFC_BANK_LTD",
+                            account_type: "CURRENT",
+                            current_balance: Math.round(Number(customBalanceLakhs || 38.5) * 100000),
+                            currency: "INR",
+                            transaction_count: 342,
+                            credit_turnover_12m: 17040000.00,
+                            debit_turnover_12m: 13190000.00,
+                            nach_mandate_active: true,
+                            risk_rating: "AAA_PRIME",
+                          };
+                          const blob = new Blob([JSON.stringify(payloadData, null, 2)], { type: "application/json" });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = `setu_telemetry_${customerName.toLowerCase().replace(/[^a-z0-9]/g, "_")}.json`;
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                        }}
+                        style={{
+                          background: "rgba(56, 189, 248, 0.15)",
+                          border: "1px solid rgba(56, 189, 248, 0.3)",
+                          color: "#38BDF8",
+                          padding: "3px 8px",
+                          borderRadius: "4px",
+                          fontSize: "10.5px",
+                          fontWeight: 700,
+                          cursor: "pointer",
+                        }}
+                      >
+                        Download .JSON
+                      </button>
+                    </div>
+                  </div>
+
+                  <pre style={{ margin: 0, whiteSpace: "pre-wrap", color: "#E2E8F0", maxHeight: "220px", overflowY: "auto" }}>
 {`{
   "fiu_session_id": "ses_fiu_99120412",
   "account_holder": "${customerName.toUpperCase()}",
