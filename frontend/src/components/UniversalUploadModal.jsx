@@ -158,7 +158,7 @@ export default function UniversalUploadModal({ isOpen, onClose }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", "fintwin_full_demo_dataset.csv");
+    link.setAttribute("download", "nexfin_cash_recovery_master_dataset.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

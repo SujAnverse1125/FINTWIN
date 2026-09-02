@@ -1,0 +1,19 @@
+id,type,category,customer,amount,invoiceDate,dueDate,status,overdueDays,gstRate,gstin,customerEmail,discountEligible
+INV-2026-088,Invoice,Sales Invoice,Mehta Heavy Tooling Pvt Ltd,1250000,2026-05-15,2026-06-30,Overdue,58,18,27AADCM9921E1Z3,accounts@mehtatooling.com,false
+INV-2026-092,Invoice,Sales Invoice,Shree Balaji Infrastructure,840000,2026-05-10,2026-06-25,Overdue,64,18,24AAACS4120F1Z8,finance@balaji-infra.in,false
+INV-2026-075,Invoice,Sales Invoice,Apex Global Logistics Corp,520000,2026-05-25,2026-07-10,Overdue,49,18,29AAACA5512G1Z9,payables@apexlogistics.com,false
+INV-2026-104,Invoice,Sales Invoice,Sona Exports & Textiles Ltd,468000,2026-06-12,2026-07-26,Overdue,34,12,33AABCS7712H1Z5,accounts@sonaexports.com,false
+INV-2026-112,Invoice,Sales Invoice,Deccan Precision Fasteners,385000,2026-06-20,2026-08-04,Overdue,26,18,36AABCD8821J1Z2,billing@deccanfasteners.com,false
+INV-2026-118,Invoice,Sales Invoice,Zaveri Pharma Packaging,240000,2026-06-28,2026-08-11,Overdue,19,12,24AABCZ1234K1Z0,finance@zaveripack.com,false
+INV-2026-125,Invoice,Sales Invoice,Krishna Furnishings & Fabrics,304000,2026-07-08,2026-08-21,Overdue,9,18,27AABCK4412L1Z4,accounts@krishnafurnishings.in,false
+INV-2026-130,Invoice,Sales Invoice,Anand Agencies Distribution,156000,2026-07-12,2026-08-24,Overdue,6,18,29AABCA8891M1Z7,info@anandagencies.com,false
+INV-2026-201,Invoice,Sales Invoice,Tata Motors Ancillary Vendor Unit,1450000,2026-08-05,2026-09-25,Pending,0,18,27AAACT2210N1Z6,vendor.desk@tatamotors-vendor.com,true
+INV-2026-205,Invoice,Sales Invoice,Godrej Appliances Supply Division,920000,2026-08-12,2026-09-20,Pending,0,18,27AAACG1120P1Z8,ap.team@godrejappliances.in,true
+INV-2026-210,Invoice,Sales Invoice,Mahindra & Mahindra Tier-2 Subcontractor,680000,2026-08-15,2026-09-18,Pending,0,18,27AAACM3340Q1Z9,treasury@mahindra-tier2.in,true
+INV-2026-215,Invoice,Sales Invoice,Schneider Electric India OEM,450000,2026-08-20,2026-10-05,Pending,0,18,29AAACS6650R1Z1,vendor.invoices@se-india.com,true
+INV-2026-001,Invoice,Sales Invoice,Reliance Retail Supply Chain,1850000,2026-04-10,2026-05-25,Paid,0,18,27AABCR4450S1Z2,accounts@relianceretail.com,false
+INV-2026-005,Invoice,Sales Invoice,Larsen & Toubro Heavy Fab,1200000,2026-04-18,2026-06-02,Paid,0,18,27AABCL8890T1Z4,vendor.payments@lnt.com,false
+EXP-2026-001,Expense,Payroll & Salary,Monthly Factory & Engineering Payroll,380000,2026-08-01,2026-08-05,Paid,0,0,27AADCO1234E1Z5,payroll@nexfin.internal,false
+EXP-2026-002,Expense,Rent & Facilities,MIDC Industrial Shed Facility Lease,110000,2026-08-01,2026-08-05,Paid,0,18,27AADCO1234E1Z5,rent@nexfin.internal,false
+EXP-2026-003,Expense,Raw Materials,Specialty Alloy Steel & Billet Billets,275000,2026-08-10,2026-08-20,Paid,0,18,27AADCO1234E1Z5,purchase@nexfin.internal,false
+EXP-2026-004,Expense,Utilities,State Industrial High-Tension Power,48000,2026-08-05,2026-08-10,Paid,0,0,27AADCO1234E1Z5,utilities@nexfin.internal,false

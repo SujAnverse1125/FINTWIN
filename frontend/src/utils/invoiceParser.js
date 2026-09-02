@@ -352,6 +352,10 @@ function normalizeInvoiceRow(row) {
     previousLatePayments: Number(row.previousLatePayments || row["Previous Late Payments"] || 0),
     customerTenureMonths: Number(row.customerTenureMonths || row["Customer Tenure Months"] || row["Tenure Months"] || 12),
     gstRate: parseFloat(String(row.gstRate || row["GST Rate"] || "18").replace("%", "").trim()) || 18,
+    gstin: row.gstin || row.GSTIN || row["Customer GSTIN"] || row["Buyer GSTIN"] || "",
+    customerEmail: row.customerEmail || row["Customer Email"] || row.email || row.Email || "",
+    overdueDays: Number(row.overdueDays || row["Overdue Days"] || row.overdue || 0),
+    discountEligible: row.discountEligible !== undefined ? row.discountEligible : true,
     source: row.source || "file_import",
   };
 }
