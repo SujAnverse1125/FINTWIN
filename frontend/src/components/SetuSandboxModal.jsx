@@ -29,13 +29,19 @@ import {
   Sliders,
   DollarSign,
   Wallet,
+  Activity,
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Server,
+  Globe,
+  Award,
 } from "lucide-react";
 
 import {
   getFinancialData,
   updateInvoiceStatus,
   updateBusinessProfile,
-  createInvoices,
 } from "../data/financialStore";
 
 export default function SetuSandboxModal({ isOpen, onClose }) {
@@ -53,6 +59,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
   const [otpInput, setOtpInput] = useState("7492");
   const [isConsentLoading, setIsConsentLoading] = useState(false);
   const [isSyncSuccess, setIsSyncSuccess] = useState(false);
+  const [showRawJsonStep3, setShowRawJsonStep3] = useState(false);
 
   // Playground 2: UPI Dynamic QR State
   const [selectedInvoiceId, setSelectedInvoiceId] = useState("");
@@ -68,8 +75,9 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifyResult, setVerifyResult] = useState(null);
 
-  // Playground 4: API Console State
+  // Playground 4: Visual Gateway Monitor State
   const [apiEndpoint, setApiEndpoint] = useState("aa_initiate");
+  const [showRawJsonTab4, setShowRawJsonTab4] = useState(false);
 
   const storeData = getFinancialData();
   const invoices = (storeData.invoices || []).filter((i) => i.status !== "Paid");
@@ -195,93 +203,6 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
     navigate("/invoices");
   };
 
-  // API Console Snippets
-  const getApiConsoleData = () => {
-    switch (apiEndpoint) {
-      case "aa_initiate":
-        return {
-          method: "POST",
-          url: "https://sandbox.setu.co/api/v2/consents",
-          headers: {
-            "x-client-id": "nexfin_sandbox_live_8912",
-            "x-client-secret": "sec_sandbox_k82m9x0119za",
-            "x-product-instance-id": "inst_aa_fiu_sahamat_991",
-            "Content-Type": "application/json",
-          },
-          body: {
-            consentHandler: aaHandle,
-            consentMode: "VIEW",
-            fetchType: "PERIODIC",
-            consentTypes: ["TRANSACTIONS", "PROFILE", "SUMMARY"],
-            fipTypes: ["DEPOSIT", "SAVINGS"],
-            fips: selectedFips,
-            dataRange: { from: "2025-09-01", to: "2026-09-01" },
-            callbackUrl: "https://nexfin.app/api/webhooks/setu/aa",
-          },
-          response: {
-            id: "con_setu_989127419",
-            status: "PENDING",
-            url: "https://sandbox.setu.co/consent/con_setu_989127419",
-            expiresOn: "2026-09-03T18:30:00Z",
-          },
-        };
-
-      case "upi_create":
-        return {
-          method: "POST",
-          url: "https://sandbox.setu.co/api/v2/payment-links",
-          headers: {
-            "x-client-id": "nexfin_sandbox_live_8912",
-            "x-client-secret": "sec_sandbox_k82m9x0119za",
-            "x-product-instance-id": "inst_upi_deeplink_771",
-            "Content-Type": "application/json",
-          },
-          body: {
-            amount: { value: Number(selectedInvoice?.amount || 1250000) * 100, currency: "INR" },
-            billerBillID: selectedInvoice?.id || selectedInvoice?.invoiceNumber || "INV-2026-088",
-            transactionNote: `Settlement for Invoice #${selectedInvoice?.id || selectedInvoice?.invoiceNumber || "INV-2026-088"}`,
-            expiryDate: new Date(Date.now() + 86400000).toISOString(),
-            settlementOption: "DIRECT_TO_ACCOUNT",
-          },
-          response: {
-            id: "plink_setu_88491290",
-            status: "ACTIVE",
-            upiLink: `upi://pay?pa=nexfin@icici&pn=NexFin+MSME&am=${selectedInvoice?.amount || 1250000}&tr=${selectedInvoice?.id || selectedInvoice?.invoiceNumber}`,
-            shortUrl: "https://setu.to/pl/88491290",
-          },
-        };
-
-      case "penny_drop":
-        return {
-          method: "POST",
-          url: "https://sandbox.setu.co/api/v2/verify/bank-account",
-          headers: {
-            "x-client-id": "nexfin_sandbox_live_8912",
-            "x-client-secret": "sec_sandbox_k82m9x0119za",
-            "x-product-instance-id": "inst_verify_penny_331",
-            "Content-Type": "application/json",
-          },
-          body: {
-            accountNumber: bankAcc,
-            ifsc: ifscCode,
-            name: customerName,
-          },
-          response: {
-            status: "SUCCESS",
-            verificationId: "vrf_setu_99214810",
-            accountHolderName: customerName.toUpperCase(),
-            nameMatchScore: 99.2,
-            utr: "524810992812",
-          },
-        };
-
-      default:
-        return {};
-    }
-  };
-
-  const consoleData = getApiConsoleData();
-
   return (
     <div
       style={{
@@ -392,7 +313,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Sandbox Navigation Tabs (Clean Wrapped / No Clipping) */}
+        {/* Sandbox Navigation Tabs */}
         <div
           style={{
             padding: "12px 28px 0",
@@ -407,7 +328,7 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
             { id: "aa_consent", label: "1. Account Aggregator (AA)", icon: Smartphone, badge: "Sahamati" },
             { id: "upi_qr", label: "2. Setu UPI DeepLink & QR", icon: QrCode, badge: "Instant UTR" },
             { id: "penny_drop", label: "3. KYC & Penny Drop", icon: ShieldCheck, badge: "IMPS Match" },
-            { id: "api_console", label: "4. Live API Console (cURL)", icon: Terminal, badge: "Swagger" },
+            { id: "api_console", label: "4. Live Gateway Monitor", icon: Activity, badge: "Architecture" },
           ].map((t) => {
             const Icon = t.icon;
             const active = activeTab === t.id;
@@ -905,105 +826,76 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
                   )}
                 </div>
 
-                {/* Raw JSON Payload Viewer with Copy & Download */}
-                <div style={{ background: "#0F172A", borderRadius: "14px", padding: "16px", color: "#38BDF8", fontFamily: "monospace", fontSize: "11px", display: "flex", flexDirection: "column", gap: 10, boxShadow: "0 4px 14px rgba(0,0,0,0.15)" }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: 8 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <FileCode size={14} style={{ color: "#38BDF8" }} />
-                      <span style={{ color: "#F8FAFC", fontWeight: 700 }}>Setu FIU Telemetry Payload</span>
+                {/* Visual Telemetry Card (Replacing Raw Code Boxes) */}
+                <div style={{ background: "#FFFFFF", borderRadius: "14px", border: "1px solid #E2E8F0", padding: "16px", display: "flex", flexDirection: "column", gap: 12, boxShadow: "0 4px 14px rgba(0,0,0,0.04)" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #F1F5F9", paddingBottom: 10 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ width: 28, height: 28, borderRadius: "6px", background: "rgba(2, 132, 199, 0.1)", color: "#0284C7", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Building2 size={16} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: "13px", fontWeight: 800, color: "#0F172A" }}>{selectedFips[0] || "HDFC Bank Ltd"}</div>
+                        <div style={{ fontSize: "10.5px", color: "#64748B" }}>Verified Current A/C • IFSC: HDFC0000240</div>
+                      </div>
                     </div>
 
-                    <div style={{ display: "flex", gap: 6 }}>
-                      <button
-                        onClick={() => {
-                          const payloadText = JSON.stringify({
-                            fiu_session_id: "ses_fiu_99120412",
-                            account_holder: customerName.toUpperCase(),
-                            fip_name: selectedFips[0]?.toUpperCase().replace(/ /g, "_") || "HDFC_BANK_LTD",
-                            account_type: "CURRENT",
-                            current_balance: Math.round(Number(customBalanceLakhs || 38.5) * 100000),
-                            currency: "INR",
-                            transaction_count: 342,
-                            credit_turnover_12m: 17040000.00,
-                            debit_turnover_12m: 13190000.00,
-                            nach_mandate_active: true,
-                            risk_rating: "AAA_PRIME",
-                          }, null, 2);
-                          handleCopy(payloadText, "telemetry_json");
-                        }}
-                        style={{
-                          background: "rgba(255, 255, 255, 0.1)",
-                          border: "1px solid rgba(255, 255, 255, 0.2)",
-                          color: "#FFFFFF",
-                          padding: "3px 8px",
-                          borderRadius: "4px",
-                          fontSize: "10.5px",
-                          fontWeight: 700,
-                          cursor: "pointer",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 4,
-                        }}
-                      >
-                        {copiedKey === "telemetry_json" ? <Check size={11} style={{ color: "#10B981" }} /> : <Copy size={11} />}
-                        <span>{copiedKey === "telemetry_json" ? "Copied!" : "Copy JSON"}</span>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          const payloadData = {
-                            fiu_session_id: "ses_fiu_99120412",
-                            account_holder: customerName.toUpperCase(),
-                            fip_name: selectedFips[0]?.toUpperCase().replace(/ /g, "_") || "HDFC_BANK_LTD",
-                            account_type: "CURRENT",
-                            current_balance: Math.round(Number(customBalanceLakhs || 38.5) * 100000),
-                            currency: "INR",
-                            transaction_count: 342,
-                            credit_turnover_12m: 17040000.00,
-                            debit_turnover_12m: 13190000.00,
-                            nach_mandate_active: true,
-                            risk_rating: "AAA_PRIME",
-                          };
-                          const blob = new Blob([JSON.stringify(payloadData, null, 2)], { type: "application/json" });
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement("a");
-                          a.href = url;
-                          a.download = `setu_telemetry_${customerName.toLowerCase().replace(/[^a-z0-9]/g, "_")}.json`;
-                          document.body.appendChild(a);
-                          a.click();
-                          document.body.removeChild(a);
-                        }}
-                        style={{
-                          background: "rgba(56, 189, 248, 0.15)",
-                          border: "1px solid rgba(56, 189, 248, 0.3)",
-                          color: "#38BDF8",
-                          padding: "3px 8px",
-                          borderRadius: "4px",
-                          fontSize: "10.5px",
-                          fontWeight: 700,
-                          cursor: "pointer",
-                        }}
-                      >
-                        Download .JSON
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => setShowRawJsonStep3(!showRawJsonStep3)}
+                      style={{
+                        background: "#F8FAFC",
+                        border: "1px solid #CBD5E1",
+                        borderRadius: "6px",
+                        padding: "4px 8px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        color: "#475569",
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 4,
+                      }}
+                    >
+                      {showRawJsonStep3 ? <EyeOff size={12} /> : <Eye size={12} />}
+                      <span>{showRawJsonStep3 ? "Hide Raw Code" : "Show Raw JSON"}</span>
+                    </button>
                   </div>
 
-                  <pre style={{ margin: 0, whiteSpace: "pre-wrap", color: "#E2E8F0", maxHeight: "220px", overflowY: "auto" }}>
+                  {!showRawJsonStep3 ? (
+                    /* Visual Key-Value Grid */
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: "12px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                        <span style={{ color: "#64748B" }}>12M Total Inflow Velocity:</span>
+                        <strong style={{ color: "#059669" }}>₹1.70 Cr (342 Credits)</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                        <span style={{ color: "#64748B" }}>12M Outbound Spend / Burn:</span>
+                        <strong style={{ color: "#DC2626" }}>₹1.31 Cr (280 Debits)</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                        <span style={{ color: "#64748B" }}>Automated Mandate (NACH):</span>
+                        <strong style={{ color: "#0284C7" }}>Active & Registered</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                        <span style={{ color: "#64748B" }}>Institutional Risk Grade:</span>
+                        <strong style={{ color: "#059669" }}>AAA Prime (Clean History)</strong>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Raw JSON View (Only when toggled) */
+                    <pre style={{ margin: 0, padding: "10px", background: "#0F172A", borderRadius: "8px", color: "#38BDF8", fontSize: "10.5px", fontFamily: "monospace", whiteSpace: "pre-wrap", maxHeight: "180px", overflowY: "auto" }}>
 {`{
   "fiu_session_id": "ses_fiu_99120412",
   "account_holder": "${customerName.toUpperCase()}",
   "fip_name": "${selectedFips[0]?.toUpperCase().replace(/ /g, "_") || "HDFC_BANK_LTD"}",
   "account_type": "CURRENT",
   "current_balance": ${Math.round(Number(customBalanceLakhs || 38.5) * 100000)}.00,
-  "currency": "INR",
   "transaction_count": 342,
   "credit_turnover_12m": 17040000.00,
   "debit_turnover_12m": 13190000.00,
-  "nach_mandate_active": true,
   "risk_rating": "AAA_PRIME"
 }`}
-                  </pre>
+                    </pre>
+                  )}
                 </div>
               </div>
             )}
@@ -1370,79 +1262,179 @@ export default function SetuSandboxModal({ isOpen, onClose }) {
         )}
 
         {/* =========================================================================
-            PLAYGROUND 4: LIVE API CONSOLE (cURL)
+            PLAYGROUND 4: VISUAL GATEWAY MONITOR & FLOW INSPECTOR (NO RAW CODE BOXES)
             ========================================================================= */}
         {activeTab === "api_console" && (
-          <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: 18 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {[
-                  { id: "aa_initiate", label: "POST /v2/consents (AA)" },
-                  { id: "upi_create", label: "POST /v2/payment-links (UPI)" },
-                  { id: "penny_drop", label: "POST /v2/verify/bank-account" },
+                  { id: "aa_initiate", label: "1. Account Aggregator (AA)", endpoint: "POST /v2/consents" },
+                  { id: "upi_create", label: "2. Setu UPI DeepLink Gateway", endpoint: "POST /v2/payment-links" },
+                  { id: "penny_drop", label: "3. IMPS Penny Drop & KYC", endpoint: "POST /v2/verify/bank-account" },
                 ].map((ep) => (
                   <button
                     key={ep.id}
                     onClick={() => setApiEndpoint(ep.id)}
                     style={{
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      fontSize: "11.5px",
+                      padding: "8px 14px",
+                      borderRadius: "8px",
+                      fontSize: "12px",
                       fontWeight: 700,
-                      border: apiEndpoint === ep.id ? "1px solid #0284C7" : "1px solid #CBD5E1",
-                      background: apiEndpoint === ep.id ? "#0284C7" : "#FFFFFF",
-                      color: apiEndpoint === ep.id ? "#FFFFFF" : "#334155",
+                      border: apiEndpoint === ep.id ? "1px solid #0284C7" : "1px solid #E2E8F0",
+                      background: apiEndpoint === ep.id ? "rgba(2, 132, 199, 0.08)" : "#FFFFFF",
+                      color: apiEndpoint === ep.id ? "#0284C7" : "#475569",
                       cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
                     }}
                   >
-                    {ep.label}
+                    <Server size={13} />
+                    <span>{ep.label}</span>
                   </button>
                 ))}
               </div>
 
               <button
-                onClick={() => handleCopy(JSON.stringify(consoleData, null, 2), "curl")}
+                onClick={() => setShowRawJsonTab4(!showRawJsonTab4)}
                 style={{
                   padding: "6px 12px",
                   borderRadius: "6px",
                   border: "1px solid #CBD5E1",
                   background: "#FFFFFF",
                   fontSize: "11.5px",
-                  fontWeight: 700,
+                  fontWeight: 600,
+                  color: "#475569",
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 5,
                   cursor: "pointer",
                 }}
               >
-                {copiedKey === "curl" ? <Check size={13} style={{ color: "#059669" }} /> : <Copy size={13} />}
-                <span>{copiedKey === "curl" ? "Copied Payload!" : "Copy Payload"}</span>
+                {showRawJsonTab4 ? <EyeOff size={13} /> : <Eye size={13} />}
+                <span>{showRawJsonTab4 ? "View Clean Cards" : "View Raw JSON"}</span>
               </button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-              {/* Request Box */}
-              <div style={{ background: "#0F172A", borderRadius: "12px", padding: "14px", color: "#38BDF8", fontFamily: "monospace", fontSize: "11px", overflowY: "auto", maxHeight: "320px" }}>
-                <div style={{ color: "#94A3B8", marginBottom: 6 }}>// Request Headers & Body:</div>
-                <div style={{ color: "#F59E0B", marginBottom: 6 }}>
-                  {consoleData.method} {consoleData.url}
-                </div>
-                <pre style={{ margin: 0, whiteSpace: "pre-wrap", color: "#E2E8F0" }}>
-{JSON.stringify({ headers: consoleData.headers, body: consoleData.body }, null, 2)}
-                </pre>
-              </div>
+            {!showRawJsonTab4 ? (
+              /* Visual Executive Inspection Cards */
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                {/* Outbound Request Card */}
+                <div style={{ background: "#FFFFFF", borderRadius: "14px", border: "1px solid #E2E8F0", padding: "18px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)", display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #F1F5F9", paddingBottom: 10 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ background: "#0284C7", color: "#FFFFFF", padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: 800 }}>POST</span>
+                      <span style={{ fontSize: "12.5px", fontWeight: 700, color: "#0F172A" }}>
+                        {apiEndpoint === "aa_initiate" ? "/api/v2/consents" : apiEndpoint === "upi_create" ? "/api/v2/payment-links" : "/api/v2/verify/bank-account"}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: "11px", color: "#059669", fontWeight: 700, background: "rgba(16, 185, 129, 0.1)", padding: "2px 6px", borderRadius: "4px" }}>
+                      HMAC SHA-256 ✓
+                    </span>
+                  </div>
 
-              {/* Response Box */}
-              <div style={{ background: "#0F172A", borderRadius: "12px", padding: "14px", color: "#10B981", fontFamily: "monospace", fontSize: "11px", overflowY: "auto", maxHeight: "320px" }}>
-                <div style={{ color: "#94A3B8", marginBottom: 6, display: "flex", justifyContent: "space-between" }}>
-                  <span>// Setu Sandbox Response:</span>
-                  <span style={{ color: "#10B981", fontWeight: 800 }}>Status: 200 OK</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: "12px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                      <span style={{ color: "#64748B" }}>Target System:</span>
+                      <strong style={{ color: "#0F172A" }}>
+                        {apiEndpoint === "aa_initiate" ? "Sahamati RBI Account Aggregator" : apiEndpoint === "upi_create" ? "Setu Instant UPI DeepLink" : "NPCI IMPS Penny Drop Node"}
+                      </strong>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                      <span style={{ color: "#64748B" }}>Client ID:</span>
+                      <code style={{ fontSize: "11px", color: "#0284C7" }}>nexfin_sandbox_live_8912</code>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                      <span style={{ color: "#64748B" }}>Target Account / Subject:</span>
+                      <strong style={{ color: "#0F172A" }}>
+                        {apiEndpoint === "aa_initiate" ? aaHandle : apiEndpoint === "upi_create" ? `Invoice #${selectedInvoice?.id || "INV-088"}` : customerName}
+                      </strong>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                      <span style={{ color: "#64748B" }}>Payload Security:</span>
+                      <strong style={{ color: "#059669" }}>2048-Bit RSA Encrypted</strong>
+                    </div>
+                  </div>
                 </div>
-                <pre style={{ margin: 0, whiteSpace: "pre-wrap", color: "#E2E8F0" }}>
-{JSON.stringify(consoleData.response, null, 2)}
-                </pre>
+
+                {/* Gateway Response Card */}
+                <div style={{ background: "#FFFFFF", borderRadius: "14px", border: "1px solid #A7F3D0", padding: "18px", boxShadow: "0 2px 8px rgba(16, 185, 129, 0.08)", display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #F1F5F9", paddingBottom: 10 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10B981" }}></span>
+                      <span style={{ fontSize: "13px", fontWeight: 800, color: "#0F172A" }}>Setu Sandbox Response</span>
+                    </div>
+                    <span style={{ fontSize: "11px", color: "#059669", fontWeight: 800, background: "#ECFDF5", padding: "2px 8px", borderRadius: "4px" }}>
+                      200 OK • 42ms
+                    </span>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: "12px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                      <span style={{ color: "#64748B" }}>Transaction Status:</span>
+                      <strong style={{ color: "#059669" }}>✓ SUCCESSFUL (CONFIRMED)</strong>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                      <span style={{ color: "#64748B" }}>Setu Reference ID:</span>
+                      <code style={{ fontSize: "11px", color: "#0F172A", fontWeight: 700 }}>
+                        {apiEndpoint === "aa_initiate" ? "con_setu_989127419" : apiEndpoint === "upi_create" ? "plink_setu_88491290" : "vrf_setu_99214810"}
+                      </code>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                      <span style={{ color: "#64748B" }}>Settlement Mode:</span>
+                      <strong style={{ color: "#0284C7" }}>Direct RBI Bank Ingestion</strong>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px", background: "#F8FAFC", borderRadius: "6px" }}>
+                      <span style={{ color: "#64748B" }}>Digital Twin Integration:</span>
+                      <strong style={{ color: "#059669" }}>Instant Real-Time Sync</strong>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              /* Raw JSON Inspector (Available as clean fallback toggle) */
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                <div style={{ background: "#0F172A", borderRadius: "12px", padding: "14px", color: "#38BDF8", fontFamily: "monospace", fontSize: "11px", overflowY: "auto", maxHeight: "300px" }}>
+                  <div style={{ color: "#94A3B8", marginBottom: 6 }}>// Request Headers & Body:</div>
+                  <pre style={{ margin: 0, whiteSpace: "pre-wrap", color: "#E2E8F0" }}>
+{JSON.stringify({
+  method: "POST",
+  url: `https://sandbox.setu.co/api/v2/${apiEndpoint === "aa_initiate" ? "consents" : apiEndpoint === "upi_create" ? "payment-links" : "verify/bank-account"}`,
+  headers: {
+    "x-client-id": "nexfin_sandbox_live_8912",
+    "x-product-instance-id": "inst_setu_prod_991",
+    "Content-Type": "application/json"
+  },
+  body: {
+    target: customerName,
+    reference: aaHandle,
+    timestamp: new Date().toISOString()
+  }
+}, null, 2)}
+                  </pre>
+                </div>
+
+                <div style={{ background: "#0F172A", borderRadius: "12px", padding: "14px", color: "#10B981", fontFamily: "monospace", fontSize: "11px", overflowY: "auto", maxHeight: "300px" }}>
+                  <div style={{ color: "#94A3B8", marginBottom: 6 }}>// Setu Response (200 OK):</div>
+                  <pre style={{ margin: 0, whiteSpace: "pre-wrap", color: "#E2E8F0" }}>
+{JSON.stringify({
+  status: "SUCCESS",
+  code: 200,
+  latency_ms: 42,
+  verification_id: "setu_ref_99120412",
+  timestamp: new Date().toISOString()
+}, null, 2)}
+                  </pre>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
